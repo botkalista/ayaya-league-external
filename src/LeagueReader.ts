@@ -29,7 +29,6 @@ class AyayaLeagueReader {
 
     /**
      *  @deprecated Not Working
-     * 
      */
     getHoveredEntity(entities) {
         const hovered = Reader.readProcessMemory(OFFSET.oUnderMouse, "DWORD", true);
