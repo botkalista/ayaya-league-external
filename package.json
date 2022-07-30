@@ -1,0 +1,15 @@
+{
+  "name": "ayaya-league-external",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "memoryjs": "^3.4.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "Emily",
+  "license": "MIT",
+  "description": "External memory reader for League of Legends"
+}
