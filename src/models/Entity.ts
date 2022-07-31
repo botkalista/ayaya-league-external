@@ -1,3 +1,4 @@
+import { Spell } from "./Spell";
 
 export class Entity {
     address: string;
@@ -8,6 +9,8 @@ export class Entity {
     pos: { x: number, y: number, z: number };
     hp: number;
     maxHp: number;
+    dead: boolean;
+    spells: Spell[];
 
     static fromData(data: any) {
         const instance = new Entity();

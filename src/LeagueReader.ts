@@ -2,6 +2,8 @@
 import Reader from './MemoryReader';
 import { allowedChars, OFFSET } from './consts/Offsets'
 import { Entity } from './models/Entity';
+import { Spell } from './models/Spell';
+import { getNameFromBuffer } from './utils/Utils';
 
 class AyayaLeagueReader {
 
@@ -26,6 +28,11 @@ class AyayaLeagueReader {
         const objects = this.getAllObjects();
         const objectsData = objects.map(o => this.readObjectAt(o));
         return objectsData;
+    }
+
+    getGameTime() {
+        const time = Reader.readProcessMemory(OFFSET.oGameTime, 'DWORD', true);
+        return time;
     }
 
     /**
@@ -82,22 +89,34 @@ class AyayaLeagueReader {
     private getObjectData(address: number) {
         const namePointer = Reader.readProcessMemory(address + OFFSET.oObjName, 'DWORD');
         const nameBuffer = Reader.readProcessMemoryBuffer(namePointer, 0x25);
-        const _name: any[] = [];
-        for (let i = 0; i < nameBuffer.length; i++) {
-            const s = String.fromCharCode(nameBuffer.at(i))
-            if (!allowedChars.includes(s)) break;
-            _name.push(s);
-        }
-        const name = _name.join('');
-
+        const name = getNameFromBuffer(nameBuffer);
         const netId = Reader.readProcessMemory(address + OFFSET.oMapNetId, "DWORD");
         const hp = Reader.readProcessMemory(address + OFFSET.oObjectHealth, "FLOAT");
         const maxHp = Reader.readProcessMemory(address + OFFSET.oObjectMaxHealth, "FLOAT");
         const pos = Reader.readProcessMemory(address + OFFSET.oObjPosition, "VEC3");
         const index = Reader.readProcessMemory(address + OFFSET.oObjIndex, "DWORD");
         const team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
+        const dead = Reader.readProcessMemory(address + OFFSET.oObjectDead, "DWORD");
 
-        return { netId, hp, maxHp, pos, name, index, team, address: Reader.toHex(address) }
+        const spells: Spell[] = [];
+
+        for (let i = 0; i < 6; i++) {
+
+            const spellAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook + (i * 4), "DWORD");
+
+
+            const spellNameBuffer = Reader.readProcessMemoryBuffer(spellAddress + OFFSET.oSpellName, 0x25);
+            const spellName = getNameFromBuffer(spellNameBuffer);
+            const spellLevel = Reader.readProcessMemory(spellAddress + OFFSET.oSpellLevel, "DWORD");
+            const spellManaCost = Reader.readProcessMemory(spellAddress + OFFSET.oSpellManaCost, "DWORD");
+            const spellReadyAt = Reader.readProcessMemory(spellAddress + OFFSET.oSpellReadyAt, "DWORD");
+
+            const spell = new Spell(Reader.toHex(spellAddress), spellLevel, 0, spellManaCost, spellReadyAt, 0, spellName);
+            spells.push(spell);
+        }
+
+        return { netId, hp, maxHp, pos, name, index, team, dead, address: Reader.toHex(address), spells }
+
     }
 
 }

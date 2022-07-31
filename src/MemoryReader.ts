@@ -1,6 +1,7 @@
 
 import * as mem from 'memoryjs';
 
+
 export class AyayaMemoryReader {
 
     private leagueProcess;
