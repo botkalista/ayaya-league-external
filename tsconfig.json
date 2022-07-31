@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["ES2016","DOM"]
+    "target": "ES6",
+    "lib": ["ES2016","DOM"],
+    "moduleResolution": "node"
   },
   "exclude": ["node_modules"]
 }

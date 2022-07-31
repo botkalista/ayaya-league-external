@@ -1,6 +1,7 @@
 
 import Reader from './MemoryReader';
 import { allowedChars, OFFSET } from './consts/Offsets'
+import { Entity } from './models/Entity';
 
 class AyayaLeagueReader {
 
@@ -15,10 +16,10 @@ class AyayaLeagueReader {
         return Reader.toHex(int);
     }
 
-    getLocalPlayer() {
+    getLocalPlayer(): Entity {
         const localPlayer = Reader.readProcessMemory(OFFSET.oLocalPlayer, "DWORD", true);
         const data = this.getObjectData(localPlayer);
-        return data;
+        return Entity.fromData(data);
     }
 
     getEntities() {
