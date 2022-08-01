@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyayaLeagueExternal</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
+    <script>
+        const { ipcRenderer } = require('electron')
+
+        let canvas;
+        let meX = 0;
+        let meY = 0;
+
+
+        ipcRenderer.on('setScreenSize', function (evt, message) {
+            const data = JSON.parse(message);
+            resizeCanvas(data.x, data.y);
+            ipcRenderer.send('screenSizeOK');
+        });
+
+        ipcRenderer.on('me_pos', function (evt, message) {
+            const data = JSON.parse(message);
+            meX = data.x;
+            meY = data.y;
+        });
+
+
+        function setup() {
+            canvas = createCanvas(10, 10);
+        }
+
+        function draw() {
+            clear();
+            stroke(0, 220, 0);
+            strokeWeight(3);
+            noFill();
+            ellipse(meX, meY, 550, 550);
+        }
+
+    </script>
+</body>
+
+
+
+</html>

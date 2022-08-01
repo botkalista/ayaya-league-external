@@ -1,4 +1,5 @@
 import { Spell } from "./Spell";
+import { Vector3 } from "./Vector";
 
 export class Entity {
     address: string;
@@ -6,7 +7,7 @@ export class Entity {
     index: number;
     name: string;
     team: number;
-    pos: { x: number, y: number, z: number };
+    pos: Vector3;
     hp: number;
     maxHp: number;
     dead: boolean;

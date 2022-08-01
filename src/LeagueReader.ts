@@ -4,14 +4,19 @@ import { OFFSET } from './consts/Offsets'
 import { Entity } from './models/Entity';
 import { Spell } from './models/Spell';
 import { getNameFromBuffer } from './utils/Utils';
+import { Vector2, Vector3, Vector4 } from './models/Vector';
+
+import * as math from 'mathjs'
 
 class AyayaLeagueReader {
 
     private objectManager;
     private rootNode;
+    reader: typeof Reader;
 
     constructor() {
         Reader.hookLeagueProcess();
+        this.reader = Reader;
         console.log('BaseAddress', this.toHex(Reader.baseAddr));
         console.log('Handle', this.toHex(Reader.pHandle));
     }
@@ -41,32 +46,6 @@ class AyayaLeagueReader {
         return time;
     }
 
-    worldToScreen(pos: { x: number, y: number, z: number }) {
-        // public static Vector2 WorldToScreen(Vector3 pos)
-        // {
-        //     Vector2 returnVec = Vector2.Zero;
-        //     Vector2 screen = ScreenSize();
-        //     Matrix matrix = ViewProjectionMatrix();
-        //     Vector4 clipCoords;
-        //     clipCoords.X = pos.X * matrix.M11 + pos.Y * matrix.M21 + pos.Z * matrix.M31 + matrix.M41;
-        //     clipCoords.Y = pos.X * matrix.M12 + pos.Y * matrix.M22 + pos.Z * matrix.M32 + matrix.M42;
-        //     clipCoords.Z = pos.X * matrix.M13 + pos.Y * matrix.M23 + pos.Z * matrix.M33 + matrix.M43;
-        //     clipCoords.W = pos.X * matrix.M14 + pos.Y * matrix.M24 + pos.Z * matrix.M34 + matrix.M44;
-
-        //     if (clipCoords[3] < 0.1f)
-        //     {
-        //         return returnVec;
-        //     }
-        //     Vector3 M;
-        //     M.X = clipCoords.X / clipCoords.W;
-        //     M.Y = clipCoords.Y / clipCoords.W;
-        //     M.Z = clipCoords.Z / clipCoords.W;
-
-        //     returnVec.X = (screen.X / 2 * M.X) + (M.X + screen.X / 2);
-        //     returnVec.Y = -(screen.Y / 2 * M.Y) + (M.Y + screen.Y / 2);
-        //     return returnVec;
-        // }
-    }
 
 
     printChat() {
@@ -154,6 +133,85 @@ class AyayaLeagueReader {
     }
 
 
+
+
+    worldToScreen(pos: Vector3, screenSize: Vector2) {
+        const _viewProjMatrix = this.getViewProjectionMatrix();
+        const viewProjMatrix = this.matrixToArray(_viewProjMatrix);
+        const out = Vector2.zero();
+        const screen = new Vector2(screenSize.x, screenSize.y);
+        const clipCoords = Vector4.zero();
+        clipCoords.x = pos.x * viewProjMatrix[0] + pos.y * viewProjMatrix[4] + pos.z * viewProjMatrix[8] + viewProjMatrix[12];
+        clipCoords.y = pos.x * viewProjMatrix[1] + pos.y * viewProjMatrix[5] + pos.z * viewProjMatrix[9] + viewProjMatrix[13];
+        clipCoords.z = pos.x * viewProjMatrix[2] + pos.y * viewProjMatrix[6] + pos.z * viewProjMatrix[10] + viewProjMatrix[14];
+        clipCoords.w = pos.x * viewProjMatrix[3] + pos.y * viewProjMatrix[7] + pos.z * viewProjMatrix[11] + viewProjMatrix[15];
+        if (clipCoords.w < 1.0) clipCoords.w = 1;
+        const m = Vector3.zero();
+        m.x = clipCoords.x / clipCoords.w;
+        m.y = clipCoords.y / clipCoords.w;
+        m.z = clipCoords.z / clipCoords.w;
+        out.x = (screen.x / 2 * m.x) + (m.x + screen.x / 2);
+        out.y = -(screen.y / 2 * m.y) + (m.y + screen.y / 2);
+        return out;
+
+    }
+    getScreenSize(renderer: number) {
+        const width = Reader.readProcessMemory(renderer + OFFSET.oGameWindowWidth, "DWORD");
+        const height = Reader.readProcessMemory(renderer + OFFSET.oGameWindowHeight, "DWORD");
+        return new Vector2(width, height);
+    }
+    getRenderBase() {
+        return Reader.readProcessMemory(OFFSET.oRenderer, "DWORD", true);
+    }
+    private getViewProjectionMatrix() {
+        const viewMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix);
+        const projMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix + 0x40);
+        const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
+        return viewProjMatrix;
+    }
+    private matrixToArray(matrix: math.Matrix): number[] {
+        const result: number[] = [];
+        for (let i = 0; i < matrix['_data'].length; i++) {
+            for (let k = 0; k < matrix['_data'][i].length; k++) {
+                const val: number = matrix['_data'][i][k];
+                result.push(val);
+            }
+        }
+        return result;
+    }
+    private readMatrixAt(address: number) {
+        const buffer = Reader.readProcessMemoryBuffer(address, 64, true);
+
+        const matrix = math.matrix([
+            [
+                buffer.readFloatLE(0 * 4),
+                buffer.readFloatLE(1 * 4),
+                buffer.readFloatLE(2 * 4),
+                buffer.readFloatLE(3 * 4)
+            ],
+            [
+                buffer.readFloatLE(4 * 4),
+                buffer.readFloatLE(5 * 4),
+                buffer.readFloatLE(6 * 4),
+                buffer.readFloatLE(7 * 4)
+            ],
+            [
+                buffer.readFloatLE(8 * 4),
+                buffer.readFloatLE(9 * 4),
+                buffer.readFloatLE(10 * 4),
+                buffer.readFloatLE(11 * 4)
+            ],
+            [
+                buffer.readFloatLE(12 * 4),
+                buffer.readFloatLE(13 * 4),
+                buffer.readFloatLE(14 * 4),
+                buffer.readFloatLE(15 * 4)
+            ]
+        ]);
+        return matrix;
+    }
+
+
     private getAllObjects() {
 
         const objectManager = this.objectManager || this.getObjectManager();
@@ -176,23 +234,19 @@ class AyayaLeagueReader {
 
         return Array.from(checked.values());
     }
-
     private getObjectManager() {
         const aObjectManager = Reader.readProcessMemory(OFFSET.oObjectManager, "DWORD", true);
         return aObjectManager;
     }
-
     private getObjectManagerRootNode(aObjectManager: number) {
         const rootNode = Reader.readProcessMemory(aObjectManager + OFFSET.oMapRoot, "DWORD");
         return rootNode;
     }
-
     private readObjectAt(address: number) {
         const object = Reader.readProcessMemory(address + OFFSET.oMapNodeObject, 'DWORD');
         const data = this.getObjectData(object);
         return data;
     }
-
     private getObjectData(address: number) {
         const namePointer = Reader.readProcessMemory(address + OFFSET.oObjName, 'DWORD');
         const nameBuffer = Reader.readProcessMemoryBuffer(namePointer, 0x25);

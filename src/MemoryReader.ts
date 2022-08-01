@@ -5,8 +5,8 @@ import * as mem from 'memoryjs';
 export class AyayaMemoryReader {
 
     private leagueProcess;
-    private baseAddress;
-    private handle;
+    private baseAddress: number;
+    private handle: number;
     public hooked = false;
 
     public memInstance = mem;
@@ -30,7 +30,7 @@ export class AyayaMemoryReader {
         return mem.readMemory(this.handle, address + (fromBaseAddress ? this.baseAddress : 0), type);
     }
 
-    readProcessMemoryBuffer(address: number, size: number, fromBaseAddress: boolean = false) {
+    readProcessMemoryBuffer(address: number, size: number, fromBaseAddress: boolean = false): Buffer {
         if (!this.hooked) throw Error('You need to hook league process before reading memory');
         return mem.readBuffer(this.handle, address + (fromBaseAddress ? this.baseAddress : 0), size);
     }

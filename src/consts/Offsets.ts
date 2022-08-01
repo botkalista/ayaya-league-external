@@ -9,7 +9,7 @@ export const OFFSET = {
     oGameTime: 0x3109fac,
 
     oRenderer: 0x31437fc,
-    oViewProjMatrices: 0x3140910,
+    oViewProjMatrix: 0x3140910,
 
     oAttackableList: 0x24C188C,
     oHeroList: 0x1872A68, //Not sure
