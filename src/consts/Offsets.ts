@@ -8,15 +8,27 @@ export const allowedChars = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfg
 export const OFFSET = {
     oGameTime: 0x3109fac,
 
-    oAttackableList: 0x24C188C,
+    oRenderer: 0x31437fc,
+    oViewProjMatrices: 0x3140910,
 
+    oAttackableList: 0x24C188C,
+    oHeroList: 0x1872A68, //Not sure
     oUnderMouse: 0x24c1a24,
 
     oLocalPlayer: 0x31113EC,
     oObjectManager: 0x18729d8,
 
+
+    oNetClient: 0x310BA6C, //Not sure
+
+    oChatInstance: 0x31114A8,
+    fPrintChat: 0x5E2150,
+    
+
     oObjIndex: 0x0008,
     oObjTeam: 0x0034,
+
+    oObjNetId: 0xB4,
 
     oObjName: 0x2BA4,
     oObjLevel: 0x3384,
@@ -26,12 +38,13 @@ export const OFFSET = {
     oObjectMaxHealth: 0x0E84,
     oObjectMana: 0x029C,
     oObjectMaxMana: 0x02AC,
-    
+
     oObjectDead: 0x021C,
 
     oObjectAttackDamage: 0x134C,
     oObjectBonusAttackDamage: 0x12C4,
 
+    oBuffManager: 0x2178, //Not sure
 
     oSpellBook: 0x27B8,
     oSpellReadyAt: 0x24,
@@ -45,6 +58,10 @@ export const OFFSET = {
     oMapRoot: 40,
     oMapNodeObject: 20,
     oMapNetId: 16,
+
+    oGameWindowWidth: 12,
+    oGameWindowHeight: 16,
+
 }
 
 

@@ -9,6 +9,11 @@ export class AyayaMemoryReader {
     private handle;
     public hooked = false;
 
+    public memInstance = mem;
+
+    get baseAddr() { return this.baseAddress; }
+    get pHandle() { return this.handle; }
+
     hookLeagueProcess() {
         const processes = mem.getProcesses();
         const league = processes.find(e => e.szExeFile == 'League of Legends.exe');
@@ -28,6 +33,10 @@ export class AyayaMemoryReader {
     readProcessMemoryBuffer(address: number, size: number, fromBaseAddress: boolean = false) {
         if (!this.hooked) throw Error('You need to hook league process before reading memory');
         return mem.readBuffer(this.handle, address + (fromBaseAddress ? this.baseAddress : 0), size);
+    }
+
+    callFunction(args, returnType, address) {
+        return mem.callFunction(this.handle, args, returnType, address);
     }
 
     toHex(int: number) {
