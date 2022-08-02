@@ -7,12 +7,13 @@
 
 # Features
 
-- Show player attack range (RANGE IS FIXED FOR NOW)
+- Show player attack range
+- Show enemy champions attack range
+- Show enemy champions summoner spells cooldown
 
 
 # TODO
 
-- Show champions spells / abilities cooldown on screen
 - Fix broken pointers
 - Fix champ detector (try to use heroList instead of guessing from all entities)
 

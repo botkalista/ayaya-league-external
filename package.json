@@ -9,6 +9,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "ts-node tests/test.ts",
+    "test:nohook": "ts-node tests/test.ts nohook",
     "compile": "tsc --project tsconfig.json",
     "exe": "electron dist/index.js",
     "execute": "npm run compile && npm run exe"

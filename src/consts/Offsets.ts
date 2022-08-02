@@ -23,7 +23,7 @@ export const OFFSET = {
 
     oChatInstance: 0x31114A8,
     fPrintChat: 0x5E2150,
-    
+
 
     oObjIndex: 0x0008,
     oObjTeam: 0x0034,
@@ -33,6 +33,8 @@ export const OFFSET = {
     oObjName: 0x2BA4,
     oObjLevel: 0x3384,
     oObjPosition: 0x01DC,
+    oObjAttackRange: 0x1394,
+    oObjVisible: 0x0274,
 
     oObjectHealth: 0x0E74,
     oObjectMaxHealth: 0x0E84,

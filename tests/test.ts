@@ -2,7 +2,6 @@ import { OFFSET } from '../src/consts/Offsets';
 import AyayaLeague from '../src/LeagueReader'
 
 
-
 // const enemyTeamId = me.team == 100 ? 200 : 100;
 
 // function showEnemiesSummoners() {
@@ -29,10 +28,22 @@ import AyayaLeague from '../src/LeagueReader'
 // }
 
 
-const me = AyayaLeague.getLocalPlayer();
-const renderer = AyayaLeague.getRenderBase();
-const screen = AyayaLeague.getScreenSize(renderer);
-const test = AyayaLeague.worldToScreen(me.pos, screen);
+AyayaLeague.reader.setMode("DUMP");
+AyayaLeague.reader.loadDump();
 
-console.log('local', test);
+const me = AyayaLeague.getLocalPlayer();
+
+const entitites = AyayaLeague.getEntities();
+
+const filtered = AyayaLeague.groupEntities(entitites, me.team);
+
+
+console.log(filtered.turrets);
+
+
+// const renderer = AyayaLeague.getRenderBase();
+// const screen = AyayaLeague.getScreenSize(renderer);
+// const test = AyayaLeague.worldToScreen(me.pos, screen);
+
+// console.log('local', test);
 

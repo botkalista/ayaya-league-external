@@ -14,11 +14,12 @@ class AyayaLeagueReader {
     private rootNode;
     reader: typeof Reader;
 
-    constructor() {
-        Reader.hookLeagueProcess();
+    constructor(hook = true) {
+        console.log(hook);
+        if (hook) Reader.hookLeagueProcess();
         this.reader = Reader;
-        console.log('BaseAddress', this.toHex(Reader.baseAddr));
-        console.log('Handle', this.toHex(Reader.pHandle));
+        if (hook) console.log('BaseAddress', this.toHex(Reader.baseAddr));
+        if (hook) console.log('Handle', this.toHex(Reader.pHandle));
     }
 
     toHex(int: number) {
@@ -31,14 +32,56 @@ class AyayaLeagueReader {
         return Entity.fromData(data);
     }
 
-    getEntities(): Entity[] {
-        const objects = this.getAllObjects();
+    getEntities(timeoutTimestamp?: number): Entity[] {
+
+        const objects = this.getAllObjects(timeoutTimestamp);
+
         const objectsData = objects.map(o => this.readObjectAt(o)).filter(e => e != undefined);
+
         return objectsData as Entity[];
     }
 
-    getHeroes() {
-        //* ??
+
+    getAttackableEntities(entities: Entity[]): Entity[] {
+
+
+        return entities;
+    }
+
+
+    groupEntities(_entities: Entity[], playerTeamId: number) {
+
+        const enemyTeamId = playerTeamId == 100 ? 200 : 100;
+
+        const entities = _entities.filter(e => !e.name.startsWith('PreSeason'))
+
+        const allies = entities.filter(e => e.team == playerTeamId);
+        const enemies = entities.filter(e => e.team == enemyTeamId);
+        const neutrals = entities.filter(e => e.team != 100 && e.team != 200);
+
+        const turrets = entities.filter(e => e.name.startsWith('Turret'));
+        const minions = entities.filter(e => e.name.startsWith('SRU'));
+        const champions = entities.filter(e => !turrets.includes(e) && !minions.includes(e));
+
+        const allyTurrets = allies.filter(e => turrets.includes(e));
+        const enemyTurrets = enemies.filter(e => turrets.includes(e));
+
+        const allyMinions = allies.filter(e => minions.includes(e));
+        const enemyMinions = enemies.filter(e => minions.includes(e));
+
+        const allyChampions = allies.filter(e => champions.includes(e));
+        const enemyChampions = enemies.filter(e => champions.includes(e));
+
+
+
+
+        return {
+            allies, enemies, neutrals,
+            turrets, allyTurrets, enemiesTurrets: enemyTurrets,
+            minions, allyMinions, enemiesMinions: enemyMinions,
+            champions, allyChampions, enemyChampions
+        }
+
     }
 
     getGameTime() {
@@ -135,9 +178,18 @@ class AyayaLeagueReader {
 
 
 
-    worldToScreen(pos: Vector3, screenSize: Vector2) {
-        const _viewProjMatrix = this.getViewProjectionMatrix();
-        const viewProjMatrix = this.matrixToArray(_viewProjMatrix);
+    worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrixArg?: number[]) {
+
+        let viewProjMatrix: number[] = [];
+
+        if (viewProjMatrixArg) {
+            viewProjMatrix = viewProjMatrixArg;
+        } else {
+            const _viewProjMatrix = this.getViewProjectionMatrix();
+            viewProjMatrix = this.matrixToArray(_viewProjMatrix);
+        }
+
+
         const out = Vector2.zero();
         const screen = new Vector2(screenSize.x, screenSize.y);
         const clipCoords = Vector4.zero();
@@ -163,13 +215,13 @@ class AyayaLeagueReader {
     getRenderBase() {
         return Reader.readProcessMemory(OFFSET.oRenderer, "DWORD", true);
     }
-    private getViewProjectionMatrix() {
+    getViewProjectionMatrix() {
         const viewMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix);
         const projMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix + 0x40);
         const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
         return viewProjMatrix;
     }
-    private matrixToArray(matrix: math.Matrix): number[] {
+    matrixToArray(matrix: math.Matrix): number[] {
         const result: number[] = [];
         for (let i = 0; i < matrix['_data'].length; i++) {
             for (let k = 0; k < matrix['_data'][i].length; k++) {
@@ -211,8 +263,7 @@ class AyayaLeagueReader {
         return matrix;
     }
 
-
-    private getAllObjects() {
+    private getAllObjects(timeoutTimestamp?: number) {
 
         const objectManager = this.objectManager || this.getObjectManager();
         const rootNode = this.rootNode || this.getObjectManagerRootNode(objectManager);
@@ -220,7 +271,12 @@ class AyayaLeagueReader {
         const checked = new Set<number>();
         const toCheck = new Set<number>();
         toCheck.add(rootNode);
+
         while (toCheck.size > 0) {
+
+            const now = Date.now();
+            if (timeoutTimestamp && now > timeoutTimestamp) break;
+
             const target: number = Array.from(toCheck.values())[0];
             checked.add(target);
             toCheck.delete(target);
@@ -234,6 +290,7 @@ class AyayaLeagueReader {
 
         return Array.from(checked.values());
     }
+
     private getObjectManager() {
         const aObjectManager = Reader.readProcessMemory(OFFSET.oObjectManager, "DWORD", true);
         return aObjectManager;
@@ -247,20 +304,33 @@ class AyayaLeagueReader {
         const data = this.getObjectData(object);
         return data;
     }
-    private getObjectData(address: number) {
+    getObjectData(address: number, bypassNameChecks = false) {
+
         const namePointer = Reader.readProcessMemory(address + OFFSET.oObjName, 'DWORD');
         const nameBuffer = Reader.readProcessMemoryBuffer(namePointer, 0x25);
         const name = getNameFromBuffer(nameBuffer);
 
-        if (name.length < 3) return;
+        if (!bypassNameChecks) {
+            if (name.length < 3) return;
+            if (name.startsWith(' ')) return;
+        }
 
         const netId = Reader.readProcessMemory(address + OFFSET.oObjNetId, "DWORD");
+
+        if (!bypassNameChecks) {
+            if (netId - 0x40000000 > 0x100000) return;
+            if (netId < 0) return;
+        }
+
+        const pos = Reader.readProcessMemory(address + OFFSET.oObjPosition, "VEC3");
         const hp = Reader.readProcessMemory(address + OFFSET.oObjectHealth, "FLOAT");
         const maxHp = Reader.readProcessMemory(address + OFFSET.oObjectMaxHealth, "FLOAT");
-        const pos = Reader.readProcessMemory(address + OFFSET.oObjPosition, "VEC3");
-        const index = Reader.readProcessMemory(address + OFFSET.oObjIndex, "DWORD");
+        const visible = Reader.readProcessMemory(address + OFFSET.oObjVisible, 'BOOL');
+        const range = Reader.readProcessMemory(address + OFFSET.oObjAttackRange, 'FLOAT');
         const team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
-        const dead = Reader.readProcessMemory(address + OFFSET.oObjectDead, "DWORD");
+        
+        // const index = Reader.readProcessMemory(address + OFFSET.oObjIndex, "DWORD");
+        // const dead = Reader.readProcessMemory(address + OFFSET.oObjectDead, "DWORD");
 
         const spells: Spell[] = [];
 
@@ -268,25 +338,22 @@ class AyayaLeagueReader {
             for (let i = 0; i < 6; i++) {
 
                 const spellAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook + (i * 4), "DWORD");
-
-
-                const spellNameBuffer = Reader.readProcessMemoryBuffer(spellAddress + OFFSET.oSpellName, 0x25);
-                const spellName = getNameFromBuffer(spellNameBuffer);
-                const spellLevel = Reader.readProcessMemory(spellAddress + OFFSET.oSpellLevel, "DWORD");
-                const spellManaCost = Reader.readProcessMemory(spellAddress + OFFSET.oSpellManaCost, "DWORD");
+                // const spellNameBuffer = Reader.readProcessMemoryBuffer(spellAddress + OFFSET.oSpellName, 0x25);
+                // const spellName = getNameFromBuffer(spellNameBuffer);
+                // const spellLevel = Reader.readProcessMemory(spellAddress + OFFSET.oSpellLevel, "DWORD");
+                // const spellManaCost = Reader.readProcessMemory(spellAddress + OFFSET.oSpellManaCost, "DWORD");
                 const spellReadyAt = Reader.readProcessMemory(spellAddress + OFFSET.oSpellReadyAt, "DWORD");
 
-                const spell = new Spell(Reader.toHex(spellAddress), spellLevel, 0, spellManaCost, spellReadyAt, 0, spellName);
+                const spell = new Spell(Reader.toHex(spellAddress), 0, 0, 0, spellReadyAt, 0, "spellName");
                 spells.push(spell);
             }
         }
-        return { netId, hp, maxHp, pos, name, index, team, dead, address: Reader.toHex(address), spells }
+        return { netId, hp, maxHp, pos, name, team, visible, range, address: Reader.toHex(address), spells }
 
     }
 
 }
 
-
-const instance = new AyayaLeagueReader();
+const instance = new AyayaLeagueReader(process.argv[2] != 'nohook');
 
 export default instance;

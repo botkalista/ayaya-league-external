@@ -4,14 +4,16 @@ import { Vector3 } from "./Vector";
 export class Entity {
     address: string;
     netId: number;
-    index: number;
+    // index: number;
     name: string;
     team: number;
     pos: Vector3;
     hp: number;
     maxHp: number;
-    dead: boolean;
+    visible: boolean;
+    // dead: boolean;
     spells: Spell[];
+    range: number;
 
     static fromData(data: any) {
         const instance = new Entity();
