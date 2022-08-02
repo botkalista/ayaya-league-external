@@ -10,6 +10,7 @@
 - Show player attack range
 - Show enemy champions attack range
 - Show enemy champions summoner spells cooldown
+- Settings window [CTRL + SPACE]
 
 
 # TODO

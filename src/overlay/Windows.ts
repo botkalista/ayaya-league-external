@@ -13,10 +13,10 @@ export function createOverlayWindow() {
         },
         frame: false,
         alwaysOnTop: true,
-        skipTaskbar: false,
+        skipTaskbar: true,
         transparent: true
     });
-    //win.setMenu(null);
+    win.setMenu(null);
     win.setAlwaysOnTop(true, 'screen-saver');
     win.setIgnoreMouseEvents(true);
     win.loadFile('../static/index.html');
@@ -37,9 +37,11 @@ export function createSettingsWindow() {
         frame: false,
         autoHideMenuBar: true,
         alwaysOnTop: true,
-        skipTaskbar: false,
+        skipTaskbar: true,
     });
+    win.setMenu(null);
     win.setAlwaysOnTop(true, 'screen-saver');
     win.loadFile('../static/settings.html');
+    win.hide();
     return win;
 }

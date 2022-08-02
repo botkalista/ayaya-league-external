@@ -31,11 +31,43 @@ import AyayaLeague from '../src/LeagueReader'
 AyayaLeague.reader.setMode("DUMP");
 AyayaLeague.reader.loadDump();
 
-const me = AyayaLeague.getLocalPlayer();
+const Reader = AyayaLeague.reader;
 
-console.log(me.spells[4]);
-console.log(me.spells[5]);
+const localPlayer = Reader.readProcessMemory(OFFSET.oLocalPlayer, "DWORD", true);
+const hp = Reader.readProcessMemory(localPlayer + OFFSET.oObjectHealth, "FLOAT");
+console.log({ hp });
+const spell = Reader.readProcessMemory(localPlayer + OFFSET.oSpellBook + (4 * 4), "DWORD");
+const sLevel = Reader.readProcessMemory(spell + OFFSET.oSpellLevel, "DWORD");
+const sCd = Reader.readProcessMemory(spell + OFFSET.oSpellReadyAt, "FLOAT");
+console.log({ sLevel })
+console.log({ sCd })
 
+const gameTime = AyayaLeague.getGameTime();
+console.log({ gameTime })
+
+const sInfo = Reader.readProcessMemory(spell + OFFSET.oSpellInfo, "DWORD");
+const sData = Reader.readProcessMemory(sInfo + OFFSET.oSpellInfoData, "DWORD");
+const name = Reader.readProcessMemory(sData + OFFSET.oSpellInfoDataName, "DWORD");
+
+const realName = Reader.readProcessMemory(name, "STR");
+console.log({ realName });
+
+
+// const spellDinfo = Reader.readProcessMemory(spellD + OFFSET.oSpellInfo, "DWORD");
+
+// const index = Reader.readProcessMemory(spellDinfo + OFFSET.oSpellInfoIndex, "DWORD");
+// const level = Reader.readProcessMemory(spellDinfo + OFFSET.oSpellInfoLevel, "DWORD");
+// const startTime = Reader.readProcessMemory(spellDinfo + OFFSET.oSpellInfoStartTime, "DWORD");
+
+// const data = Reader.readProcessMemory(spellDinfo + OFFSET.oSpellInfoData, "DWORD");
+
+// const cd = Reader.readProcessMemory(data + OFFSET.oSpellInfoDataCooldownTime, "DWORD");
+
+// console.log(index)
+// console.log(level)
+// console.log(startTime)
+// console.log(spellDinfo)
+// console.log(cd)
 
 // const renderer = AyayaLeague.getRenderBase();
 // const screen = AyayaLeague.getScreenSize(renderer);

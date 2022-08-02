@@ -56,6 +56,16 @@ export const OFFSET = {
     oSpellInfo: 0x120,
     oSpellName: 0x18,
 
+    oSpellInfoSlot: 0x4,
+    oSpellInfoData: 0x40,
+    oSpellInfoStartTime: 0x8,
+    oSpellInfoIndex: 0xC,
+    oSpellInfoLevel: 0x58,
+
+    oSpellInfoDataMissileName: 0x78,
+    oSpellInfoDataName: 0x6C,
+    oSpellInfoDataCooldownTime: 0x0288,
+
     oMapCount: 44,
     oMapRoot: 40,
     oMapNodeObject: 20,

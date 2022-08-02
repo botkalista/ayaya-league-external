@@ -85,7 +85,7 @@ class AyayaLeagueReader {
     }
 
     getGameTime() {
-        const time = Reader.readProcessMemory(OFFSET.oGameTime, 'DWORD', true);
+        const time = Reader.readProcessMemory(OFFSET.oGameTime, 'FLOAT', true);
         return time;
     }
 
@@ -336,15 +336,17 @@ class AyayaLeagueReader {
 
         if (team == 100 || team == 200) {
             for (let i = 0; i < 6; i++) {
+                const sAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook + (i * 4), "DWORD");
+                const spellReadyAt = Reader.readProcessMemory(sAddress + OFFSET.oSpellReadyAt, "FLOAT");
+                const spellLevel = Reader.readProcessMemory(sAddress + OFFSET.oSpellLevel, 'DWORD');
+                const sInfo = Reader.readProcessMemory(sAddress + OFFSET.oSpellInfo, "DWORD");
+                const sData = Reader.readProcessMemory(sInfo + OFFSET.oSpellInfoData, "DWORD");
 
-                const spellAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook + (i * 4), "DWORD");
-                // const spellNameBuffer = Reader.readProcessMemoryBuffer(spellAddress + OFFSET.oSpellName, 0x25);
-                // const spellName = getNameFromBuffer(spellNameBuffer);
-                // const spellLevel = Reader.readProcessMemory(spellAddress + OFFSET.oSpellLevel, "DWORD");
-                // const spellManaCost = Reader.readProcessMemory(spellAddress + OFFSET.oSpellManaCost, "DWORD");
-                // const spellInfo = Reader.readProcessMemory(spellAddress + OFFSET.oSpellInfo, 'DWORD');
-                const spellReadyAt = Reader.readProcessMemory(spellAddress + OFFSET.oSpellReadyAt, "DWORD");
-                const spell = new Spell(Reader.toHex(spellAddress), 0, 0, 0, spellReadyAt, 0, "spellName");
+                const _name = Reader.readProcessMemory(sData + OFFSET.oSpellInfoDataName, "DWORD");
+                const nameBuffer = Reader.readProcessMemoryBuffer(_name, 30);
+                const name = getNameFromBuffer(nameBuffer);
+
+                const spell = new Spell(Reader.toHex(sAddress), spellLevel, 0, spellReadyAt, name);
                 spells.push(spell);
             }
         }

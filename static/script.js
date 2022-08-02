@@ -14,6 +14,13 @@ function getChampionImage(name) {
     assets[name] = img;
 }
 
+function getSummonerImage(name) {
+    if (assets[name]) return assets[name];
+    const img = createImg(`http://ddragon.leagueoflegends.com/cdn/12.14.1/img/spell/${name}.png`, name);
+    img.hide();
+    assets[name] = img;
+}
+
 function addHandlars() {
     // ----- Screen size -----
     ipcRenderer.on('dataScreenSize', function (evt, message) {
@@ -57,6 +64,7 @@ function drawOverlayEnemySpells() {
         const x = 30;
         const y = 30 + 45 * i;
 
+
         const img = getChampionImage(name);
         try {
             if (!img) throw Error('noimage')
@@ -68,8 +76,35 @@ function drawOverlayEnemySpells() {
         }
 
         fill(255);
-        text(spells[4].cd, x + 40 + 5, y, 40, 40);
-        text(spells[5].cd, x + 40 + 5 + 40, y, 40, 40);
+
+        const spellImg1 = getSummonerImage(spells[4].name);
+        try {
+            if (!spellImg1) throw Error('noimage');
+            image(spellImg1, x + 40 + 5, y, 40, 40);
+            if (spells[4].cd > 0) {
+                noStroke();
+                fill(0, 0, 0, 100);
+                rect(x + 40 + 5, y, 40, 40)
+            }
+        } catch (ex) { }
+
+        const spellImg2 = getSummonerImage(spells[5].name);
+
+        try {
+            if (!spellImg2) throw Error('noimage');
+            image(spellImg2, x + 40 + 5 + 40 + 5, y, 40, 40);
+            if (spells[5].cd > 0) {
+                noStroke();
+                fill(0, 0, 0, 100);
+                rect(x + 40 + 5 + 40 + 5, y, 40, 40)
+            }
+        } catch (ex) { }
+
+
+        noStroke();
+        fill(255);
+        if (spells[4].cd > 0) text(spells[4].cd, x + 40 + 5, y, 40, 40);
+        if (spells[5].cd > 0) text(spells[5].cd, x + 40 + 5 + 40, y, 40, 40);
 
     }
 
