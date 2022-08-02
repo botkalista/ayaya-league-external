@@ -87,23 +87,24 @@
             <div class="delete" @click="closeWindow()" style="-webkit-app-region: no-drag;"></div>
         </div>
 
-        <div class="content">
+        <div class="content" v-if="settings">
             <label class="checkbox">
-                <input type="checkbox" v-model="me.range" @change="updateSettings()"> Player range
+                <input type="checkbox" v-model="settings.me.range" @change="updateSettings()"> Player range
             </label>
             <div class="separator"></div>
             <label class="checkbox">
-                <input type="checkbox" v-model="nmeChamps.range" @change="updateSettings()"> Enemy range
+                <input type="checkbox" v-model="settings.nmeChamps.range" @change="updateSettings()"> Enemy range
             </label>
             <label class="checkbox">
-                <input type="checkbox" v-model="nmeChamps.spells" @change="updateSettings()"> Enemy spells
+                <input type="checkbox" v-model="settings.nmeChamps.spells" @change="updateSettings()"> Enemy spells
             </label>
             <div class="separator"></div>
             <label class="checkbox">
-                <input type="checkbox" v-model="over.nmeSpells" @change="updateSettings()"> Overlay spells
+                <input type="checkbox" v-model="settings.over.nmeSpells" @change="updateSettings()"> Overlay spells
             </label>
             <label class="checkbox">
-                <input type="checkbox" v-model="over.performance" @change="updateSettings()"> Overlay performance
+                <input type="checkbox" v-model="settings.over.performance" @change="updateSettings()"> Overlay
+                performance
             </label>
         </div>
 

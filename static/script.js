@@ -5,6 +5,15 @@ const { ipcRenderer } = require('electron');
 let gameData = {};
 let settings = {};
 
+let assets = {};
+
+function getChampionImage(name) {
+    if (assets[name]) return assets[name];
+    const img = createImg(`http://ddragon.leagueoflegends.com/cdn/12.14.1/img/champion/${name}.png`, name);
+    img.hide();
+    assets[name] = img;
+}
+
 function addHandlars() {
     // ----- Screen size -----
     ipcRenderer.on('dataScreenSize', function (evt, message) {
@@ -17,7 +26,7 @@ function addHandlars() {
     // ----- Settings -----
     ipcRenderer.on('dataSettings', function (evt, message) {
         const data = JSON.parse(message);
-        console.log('gotsettings')
+        console.log('gotsettings', data)
         settings = data;
     });
     ipcRenderer.send('requestSettings');
@@ -29,7 +38,6 @@ function addHandlars() {
         gameData = data;
     });
 }
-
 
 function setup() {
     canvas = createCanvas(10, 10);
@@ -44,14 +52,20 @@ function drawOverlayEnemySpells() {
 
     for (let i = 0; i < gameData.enemyChampions.length; i++) {
 
-        const { spells } = gameData.enemyChampions[i];
+        const { spells, name } = gameData.enemyChampions[i];
 
         const x = 30;
         const y = 30 + 45 * i;
 
-        noStroke();
-        fill(0);
-        rect(x, y, 40, 40);
+        const img = getChampionImage(name);
+        try {
+            if (!img) throw Error('noimage')
+            image(img, x, y, 40, 40);
+        } catch (ex) {
+            noStroke();
+            fill(0);
+            rect(x, y, 40, 40);
+        }
 
         fill(255);
         text(spells[4].cd, x + 40 + 5, y, 40, 40);

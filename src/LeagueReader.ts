@@ -342,8 +342,8 @@ class AyayaLeagueReader {
                 // const spellName = getNameFromBuffer(spellNameBuffer);
                 // const spellLevel = Reader.readProcessMemory(spellAddress + OFFSET.oSpellLevel, "DWORD");
                 // const spellManaCost = Reader.readProcessMemory(spellAddress + OFFSET.oSpellManaCost, "DWORD");
+                // const spellInfo = Reader.readProcessMemory(spellAddress + OFFSET.oSpellInfo, 'DWORD');
                 const spellReadyAt = Reader.readProcessMemory(spellAddress + OFFSET.oSpellReadyAt, "DWORD");
-
                 const spell = new Spell(Reader.toHex(spellAddress), 0, 0, 0, spellReadyAt, 0, "spellName");
                 spells.push(spell);
             }

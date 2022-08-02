@@ -19,6 +19,7 @@ export class Preparator {
         const result = {
             x: screenPos.x, y: screenPos.y,
             hp: parseInt(data.hp.toFixed(0)),
+            name: data.name,
             maxHp: parseInt(data.maxHp.toFixed(0)),
             range: parseInt(data.range.toFixed(0)),
             vis: data.visible,

@@ -66,6 +66,12 @@ export class AyayaMemoryReader {
                 if (type == 'BOOL')
                     return this.dump.at(address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)) == 1;
 
+                if (type == 'STR' || type == 'STRING')
+                    return this.dump.subarray(
+                        address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress),
+                        address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress) + 10
+                    );
+
                 if (type == 'VEC3') {
                     const result = new Vector3(
                         this.dump.readFloatLE(0 + address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)),

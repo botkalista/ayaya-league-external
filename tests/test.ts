@@ -33,12 +33,8 @@ AyayaLeague.reader.loadDump();
 
 const me = AyayaLeague.getLocalPlayer();
 
-const entitites = AyayaLeague.getEntities();
-
-const filtered = AyayaLeague.groupEntities(entitites, me.team);
-
-
-console.log(filtered.turrets);
+console.log(me.spells[4]);
+console.log(me.spells[5]);
 
 
 // const renderer = AyayaLeague.getRenderBase();
