@@ -1,106 +1,130 @@
-import AyayaLeague from './LeagueReader'
-import { BrowserWindow, app, ipcMain } from 'electron';
-import { Spell } from './models/Spell';
-import { Entity } from './models/Entity';
+import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents } from 'electron';
+import AyayaLeague from './LeagueReader';
+import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
+import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } from './overlay/Settings'
+import { Settings } from './overlay/models/Settings';
+import { Vector2 } from './models/Vector';
+import { Preparator } from './overlay/Preparator';
 
-function createOverlay() {
-    const win = new BrowserWindow({
-        width: 100,
-        height: 100,
-        x: 0,
-        y: 0,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        },
-        frame: false,
-        alwaysOnTop: true,
-        skipTaskbar: false,
-        transparent: true
-    });
-    win.setAlwaysOnTop(true, 'screen-saver');
-    win.setIgnoreMouseEvents(true);
-    win.loadFile('../static/index.html');
-    return win;
-}
+if (process.argv[2] == 'nohook') { AyayaLeague.reader.setMode("DUMP"); AyayaLeague.reader.loadDump(); }
 
-const renderer = AyayaLeague.getRenderBase();
-const screen = AyayaLeague.getScreenSize(renderer);
 
-let gameTime;
-let matrix;
+const preparator = new Preparator(AyayaLeague);
+
+let overlayWindow: BrowserWindow;
+let settingsWindow: BrowserWindow;
+
 let highestReadTime = 0;
 
-function loop(sendObject) {
+let renderer: number;
+let screen: Vector2;
 
+function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
+    if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
+    return (win as WebContents).send(name, JSON.stringify(data));
+}
+function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => void) {
+    ipcMain.on(name, (e, message) => {
+        if (message == undefined || message == 'undefined') return cb(e, undefined);
+        cb(e, JSON.parse(message));
+    });
+}
+function registerHandlers() {
+
+    onMessage<Settings>('updateSettings', (e, data) => {
+        setSettings(data);
+        saveSettingsToFile();
+        sendMessageToWin(overlayWindow, 'dataSettings', data);
+        sendMessageToWin(settingsWindow, 'dataSettings', data);
+    });
+
+    onMessage<never>('requestSettings', (e, data) => {
+        const settings = getSettings();
+        sendMessageToWin(e.sender, 'dataSettings', settings);
+    });
+
+    onMessage<never>('requestScreenSize', (e, data) => {
+        renderer = renderer || AyayaLeague.getRenderBase();
+        screen = screen || AyayaLeague.getScreenSize(renderer);
+        sendMessageToWin(e.sender, 'dataScreenSize', screen);
+    });
+
+
+    onMessage<never>('closeSettingsWindow', (e, data) => {
+        settingsWindow.hide();
+    });
+
+
+}
+
+function main() {
+
+    loadSettingsFromFile();
+    registerHandlers();
+
+    overlayWindow = createOverlayWindow();
+    settingsWindow = createSettingsWindow();
+
+    renderer = AyayaLeague.getRenderBase();
+    screen = AyayaLeague.getScreenSize(renderer);
+    overlayWindow.setSize(screen.x, screen.y);
+
+    //* SHORTCUTS
+    globalShortcut.register('CommandOrControl+Space', () => {
+        settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
+    });
+
+    loop();
+
+}
+
+function loop() {
+    // --- performance ---
+    const now = Date.now();
     const start = performance.now();
+    // --- performance ---
 
-    gameTime = AyayaLeague.getGameTime();
+
+
+    const gameTime = AyayaLeague.getGameTime();
 
     const _matrix = AyayaLeague.getViewProjectionMatrix();
-    matrix = AyayaLeague.matrixToArray(_matrix);
-
-    const me = AyayaLeague.getLocalPlayer();
-    sendObject('me', prepareChampion(me));
-
-    const entities = AyayaLeague.getEntities();
-    const groupEntities = AyayaLeague.groupEntities(entities, me.team);
-    const enemyChampions = groupEntities.enemyChampions.map(e => prepareChampion(e));
+    const matrix = AyayaLeague.matrixToArray(_matrix);
 
 
+    const localPLayer = AyayaLeague.getLocalPlayer();
+
+    const me = preparator.prepareChampion(localPLayer, screen, matrix, gameTime);
+
+    const entities = AyayaLeague.getEntities(now + 500);
+    const groupEntities = AyayaLeague.groupEntities(entities, localPLayer.team);
+    const enemyChampions = groupEntities.enemyChampions.map(e => preparator.prepareChampion(e, screen, matrix, gameTime));
+
+
+    // --- performance ---
     const end = performance.now();
     const readingTime = end - start;
     if (readingTime > highestReadTime) highestReadTime = readingTime;
+    // --- performance ---
 
-    sendObject('gameData', {
-        enemyChampions, performance: {
+
+    const finalData = {
+        me,
+        enemyChampions,
+        performance: {
             time: parseFloat(readingTime.toFixed(1)),
             max: parseFloat(highestReadTime.toFixed(1))
         }
-    });
-
-    setTimeout(() => loop(sendObject), 16);
-}
-
-
-
-function prepareSpell(data: Spell) {
-    const result = { cd: data.getSeconds(gameTime) }
-    return result;
-}
-
-function prepareChampion(data: Entity) {
-    const screenPos = AyayaLeague.worldToScreen(data.pos, screen, matrix);
-
-    const result = {
-        x: screenPos.x, y: screenPos.y,
-        hp: parseInt(data.hp.toFixed(0)),
-        maxHp: parseInt(data.maxHp.toFixed(0)),
-        range: parseInt(data.range.toFixed(0)),
-        vis: data.visible,
-        spells: data.spells.map(e => prepareSpell(e))
     }
 
-    return result;
+    sendMessageToWin(overlayWindow, 'gameData', finalData);
+
+    setTimeout(loop, Math.max(readingTime + 10, 20));
 }
 
+app.whenReady().then(main);
 
-app.whenReady().then(() => {
-    const win = createOverlay();
 
-    const screenSizeInterval = setInterval(() => {
-        win.webContents.send('setScreenSize', JSON.stringify(screen));
-        win.setSize(screen.x, screen.y);
-    }, 2000);
-
-    function sendObject(name, obj) {
-        win.webContents.send(name, JSON.stringify(obj));
-    }
-
-    loop(sendObject);
-
-    ipcMain.on('screenSizeOK', (e, message) => {
-        // clearInterval(screenSizeInterval);
-    });
-
+app.on('will-quit', () => {
+    globalShortcut.unregisterAll()
 });

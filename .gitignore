@@ -2,3 +2,5 @@ node_modules
 dist
 *.cpp
 dump
+settings.json
+cache

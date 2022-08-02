@@ -30,6 +30,7 @@ export class AyayaMemoryReader {
 
     setMode(readMode: "LEAGUE" | "DUMP") {
         this.mode = readMode;
+        console.log('Mode set to', this.mode)
     }
 
     hookLeagueProcess() {
@@ -62,6 +63,9 @@ export class AyayaMemoryReader {
                 if (type == 'FLOAT')
                     return this.dump.readFloatLE(address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress));
 
+                if (type == 'BOOL')
+                    return this.dump.at(address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)) == 1;
+
                 if (type == 'VEC3') {
                     const result = new Vector3(
                         this.dump.readFloatLE(0 + address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)),
@@ -71,7 +75,7 @@ export class AyayaMemoryReader {
                     return result;
                 }
             } catch (ex) {
-                console.log('ERROR', ex);
+                // console.log('ERROR', ex);
                 return 0;
             }
 

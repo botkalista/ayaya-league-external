@@ -12,7 +12,9 @@
     "test:nohook": "ts-node tests/test.ts nohook",
     "compile": "tsc --project tsconfig.json",
     "exe": "electron dist/index.js",
-    "execute": "npm run compile && npm run exe"
+    "exe:nohook": "electron dist/index.js nohook",
+    "execute": "npm run compile && npm run exe",
+    "execute:nohook": "npm run compile && npm run exe:nohook"
   },
   "keywords": [],
   "author": "Emily",

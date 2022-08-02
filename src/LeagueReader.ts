@@ -15,7 +15,7 @@ class AyayaLeagueReader {
     reader: typeof Reader;
 
     constructor(hook = true) {
-        console.log(hook);
+        console.log({ hook });
         if (hook) Reader.hookLeagueProcess();
         this.reader = Reader;
         if (hook) console.log('BaseAddress', this.toHex(Reader.baseAddr));
@@ -328,7 +328,7 @@ class AyayaLeagueReader {
         const visible = Reader.readProcessMemory(address + OFFSET.oObjVisible, 'BOOL');
         const range = Reader.readProcessMemory(address + OFFSET.oObjAttackRange, 'FLOAT');
         const team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
-        
+
         // const index = Reader.readProcessMemory(address + OFFSET.oObjIndex, "DWORD");
         // const dead = Reader.readProcessMemory(address + OFFSET.oObjectDead, "DWORD");
 
