@@ -6,6 +6,7 @@ import { Settings } from './overlay/models/Settings';
 import { Vector2 } from './models/Vector';
 import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
+import { Performance } from './utils/Performance';
 
 if (process.argv[2] == 'nohook') { AyayaLeague.reader.setMode("DUMP"); AyayaLeague.reader.loadDump(); }
 
@@ -79,12 +80,12 @@ function main() {
 
 }
 
-function loop() {
-    // --- performance ---
-    const now = Date.now();
-    const start = performance.now();
-    // --- performance ---
 
+const performance = new Performance();
+
+function loop() {
+
+    performance.start();
 
 
     const gameTime = AyayaLeague.getGameTime();
@@ -96,15 +97,19 @@ function loop() {
     const localPlayer = AyayaLeague.getLocalPlayer();
     const me = preparator.prepareChampion(localPlayer, screen, matrix, gameTime);
 
+    performance.spot('localPlayer');
+
     const enemyTeamId = localPlayer.team == 100 ? 200 : 100;
 
-    const champs = AyayaLeague.getChampionsList();
+    const champs = AyayaLeague.getChampionsList(undefined, performance);
+    performance.spot('champsRead');
     const enemyChampions = champs.filter(e => e.team == enemyTeamId).map(e => preparator.prepareChampion(e, screen, matrix, gameTime))
 
+    performance.spot('champsPrepare');
+
     // --- performance ---
-    const end = performance.now();
-    const readingTime = end - start;
-    if (readingTime > highestReadTime) highestReadTime = readingTime;
+    const result = performance.end();
+    if (result.time > highestReadTime) highestReadTime = result.time;
     // --- performance ---
 
 
@@ -112,14 +117,15 @@ function loop() {
         me,
         enemyChampions,
         performance: {
-            time: parseFloat(readingTime.toFixed(1)),
+            readings: result.readings,
+            time: result.time,
             max: parseFloat(highestReadTime.toFixed(1))
         }
     }
 
     sendMessageToWin(overlayWindow, 'gameData', finalData);
 
-    setTimeout(loop, Math.max(readingTime + 10, 20));
+    setTimeout(loop, Math.max(result.time + 10, 20));
 }
 
 app.whenReady().then(main);

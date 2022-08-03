@@ -151,6 +151,7 @@ function drawEnemiesSpells() {
 
     for (const enemy of gameData.enemyChampions) {
         const { x, y, vis, spells } = enemy;
+        if (spells.length < 6) continue;
         if (!vis) continue;
         if (x > screen.width || y > screen.height || x < 0 || y < 0) continue;
         text(`D: ${spells[4].cd} | F: ${spells[5].cd}`, x, y + 150);
@@ -171,6 +172,14 @@ function draw() {
 
     textSize(20);
     noStroke();
-    fill(0);
-    if (gameData.performance && settings.over && settings.over.performance) text(JSON.stringify(gameData.performance), 20, 20);
+    fill(255);
+    if (gameData.performance && settings.over && settings.over.performance) {
+
+        const _time = (gameData.performance.time || 0).toFixed(1);
+        const max = (gameData.performance.max || 0).toFixed(1);
+        const readings = (gameData.performance.readings || []).map(e => {
+            return `${e.name}: ${e.delta.toFixed(1)}`
+        });
+        text(`Time: ${_time} ms\nMax: ${max}\nReads:\n${readings.join('\n')}`, 20, 250);
+    }
 }

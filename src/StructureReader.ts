@@ -4,7 +4,7 @@ import Reader from './MemoryReader';
 import { Entity } from './models/Entity';
 import { Spell } from './models/Spell';
 import * as math from 'mathjs';
-
+import { Performance } from './utils/Performance';
 
 type EntityKey = keyof Entity;
 type EntityKeys = (EntityKey)[];
@@ -30,7 +30,7 @@ export function readSpell(address: number): Spell {
     spell.name = readName(sNamePtr, true);
     return spell;
 }
-export function readEntity(address: number, opts?: EntityReadOptions): Entity | undefined {
+export function readEntity(address: number, opts?: EntityReadOptions, performance?: Performance): Entity | undefined {
 
     const entity = new Entity();
 
@@ -57,11 +57,13 @@ export function readEntity(address: number, opts?: EntityReadOptions): Entity | 
     if (hasToRead("range")) entity.range = Reader.readProcessMemory(address + OFFSET.oObjAttackRange, 'FLOAT');
     if (hasToRead("team")) entity.team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
 
+    entity.spells = [];
     if (hasToRead("spells")) {
         if (entity.team == 100 || entity.team == 200) {
-            entity.spells = [];
-            for (let i = 0; i < 6; i++) {
-                entity.spells.push(readSpell(address + (i * 4)));
+            if (!entity.name.startsWith('PracticeTool')) {
+                for (let i = 0; i < 6; i++) {
+                    entity.spells.push(readSpell(address + (i * 4)));
+                }
             }
         }
     }

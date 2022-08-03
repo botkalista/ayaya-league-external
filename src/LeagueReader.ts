@@ -6,6 +6,7 @@ import { Spell } from './models/Spell';
 import { Vector2, Vector3, Vector4 } from './models/Vector';
 import { EntityReadOptions, readEntity, readMatrix, readVTable } from './StructureReader';
 import { matrixToArray } from './utils/Utils';
+import { Performance } from './utils/Performance';
 
 import * as math from 'mathjs'
 
@@ -30,10 +31,14 @@ class AyayaLeagueReader {
         const localPlayer: number = Reader.readProcessMemory(OFFSET.oLocalPlayer, "DWORD", true);
         return readEntity(localPlayer, _opts);
     }
-    getChampionsList(_opts?: EntityReadOptions) {
+    getChampionsList(_opts?: EntityReadOptions, performance?: Performance) {
         const heroManager = Reader.readProcessMemory(OFFSET.oHeroManager, "DWORD", true);
         const champsAddresses = readVTable(heroManager);
-        const champs = champsAddresses.map(e => readEntity(e, _opts));
+        const champs = champsAddresses.map(e => {
+            const data = readEntity(e, _opts, performance);
+            // performance.spot('entity ' + data.name.substring(0, 10));
+            return data;
+        });
         return champs;
     }
     getMinionsMonstersList(_opts?: EntityReadOptions) {

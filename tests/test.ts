@@ -1,14 +1,21 @@
 import { OFFSET } from '../src/consts/Offsets';
 import AyayaLeague from '../src/LeagueReader'
 
+import { Performance } from '../src/utils/Performance';
+
 // AyayaLeague.reader.setMode("DUMP");
 // AyayaLeague.reader.loadDump();
 
-const Reader = AyayaLeague.reader;
 
-const me = AyayaLeague.getMissilesList();
 
-console.log(me);
+
+
+// const Reader = AyayaLeague.reader;
+// const me = AyayaLeague.getMissilesList();
+// console.log(me);
+
+
+
 // const heroManager = Reader.readProcessMemory(OFFSET.oHeroManager, "DWORD", true);
 
 // const heroList = Reader.readProcessMemory(heroManager + 0x4, "DWORD");

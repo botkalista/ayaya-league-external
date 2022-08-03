@@ -42,6 +42,6 @@ export function createSettingsWindow() {
     win.setMenu(null);
     win.setAlwaysOnTop(true, 'screen-saver');
     win.loadFile('../static/settings.html');
-    // win.hide();
+    //win.hide();
     return win;
 }
