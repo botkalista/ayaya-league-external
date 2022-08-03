@@ -3,8 +3,9 @@ import Reader from './MemoryReader';
 import { OFFSET } from './consts/Offsets'
 import { Entity } from './models/Entity';
 import { Spell } from './models/Spell';
-import { getNameFromBuffer } from './utils/Utils';
 import { Vector2, Vector3, Vector4 } from './models/Vector';
+import { EntityReadOptions, readEntity, readMatrix, readVTable } from './StructureReader';
+import { matrixToArray } from './utils/Utils';
 
 import * as math from 'mathjs'
 
@@ -18,79 +19,130 @@ class AyayaLeagueReader {
         console.log({ hook });
         if (hook) Reader.hookLeagueProcess();
         this.reader = Reader;
-        if (hook) console.log('BaseAddress', this.toHex(Reader.baseAddr));
-        if (hook) console.log('Handle', this.toHex(Reader.pHandle));
-    }
-
-    toHex(int: number) {
-        return Reader.toHex(int);
-    }
-
-    getLocalPlayer(): Entity {
-        const localPlayer = Reader.readProcessMemory(OFFSET.oLocalPlayer, "DWORD", true);
-        const data = this.getObjectData(localPlayer);
-        return Entity.fromData(data);
-    }
-
-    getEntities(timeoutTimestamp?: number): Entity[] {
-
-        const objects = this.getAllObjects(timeoutTimestamp);
-
-        const objectsData = objects.map(o => this.readObjectAt(o)).filter(e => e != undefined);
-
-        return objectsData as Entity[];
     }
 
 
-    getAttackableEntities(entities: Entity[]): Entity[] {
+    getGameTime(): number {
+        return Reader.readProcessMemory(OFFSET.oGameTime, 'FLOAT', true);
+    }
 
-
-        return entities;
+    getLocalPlayer(_opts?: EntityReadOptions): Entity {
+        const localPlayer: number = Reader.readProcessMemory(OFFSET.oLocalPlayer, "DWORD", true);
+        return readEntity(localPlayer, _opts);
+    }
+    getChampionsList(_opts?: EntityReadOptions) {
+        const heroManager = Reader.readProcessMemory(OFFSET.oHeroManager, "DWORD", true);
+        const champsAddresses = readVTable(heroManager);
+        const champs = champsAddresses.map(e => readEntity(e, _opts));
+        return champs;
+    }
+    getMinionsMonstersList(_opts?: EntityReadOptions) {
+        const opts: EntityReadOptions = _opts || { skipProps: ["spells"] }
+        const minionManager = Reader.readProcessMemory(OFFSET.oMinionManager, "DWORD", true);
+        const minionsAddresses = readVTable(minionManager);
+        const minionsMonsters = minionsAddresses.map(e => readEntity(e, opts)).filter(e => !e.name.startsWith('PreSeason'));
+        const minions = minionsMonsters.filter(e => e.name.includes('Minion'));
+        const monsters = minionsMonsters.filter(e => !minions.includes(e));
+        return { minions, monsters };
+    }
+    getTurretsList(_opts?: EntityReadOptions) {
+        const opts: EntityReadOptions = _opts || { skipProps: ["spells"] }
+        const turretManager = Reader.readProcessMemory(OFFSET.oTurretManager, "DWORD", true);
+        const turretsAddresses = readVTable(turretManager);
+        const turrets = turretsAddresses.map(e => readEntity(e, opts));
+        return turrets;
+    }
+    getMissilesList(_opts?: EntityReadOptions) {
+        const opts: EntityReadOptions = _opts || { skipProps: ["spells"] }
+        const missileManager = Reader.readProcessMemory(OFFSET.oMissileManager, "DWORD", true);
+        const missilesAddresses = readVTable(missileManager);
+        const missiles = missilesAddresses.map(e => readEntity(e, opts));
+        return missiles;
     }
 
 
-    groupEntities(_entities: Entity[], playerTeamId: number) {
+    worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrixArg?: number[]) {
 
-        const enemyTeamId = playerTeamId == 100 ? 200 : 100;
+        let viewProjMatrix: number[] = [];
 
-        const entities = _entities.filter(e => !e.name.startsWith('PreSeason'))
-
-        const allies = entities.filter(e => e.team == playerTeamId);
-        const enemies = entities.filter(e => e.team == enemyTeamId);
-        const neutrals = entities.filter(e => e.team != 100 && e.team != 200);
-
-        const turrets = entities.filter(e => e.name.startsWith('Turret'));
-        const minions = entities.filter(e => e.name.startsWith('SRU'));
-        const champions = entities.filter(e => !turrets.includes(e) && !minions.includes(e));
-
-        const allyTurrets = allies.filter(e => turrets.includes(e));
-        const enemyTurrets = enemies.filter(e => turrets.includes(e));
-
-        const allyMinions = allies.filter(e => minions.includes(e));
-        const enemyMinions = enemies.filter(e => minions.includes(e));
-
-        const allyChampions = allies.filter(e => champions.includes(e));
-        const enemyChampions = enemies.filter(e => champions.includes(e));
-
-
-
-
-        return {
-            allies, enemies, neutrals,
-            turrets, allyTurrets, enemiesTurrets: enemyTurrets,
-            minions, allyMinions, enemiesMinions: enemyMinions,
-            champions, allyChampions, enemyChampions
+        if (viewProjMatrixArg) {
+            viewProjMatrix = viewProjMatrixArg;
+        } else {
+            const _viewProjMatrix = this.getViewProjectionMatrix();
+            viewProjMatrix = matrixToArray(_viewProjMatrix);
         }
 
+        const out = Vector2.zero();
+        const screen = new Vector2(screenSize.x, screenSize.y);
+        const clipCoords = Vector4.zero();
+        clipCoords.x = pos.x * viewProjMatrix[0] + pos.y * viewProjMatrix[4] + pos.z * viewProjMatrix[8] + viewProjMatrix[12];
+        clipCoords.y = pos.x * viewProjMatrix[1] + pos.y * viewProjMatrix[5] + pos.z * viewProjMatrix[9] + viewProjMatrix[13];
+        clipCoords.z = pos.x * viewProjMatrix[2] + pos.y * viewProjMatrix[6] + pos.z * viewProjMatrix[10] + viewProjMatrix[14];
+        clipCoords.w = pos.x * viewProjMatrix[3] + pos.y * viewProjMatrix[7] + pos.z * viewProjMatrix[11] + viewProjMatrix[15];
+        if (clipCoords.w < 1.0) clipCoords.w = 1;
+        const m = Vector3.zero();
+        m.x = clipCoords.x / clipCoords.w;
+        m.y = clipCoords.y / clipCoords.w;
+        m.z = clipCoords.z / clipCoords.w;
+        out.x = (screen.x / 2 * m.x) + (m.x + screen.x / 2);
+        out.y = -(screen.y / 2 * m.y) + (m.y + screen.y / 2);
+        return out;
+
     }
-
-    getGameTime() {
-        const time = Reader.readProcessMemory(OFFSET.oGameTime, 'FLOAT', true);
-        return time;
+    getScreenSize(renderer: number) {
+        const width = Reader.readProcessMemory(renderer + OFFSET.oGameWindowWidth, "DWORD");
+        const height = Reader.readProcessMemory(renderer + OFFSET.oGameWindowHeight, "DWORD");
+        return new Vector2(width, height);
     }
+    getRenderBase() {
+        return Reader.readProcessMemory(OFFSET.oRenderer, "DWORD", true);
+    }
+    getViewProjectionMatrix() {
+        const viewMatrix = readMatrix(OFFSET.oViewProjMatrix);
+        const projMatrix = readMatrix(OFFSET.oViewProjMatrix + 0x40);
+        const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
+        return viewProjMatrix;
+    }
+    private getAllObjects(timeoutTimestamp?: number) {
 
+        const objectManager = this.objectManager || this.getObjectManager();
+        const rootNode = this.rootNode || this.getObjectManagerRootNode(objectManager);
 
+        const checked = new Set<number>();
+        const toCheck = new Set<number>();
+        toCheck.add(rootNode);
 
+        while (toCheck.size > 0) {
+
+            const now = Date.now();
+            if (timeoutTimestamp && now > timeoutTimestamp) break;
+
+            const target: number = Array.from(toCheck.values())[0];
+            checked.add(target);
+            toCheck.delete(target);
+            const nextObject1 = Reader.readProcessMemory(target + 0x0, "DWORD");
+            const nextObject2 = Reader.readProcessMemory(target + 0x4, "DWORD");
+            const nextObject3 = Reader.readProcessMemory(target + 0x8, "DWORD");
+            if (!checked.has(nextObject1)) toCheck.add(nextObject1);
+            if (!checked.has(nextObject2)) toCheck.add(nextObject2);
+            if (!checked.has(nextObject3)) toCheck.add(nextObject3);
+        }
+
+        return Array.from(checked.values());
+    }
+    private getObjectManager() {
+        const aObjectManager = Reader.readProcessMemory(OFFSET.oObjectManager, "DWORD", true);
+        return aObjectManager;
+    }
+    private getObjectManagerRootNode(aObjectManager: number) {
+        const rootNode = Reader.readProcessMemory(aObjectManager + OFFSET.oMapRoot, "DWORD");
+        return rootNode;
+    }
+    private readObjectAt(address: number) {
+        const object = Reader.readProcessMemory(address + OFFSET.oMapNodeObject, 'DWORD');
+        const data = readEntity(object);
+        return data;
+    }
     printChat() {
 
         const chatInstance = Reader.readProcessMemory(OFFSET.oChatInstance, "PTR", true);
@@ -132,7 +184,6 @@ class AyayaLeagueReader {
         // }
 
     }
-
     getPing() {
         // void Game::GetPing(MemS& ms) {
         //     uint32_t cpuPingAdr;
@@ -163,7 +214,6 @@ class AyayaLeagueReader {
 
         // }
     }
-
     /**
      *  @deprecated Not Working
      */
@@ -173,185 +223,6 @@ class AyayaLeagueReader {
         console.log('netId', Reader.toHex(netId))
         const target = entities.find(e => e.netId == netId);
         return target;
-    }
-
-
-
-
-    worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrixArg?: number[]) {
-
-        let viewProjMatrix: number[] = [];
-
-        if (viewProjMatrixArg) {
-            viewProjMatrix = viewProjMatrixArg;
-        } else {
-            const _viewProjMatrix = this.getViewProjectionMatrix();
-            viewProjMatrix = this.matrixToArray(_viewProjMatrix);
-        }
-
-
-        const out = Vector2.zero();
-        const screen = new Vector2(screenSize.x, screenSize.y);
-        const clipCoords = Vector4.zero();
-        clipCoords.x = pos.x * viewProjMatrix[0] + pos.y * viewProjMatrix[4] + pos.z * viewProjMatrix[8] + viewProjMatrix[12];
-        clipCoords.y = pos.x * viewProjMatrix[1] + pos.y * viewProjMatrix[5] + pos.z * viewProjMatrix[9] + viewProjMatrix[13];
-        clipCoords.z = pos.x * viewProjMatrix[2] + pos.y * viewProjMatrix[6] + pos.z * viewProjMatrix[10] + viewProjMatrix[14];
-        clipCoords.w = pos.x * viewProjMatrix[3] + pos.y * viewProjMatrix[7] + pos.z * viewProjMatrix[11] + viewProjMatrix[15];
-        if (clipCoords.w < 1.0) clipCoords.w = 1;
-        const m = Vector3.zero();
-        m.x = clipCoords.x / clipCoords.w;
-        m.y = clipCoords.y / clipCoords.w;
-        m.z = clipCoords.z / clipCoords.w;
-        out.x = (screen.x / 2 * m.x) + (m.x + screen.x / 2);
-        out.y = -(screen.y / 2 * m.y) + (m.y + screen.y / 2);
-        return out;
-
-    }
-    getScreenSize(renderer: number) {
-        const width = Reader.readProcessMemory(renderer + OFFSET.oGameWindowWidth, "DWORD");
-        const height = Reader.readProcessMemory(renderer + OFFSET.oGameWindowHeight, "DWORD");
-        return new Vector2(width, height);
-    }
-    getRenderBase() {
-        return Reader.readProcessMemory(OFFSET.oRenderer, "DWORD", true);
-    }
-    getViewProjectionMatrix() {
-        const viewMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix);
-        const projMatrix = this.readMatrixAt(OFFSET.oViewProjMatrix + 0x40);
-        const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
-        return viewProjMatrix;
-    }
-    matrixToArray(matrix: math.Matrix): number[] {
-        const result: number[] = [];
-        for (let i = 0; i < matrix['_data'].length; i++) {
-            for (let k = 0; k < matrix['_data'][i].length; k++) {
-                const val: number = matrix['_data'][i][k];
-                result.push(val);
-            }
-        }
-        return result;
-    }
-    private readMatrixAt(address: number) {
-        const buffer = Reader.readProcessMemoryBuffer(address, 64, true);
-
-        const matrix = math.matrix([
-            [
-                buffer.readFloatLE(0 * 4),
-                buffer.readFloatLE(1 * 4),
-                buffer.readFloatLE(2 * 4),
-                buffer.readFloatLE(3 * 4)
-            ],
-            [
-                buffer.readFloatLE(4 * 4),
-                buffer.readFloatLE(5 * 4),
-                buffer.readFloatLE(6 * 4),
-                buffer.readFloatLE(7 * 4)
-            ],
-            [
-                buffer.readFloatLE(8 * 4),
-                buffer.readFloatLE(9 * 4),
-                buffer.readFloatLE(10 * 4),
-                buffer.readFloatLE(11 * 4)
-            ],
-            [
-                buffer.readFloatLE(12 * 4),
-                buffer.readFloatLE(13 * 4),
-                buffer.readFloatLE(14 * 4),
-                buffer.readFloatLE(15 * 4)
-            ]
-        ]);
-        return matrix;
-    }
-
-    private getAllObjects(timeoutTimestamp?: number) {
-
-        const objectManager = this.objectManager || this.getObjectManager();
-        const rootNode = this.rootNode || this.getObjectManagerRootNode(objectManager);
-
-        const checked = new Set<number>();
-        const toCheck = new Set<number>();
-        toCheck.add(rootNode);
-
-        while (toCheck.size > 0) {
-
-            const now = Date.now();
-            if (timeoutTimestamp && now > timeoutTimestamp) break;
-
-            const target: number = Array.from(toCheck.values())[0];
-            checked.add(target);
-            toCheck.delete(target);
-            const nextObject1 = Reader.readProcessMemory(target + 0x0, "DWORD");
-            const nextObject2 = Reader.readProcessMemory(target + 0x4, "DWORD");
-            const nextObject3 = Reader.readProcessMemory(target + 0x8, "DWORD");
-            if (!checked.has(nextObject1)) toCheck.add(nextObject1);
-            if (!checked.has(nextObject2)) toCheck.add(nextObject2);
-            if (!checked.has(nextObject3)) toCheck.add(nextObject3);
-        }
-
-        return Array.from(checked.values());
-    }
-
-    private getObjectManager() {
-        const aObjectManager = Reader.readProcessMemory(OFFSET.oObjectManager, "DWORD", true);
-        return aObjectManager;
-    }
-    private getObjectManagerRootNode(aObjectManager: number) {
-        const rootNode = Reader.readProcessMemory(aObjectManager + OFFSET.oMapRoot, "DWORD");
-        return rootNode;
-    }
-    private readObjectAt(address: number) {
-        const object = Reader.readProcessMemory(address + OFFSET.oMapNodeObject, 'DWORD');
-        const data = this.getObjectData(object);
-        return data;
-    }
-    getObjectData(address: number, bypassNameChecks = false) {
-
-        const namePointer = Reader.readProcessMemory(address + OFFSET.oObjName, 'DWORD');
-        const nameBuffer = Reader.readProcessMemoryBuffer(namePointer, 0x25);
-        const name = getNameFromBuffer(nameBuffer);
-
-        if (!bypassNameChecks) {
-            if (name.length < 3) return;
-            if (name.startsWith(' ')) return;
-        }
-
-        const netId = Reader.readProcessMemory(address + OFFSET.oObjNetId, "DWORD");
-
-        if (!bypassNameChecks) {
-            if (netId - 0x40000000 > 0x100000) return;
-            if (netId < 0) return;
-        }
-
-        const pos = Reader.readProcessMemory(address + OFFSET.oObjPosition, "VEC3");
-        const hp = Reader.readProcessMemory(address + OFFSET.oObjectHealth, "FLOAT");
-        const maxHp = Reader.readProcessMemory(address + OFFSET.oObjectMaxHealth, "FLOAT");
-        const visible = Reader.readProcessMemory(address + OFFSET.oObjVisible, 'BOOL');
-        const range = Reader.readProcessMemory(address + OFFSET.oObjAttackRange, 'FLOAT');
-        const team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
-
-        // const index = Reader.readProcessMemory(address + OFFSET.oObjIndex, "DWORD");
-        // const dead = Reader.readProcessMemory(address + OFFSET.oObjectDead, "DWORD");
-
-        const spells: Spell[] = [];
-
-        if (team == 100 || team == 200) {
-            for (let i = 0; i < 6; i++) {
-                const sAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook + (i * 4), "DWORD");
-                const spellReadyAt = Reader.readProcessMemory(sAddress + OFFSET.oSpellReadyAt, "FLOAT");
-                const spellLevel = Reader.readProcessMemory(sAddress + OFFSET.oSpellLevel, 'DWORD');
-                const sInfo = Reader.readProcessMemory(sAddress + OFFSET.oSpellInfo, "DWORD");
-                const sData = Reader.readProcessMemory(sInfo + OFFSET.oSpellInfoData, "DWORD");
-
-                const _name = Reader.readProcessMemory(sData + OFFSET.oSpellInfoDataName, "DWORD");
-                const nameBuffer = Reader.readProcessMemoryBuffer(_name, 30);
-                const name = getNameFromBuffer(nameBuffer);
-
-                const spell = new Spell(Reader.toHex(sAddress), spellLevel, 0, spellReadyAt, name);
-                spells.push(spell);
-            }
-        }
-        return { netId, hp, maxHp, pos, name, team, visible, range, address: Reader.toHex(address), spells }
-
     }
 
 }

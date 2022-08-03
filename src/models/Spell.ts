@@ -2,15 +2,10 @@
 
 export class Spell {
 
-    constructor(
-        public address: string,
-        public level: number,
-        public manaCost: number,
-        public readyAt: number,
-        public name: string
-    ) {
 
-    }
+    public level: number;
+    public readyAt: number;
+    public name: string;
 
     isReady(gameTime: number) {
         return this.getSeconds(gameTime) <= 0;

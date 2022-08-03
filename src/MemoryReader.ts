@@ -6,8 +6,6 @@ import type { Process } from './models/mem/Process';
 import type { Module } from './models/mem/Module';
 import { Vector3 } from './models/Vector';
 
-import { getNameFromBuffer } from './utils/Utils';
-
 export class AyayaMemoryReader {
     leagueProcess: Process;
     leagueModule: Module;
@@ -68,13 +66,16 @@ export class AyayaMemoryReader {
                     return this.dump.at(address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)) == 1;
 
                 if (type == 'STR' || type == 'STRING') {
-                    const buff = this.dump.subarray(
-                        address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress),
-                        address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress) + 30
-                    );
-                    return getNameFromBuffer(buff);
+                    const chars = [];
+
+                    for (let i = 0; i < 50; i++) {
+                        const target = this.dump.at(i + address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress));
+                        if (target == 0) break;
+                        chars.push(String.fromCharCode(target));
+                    }
+                    return chars.join('');
                 }
-                
+
                 if (type == 'VEC3') {
                     const result = new Vector3(
                         this.dump.readFloatLE(0 + address + (fromBaseAddress ? 0 : -this.dumpInfo.baseAddress)),

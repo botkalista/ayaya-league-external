@@ -104,7 +104,7 @@ function drawOverlayEnemySpells() {
         noStroke();
         fill(255);
         if (spells[4].cd > 0) text(spells[4].cd, x + 40 + 5, y, 40, 40);
-        if (spells[5].cd > 0) text(spells[5].cd, x + 40 + 5 + 40, y, 40, 40);
+        if (spells[5].cd > 0) text(spells[5].cd, x + 40 + 5 + 40 + 5, y, 40, 40);
 
     }
 

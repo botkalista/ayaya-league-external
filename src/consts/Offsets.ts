@@ -12,7 +12,12 @@ export const OFFSET = {
     oViewProjMatrix: 0x3140910,
 
     oAttackableList: 0x24C188C,
-    oHeroList: 0x1872A68, //Not sure
+
+    oHeroManager: 0x1872A68,
+    oMinionManager: 0x24c18b4,
+    oTurretManager: 0x310792c,
+    oMissileManager: 0x24c1860,
+
     oUnderMouse: 0x24c1a24,
 
     oLocalPlayer: 0x31113EC,
@@ -30,21 +35,22 @@ export const OFFSET = {
 
     oObjNetId: 0xB4,
 
+
+    oObjPlayerName: 0x54,
     oObjName: 0x2BA4,
     oObjLevel: 0x3384,
     oObjPosition: 0x01DC,
     oObjAttackRange: 0x1394,
     oObjVisible: 0x0274,
+    oObjHealth: 0x0E74,
+    oObjMaxHealth: 0x0E84,
+    oObjMana: 0x029C,
+    oObjMaxMana: 0x02AC,
+    oObjDead: 0x021C,
+    oObjAD: 0x134C,
+    oObjBonusAD: 0x12C4,
 
-    oObjectHealth: 0x0E74,
-    oObjectMaxHealth: 0x0E84,
-    oObjectMana: 0x029C,
-    oObjectMaxMana: 0x02AC,
 
-    oObjectDead: 0x021C,
-
-    oObjectAttackDamage: 0x134C,
-    oObjectBonusAttackDamage: 0x12C4,
 
     oBuffManager: 0x2178, //Not sure
 

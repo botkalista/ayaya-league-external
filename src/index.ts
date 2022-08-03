@@ -5,6 +5,7 @@ import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } fr
 import { Settings } from './overlay/models/Settings';
 import { Vector2 } from './models/Vector';
 import { Preparator } from './overlay/Preparator';
+import { matrixToArray } from './utils/Utils';
 
 if (process.argv[2] == 'nohook') { AyayaLeague.reader.setMode("DUMP"); AyayaLeague.reader.loadDump(); }
 
@@ -89,17 +90,16 @@ function loop() {
     const gameTime = AyayaLeague.getGameTime();
 
     const _matrix = AyayaLeague.getViewProjectionMatrix();
-    const matrix = AyayaLeague.matrixToArray(_matrix);
+    const matrix = matrixToArray(_matrix);
 
 
-    const localPLayer = AyayaLeague.getLocalPlayer();
+    const localPlayer = AyayaLeague.getLocalPlayer();
+    const me = preparator.prepareChampion(localPlayer, screen, matrix, gameTime);
 
-    const me = preparator.prepareChampion(localPLayer, screen, matrix, gameTime);
+    const enemyTeamId = localPlayer.team == 100 ? 200 : 100;
 
-    const entities = AyayaLeague.getEntities(now + 500);
-    const groupEntities = AyayaLeague.groupEntities(entities, localPLayer.team);
-    const enemyChampions = groupEntities.enemyChampions.map(e => preparator.prepareChampion(e, screen, matrix, gameTime));
-
+    const champs = AyayaLeague.getChampionsList();
+    const enemyChampions = champs.filter(e => e.team == enemyTeamId).map(e => preparator.prepareChampion(e, screen, matrix, gameTime))
 
     // --- performance ---
     const end = performance.now();
