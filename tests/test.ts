@@ -3,6 +3,15 @@ import AyayaLeague from '../src/LeagueReader'
 
 import { Performance } from '../src/utils/Performance';
 
+
+if (process.argv[2] == 'nohook') {
+    AyayaLeague.reader.setMode("DUMP");
+    AyayaLeague.reader.loadDump();
+} else {
+    AyayaLeague.reader.hookLeagueProcess();
+}
+
+
 // AyayaLeague.reader.setMode("DUMP");
 // AyayaLeague.reader.loadDump();
 

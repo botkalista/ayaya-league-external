@@ -17,7 +17,7 @@ export class Preparator {
         const screenPos = this.ayayaLeague.worldToScreen(data.pos, screen, matrix);
 
         const result = {
-            x: screenPos.x, y: screenPos.y,
+            x: parseInt(screenPos.x.toFixed(0)), y: parseInt(screenPos.y.toFixed(0)),
             hp: parseInt(data.hp.toFixed(0)),
             name: data.name,
             maxHp: parseInt(data.maxHp.toFixed(0)),

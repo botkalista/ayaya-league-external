@@ -16,12 +16,9 @@ class AyayaLeagueReader {
     private rootNode;
     reader: typeof Reader;
 
-    constructor(hook = true) {
-        console.log({ hook });
-        if (hook) Reader.hookLeagueProcess();
+    constructor() {
         this.reader = Reader;
     }
-
 
     getGameTime(): number {
         return Reader.readProcessMemory(OFFSET.oGameTime, 'FLOAT', true);
@@ -154,7 +151,7 @@ class AyayaLeagueReader {
         const args = [
             { type: Reader.memInstance.T_VOID, value: chatInstance },
             { type: Reader.memInstance.T_CHAR, value: "test" },
-            { type: Reader.memInstance.T_INT, value: 0 },
+            { type: Reader.memInstance.T_INT, value: 1 },
         ]
 
         const res = Reader.callFunction(args, 0x4, Reader.baseAddr + OFFSET.fPrintChat);
@@ -232,6 +229,6 @@ class AyayaLeagueReader {
 
 }
 
-const instance = new AyayaLeagueReader(process.argv[2] != 'nohook');
+const instance = new AyayaLeagueReader();
 
 export default instance;

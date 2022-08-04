@@ -25,9 +25,8 @@ export const OFFSET = {
 
 
     oNetClient: 0x310BA6C, //Not sure
-
-    oChatInstance: 0x31114A8,
-    fPrintChat: 0x5E2150,
+    oChatInstance: 0x31114A8, 
+    fPrintChat: 0x5E2150, // E8 ? ? ? ? 6A 00 68 ? ? ? ? E8 ? ? ? ? 83 C4 04
 
 
     oObjIndex: 0x0008,
@@ -82,6 +81,11 @@ export const OFFSET = {
 
 }
 
+// int Offsets::MissileSpellInfo = 0x0260;
+// int Offsets::MissileSrcIdx = 0x2DC;
+// int Offsets::MissileDestIdx = 0x330;
+// int Offsets::MissileStartPos = 0x02DC;
+// int Offsets::MissileEndPos = 0x02E8;
 
 // pub const LOCAL_PLAYER: u32 = 0x31113ec;
 // pub const GAME_TIME: u32 = 0x3109fac;

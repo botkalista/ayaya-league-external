@@ -8,8 +8,12 @@ import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
 import { Performance } from './utils/Performance';
 
-if (process.argv[2] == 'nohook') { AyayaLeague.reader.setMode("DUMP"); AyayaLeague.reader.loadDump(); }
-
+if (process.argv[2] == 'nohook') {
+    AyayaLeague.reader.setMode("DUMP");
+    AyayaLeague.reader.loadDump();
+} else {
+    AyayaLeague.reader.hookLeagueProcess();
+}
 
 const preparator = new Preparator(AyayaLeague);
 
@@ -51,12 +55,21 @@ function registerHandlers() {
         sendMessageToWin(e.sender, 'dataScreenSize', screen);
     });
 
-
     onMessage<never>('closeSettingsWindow', (e, data) => {
         settingsWindow.hide();
     });
 
 
+
+
+    onMessage<never>('reloadWindows', (e, data) => {
+        overlayWindow.reload();
+        settingsWindow.reload();
+    });
+
+    onMessage<never>('openOverlayDevTools', (e, data) => {
+        overlayWindow.webContents.openDevTools();
+    });
 }
 
 function main() {
@@ -117,7 +130,8 @@ function loop() {
         me,
         enemyChampions,
         performance: {
-            readings: result.readings,
+            // readings: result.readings,
+            readings: [],
             time: result.time,
             max: parseFloat(highestReadTime.toFixed(1))
         }
@@ -125,7 +139,9 @@ function loop() {
 
     sendMessageToWin(overlayWindow, 'gameData', finalData);
 
-    setTimeout(loop, Math.max(result.time + 10, 20));
+    // setTimeout(loop, Math.max(result.time + 10, 20));
+    const settings = getSettings();
+    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 20));
 }
 
 app.whenReady().then(main);

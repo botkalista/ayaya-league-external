@@ -33,6 +33,7 @@ export function createSettingsWindow() {
             nodeIntegration: true,
             contextIsolation: false
         },
+        resizable: false,
         transparent: true,
         frame: false,
         autoHideMenuBar: true,

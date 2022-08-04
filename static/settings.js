@@ -6,7 +6,8 @@ const state = Vue.reactive({
         me: { range: true },
         nmeChamps: { range: true, spells: true },
         over: { nmeSpells: true, performance: true },
-    }
+        root: { readingTime: 3000 }
+    },
 });
 
 // ----- Settings -----
@@ -25,6 +26,12 @@ const app = Vue.createApp({
         },
         closeWindow() {
             ipcRenderer.send('closeSettingsWindow');
+        },
+        reloadWindows() {
+            ipcRenderer.send('reloadWindows');
+        },
+        openOverlayDevTools() {
+            ipcRenderer.send('openOverlayDevTools');
         }
     }
 });

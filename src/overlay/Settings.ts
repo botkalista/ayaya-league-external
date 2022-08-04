@@ -6,6 +6,7 @@ let settings: Settings = {
     me: { range: true },
     nmeChamps: { range: true, spells: true },
     over: { nmeSpells: true, performance: true },
+    root: { readingTime: 3000 }
 }
 
 export function loadSettingsFromFile() {

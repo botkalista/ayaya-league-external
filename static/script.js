@@ -14,7 +14,7 @@ function getChampionImage(name) {
     assets[name] = img;
 }
 
-function getSummonerImage(name) {
+function getSpellImage(name) {
     if (assets[name]) return assets[name];
     const img = createImg(`http://ddragon.leagueoflegends.com/cdn/12.14.1/img/spell/${name}.png`, name);
     img.hide();
@@ -59,52 +59,85 @@ function drawOverlayEnemySpells() {
 
     for (let i = 0; i < gameData.enemyChampions.length; i++) {
 
-        const { spells, name } = gameData.enemyChampions[i];
+        const { spells, name, maxHp, hp } = gameData.enemyChampions[i];
+
+
+        const iStart = 3;
+        const W = 45;
+        const H = 45;
+        const S1 = 10;
+        const S = 5;
 
         const x = 30;
-        const y = 30 + 45 * i;
+        const y = 30 + (H + 10) * i;
 
 
         const img = getChampionImage(name);
         try {
             if (!img) throw Error('noimage')
-            image(img, x, y, 40, 40);
+            image(img, x, y, W, H);
         } catch (ex) {
             noStroke();
             fill(0);
-            rect(x, y, 40, 40);
+            rect(x, y, W, H);
         }
 
-        fill(255);
 
-        const spellImg1 = getSummonerImage(spells[4].name);
-        try {
-            if (!spellImg1) throw Error('noimage');
-            image(spellImg1, x + 40 + 5, y, 40, 40);
-            if (spells[4].cd > 0) {
+        for (let i = iStart; i < 6; i++) {
+            const spell = spells[i];
+            if (!spell) continue;
+            const img = getSpellImage(spell.name);
+            if (!img) continue;
+
+            const xPos = x + (W + S + S1) + (W + S) * (i - iStart);
+
+            image(img, xPos, y, W, H);
+            if (spell.cd > 0) {
                 noStroke();
-                fill(0, 0, 0, 100);
-                rect(x + 40 + 5, y, 40, 40)
-            }
-        } catch (ex) { }
-
-        const spellImg2 = getSummonerImage(spells[5].name);
-
-        try {
-            if (!spellImg2) throw Error('noimage');
-            image(spellImg2, x + 40 + 5 + 40 + 5, y, 40, 40);
-            if (spells[5].cd > 0) {
+                fill(0, 0, 0, 150);
+                rect(xPos, y, W, H);
                 noStroke();
-                fill(0, 0, 0, 100);
-                rect(x + 40 + 5 + 40 + 5, y, 40, 40)
+                fill(255);
+                text(spells[4].cd, xPos, y, W, H);
             }
-        } catch (ex) { }
+        }
 
+
+        const pad = 3;
+        const hei = 4;
+
+        const val = parseInt(100 / maxHp * hp);
 
         noStroke();
-        fill(255);
-        if (spells[4].cd > 0) text(spells[4].cd, x + 40 + 5, y, 40, 40);
-        if (spells[5].cd > 0) text(spells[5].cd, x + 40 + 5 + 40 + 5, y, 40, 40);
+
+        fill(100);
+        rect(x + pad, y + H - hei - pad, W - pad * 2, hei);
+        fill(0, 200, 0);
+        rect(x + pad, y + H - hei - pad, (W - pad * 2) / 100 * val, hei);
+
+
+        // const spellImg1 = getSpellImage(spells[4].name);
+        // try {
+        //     if (!spellImg1) throw Error('noimage');
+        //     image(spellImg1, x + 40 + 5, y, 40, 40);
+        //     if (spells[4].cd > 0) {
+        //         noStroke();
+        //         fill(0, 0, 0, 100);
+        //         rect(x + 40 + 5, y, 40, 40)
+        //     }
+        // } catch (ex) { }
+
+        // const spellImg2 = getSpellImage(spells[5].name);
+
+        // try {
+        //     if (!spellImg2) throw Error('noimage');
+        //     image(spellImg2, x + 40 + 5 + 40 + 5, y, 40, 40);
+        //     if (spells[5].cd > 0) {
+        //         noStroke();
+        //         fill(0, 0, 0, 100);
+        //         rect(x + 40 + 5 + 40 + 5, y, 40, 40)
+        //     }
+        // } catch (ex) { }
 
     }
 
@@ -154,7 +187,7 @@ function drawEnemiesSpells() {
         if (spells.length < 6) continue;
         if (!vis) continue;
         if (x > screen.width || y > screen.height || x < 0 || y < 0) continue;
-        text(`D: ${spells[4].cd} | F: ${spells[5].cd}`, x, y + 150);
+        text(`D: ${spells[4].cd} | F: ${spells[5].cd}`, x - 100, y + 100);
     }
 
     pop();
@@ -180,6 +213,6 @@ function draw() {
         const readings = (gameData.performance.readings || []).map(e => {
             return `${e.name}: ${e.delta.toFixed(1)}`
         });
-        text(`Time: ${_time} ms\nMax: ${max}\nReads:\n${readings.join('\n')}`, 20, 250);
+        text(`Time: ${_time} ms\nMax: ${max} ms\nReadTime: ${settings.root.readingTime} ms\nReads:\n${readings.join('\n')}`, 20, 250);
     }
 }
