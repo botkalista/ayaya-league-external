@@ -9,7 +9,11 @@ export class Preparator {
     constructor(public ayayaLeague: typeof AyayaLeague) { }
 
     prepareSpell(data: Spell, gameTime: number) {
-        const result = { cd: parseInt(data.getSeconds(gameTime).toFixed(0)), name: data.name }
+        const result = {
+            cd: parseInt(data.getSeconds(gameTime).toFixed(0)),
+            name: data.name,
+            level: data.level
+        }
         return result;
     }
 

@@ -88,17 +88,17 @@ function drawOverlayEnemySpells() {
             if (!spell) continue;
             const img = getSpellImage(spell.name);
             if (!img) continue;
-
             const xPos = x + (W + S + S1) + (W + S) * (i - iStart);
-
             image(img, xPos, y, W, H);
-            if (spell.cd > 0) {
+            if (spell.cd > 0 || spell.level == 0) {
                 noStroke();
                 fill(0, 0, 0, 150);
                 rect(xPos, y, W, H);
-                noStroke();
-                fill(255);
-                text(spells[4].cd, xPos, y, W, H);
+                if (spell.level > 0) {
+                    noStroke();
+                    fill(255);
+                    text(spells[4].cd, xPos, y, W, H);
+                }
             }
         }
 
