@@ -1,19 +1,15 @@
-
-import { OFFSET } from './consts/Offsets';
 import Reader from './MemoryReader';
-
 import { Entity } from './models/Entity';
-import { Spell } from './models/Spell';
-import { Missile } from './models/Missile';
-
 import * as math from 'mathjs';
-import { Performance } from './utils/Performance';
+
 
 
 type EntityKey = keyof Entity;
 type EntityKeys = (EntityKey)[];
 
 export type EntityReadOptions = Partial<{ onlyProps: EntityKeys, skipProps: EntityKeys }>;
+
+
 
 export function readName(address: number, forceFirstAddress: boolean = false): string {
     try {

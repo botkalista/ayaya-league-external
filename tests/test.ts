@@ -28,5 +28,13 @@ CachedClass.set('gameTime', gameTime);
 CachedClass.set('myTeam', myTeam);
 CachedClass.set('nmeTeam', nmeTeam);
 
+console.log(manager.champions.enemies[0].spells.length);
+console.log(manager.champions.enemies[0].spells[4].name);
 
-console.log(manager.champions.enemies[0].name)
+// for (let i = 0; i < manager.champions.enemies[0].spells.length; i++) {
+//     console.log(AyayaLeague.reader.toHex(manager.champions.enemies[0].spells[i].address));
+//     console.log(manager.champions.enemies[0].spells[i].name);
+//     console.log(manager.champions.enemies[0].spells[i].level);
+//     console.log(manager.champions.enemies[0].spells[i].readyAt);
+//     console.log('---')
+// }

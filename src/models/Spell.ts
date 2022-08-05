@@ -9,8 +9,11 @@ const Reader = AyayaLeague.reader;
 export class Spell extends CachedClass {
     constructor(public address: number) { super() };
 
+    private get spellbook(): number {
+        return this.use('spellbook', () => Reader.readProcessMemory(this.address + OFFSET.oSpellBook, "DWORD"));
+    }
     private get info(): number {
-        return this.use('info', () => Reader.readProcessMemory(this.address + OFFSET.oSpellInfo, "DWORD"));
+        return this.use('info', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellInfo, "DWORD"));
     }
     private get data(): number {
         return this.use('data', () => Reader.readProcessMemory(this.info + OFFSET.oSpellInfoData, "DWORD"));
@@ -19,15 +22,15 @@ export class Spell extends CachedClass {
     get name(): string {
         return this.use('name', () => {
             const sNamePtr = Reader.readProcessMemory(this.data + OFFSET.oSpellInfoDataName, "DWORD");
-            return readName(sNamePtr);
+            return readName(sNamePtr, true);
         });
     }
 
     get readyAt(): number {
-        return this.use('readyAt', () => Reader.readProcessMemory(this.address + OFFSET.oSpellReadyAt, "FLOAT"));
+        return this.use('readyAt', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellReadyAt, "FLOAT"));
     }
     get level(): number {
-        return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oSpellLevel, 'DWORD'));
+        return this.use('level', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellLevel, 'DWORD'));
     }
 
 
