@@ -1,4 +1,14 @@
 {
+    "EzrealQ": {
+        "width": 60,
+        "speed": 2000,
+        "range": 1200
+    },
+    "EzrealW": {
+        "width": 80,
+        "speed": 1700,
+        "range": 1200
+    },
     "EzrealR": {
         "width": 160,
         "speed": 2000,

@@ -3,6 +3,7 @@ import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
 import { worldToScreen } from "../utils/Utils";
 import { CachedClass } from './CachedClass';
+import * as SAT from 'sat';
 
 const Reader = AyayaLeague.reader;
 
@@ -22,5 +23,13 @@ export class Missile extends CachedClass {
     }
     get screenEndPos(): Vector2 {
         return worldToScreen(this.gameEndPos, CachedClass.get('screen'), CachedClass.get('matrix'));
+    }
+
+    get satHitbox() {
+        return this.use('satHitbox', () => {
+            const length = Math.hypot(this.screenEndPos.x - this.screenStartPos.x, this.screenEndPos.y - this.screenStartPos.y);
+            const width = 120;
+            return new SAT.Box(new SAT.Vector(this.screenStartPos.x, this.screenStartPos.y), length, width).toPolygon();
+        });
     }
 }

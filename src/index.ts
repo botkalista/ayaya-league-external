@@ -7,9 +7,13 @@ import { Vector2 } from './models/Vector';
 import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
 import { Performance } from './utils/Performance';
-
 import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from './models/CachedClass';
+import ActionControllerWrapper from './ActionControllerWrapper';
+
+import * as path from 'path';
+import * as fs from 'fs';
+import * as child from 'child_process';
 
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
@@ -27,6 +31,10 @@ let highestReadTime = 0;
 
 let renderer: number;
 let screen: Vector2;
+
+const threads: child.ChildProcess[] = [];
+
+const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => any }[] = []
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -75,7 +83,23 @@ function registerHandlers() {
     });
 }
 
-function main() {
+async function main() {
+
+    //* Setup ActionControllerThread
+    const nodePath = path.join(__dirname, '../../exe/node_16.15.0_x64.exe');
+    const threadPath = path.join(__dirname, '../../threads/action_controller/ActionControllerThread.js');
+    const actionControllerProcess = child.exec(nodePath + ' ' + threadPath);
+
+    actionControllerProcess.stderr.on('data', e => {
+        console.error('[THREAD_ACTION]', e);
+    })
+    actionControllerProcess.stdout.on('data', e => {
+        if (e.toString().startsWith('Listening')) ActionControllerWrapper.connect();
+        console.log('[THREAD_ACTION]', e);
+    })
+
+    threads.push(actionControllerProcess);
+
 
     loadSettingsFromFile();
     registerHandlers();
@@ -92,10 +116,35 @@ function main() {
         settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
     });
 
+
+    //* Load user scripts
+    const basePath = path.join(__dirname, '../../scripts/userscripts');
+    const userScriptsPaths = fs.readdirSync(basePath);
+
+    for (const scriptPath of userScriptsPaths) {
+        try {
+            if (scriptPath.endsWith('.ts')) {
+                console.log('Skipped', scriptPath, ' - You need to compile it to js');
+                continue;
+            }
+            const imp = await require(path.join(basePath, scriptPath));
+            userScripts.push(imp);
+        } catch (ex) {
+            console.error('Error loading', scriptPath, ex);
+        }
+    }
+
+    console.log('Loaded', userScripts.length, 'user scripts.');
+
+    userScripts.forEach(s => s.setup());
+
+
+    //* Connect to ActionControllerThread
+    // ActionControllerWrapper.connect();
+
     loop();
 
 }
-
 
 const performance = new Performance();
 
@@ -129,6 +178,10 @@ function loop() {
         matrix
     }
 
+
+
+    userScripts.forEach(s => s.onTick(manager));
+
     // --- performance ---
     const result = performance.end();
     if (result.time > highestReadTime) highestReadTime = result.time;
@@ -144,5 +197,6 @@ app.whenReady().then(main);
 
 
 app.on('will-quit', () => {
-    globalShortcut.unregisterAll()
+    globalShortcut.unregisterAll();
+    threads.forEach(t => t.kill());
 });

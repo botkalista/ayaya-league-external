@@ -5,6 +5,7 @@ import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
 import { factoryFromArray, worldToScreen } from "../utils/Utils";
 import { Spell } from "./Spell";
+import * as SAT from 'sat';
 
 const Reader = AyayaLeague.reader;
 
@@ -47,6 +48,10 @@ export class Entity extends CachedClass {
             if (this.name.startsWith('PracticeTool')) return [];
             return factoryFromArray(Spell, AyayaLeague.getSpellsOf(this.address))
         });
+    }
+
+    get satHitbox() {
+        return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 120 / 2));
     }
 
 }

@@ -49,12 +49,24 @@ function addHandlars() {
     ipcRenderer.on('gameData', function (evt, message) {
         const data = JSON.parse(message);
         gameData = data;
+
+
+
+
+        gameData.missiles.push(
+            {
+                ePos: { x: 4011.968994140625, y: -68.89016723632812, z: 10945.3203125 },
+                sPos: { x: 3766.420166015625, y: -68.89016723632812, z: 9771.7333984375 }
+            }
+        );
+
     });
 }
 
 function setup() {
     canvas = createCanvas(10, 10);
     addHandlars();
+    console.log(process.version)
     // frameRate(50);
 }
 
@@ -144,7 +156,7 @@ function drawOverlayEnemySpells() {
             const img = getSpellImage(spell.name);
             if (!img) continue;
             const xPos = x + (W + S + S1) + (W + S) * (i - iStart);
-          
+
             try {
                 image(img, xPos, y, W, H);
             } catch (ex) {
@@ -220,6 +232,9 @@ function drawPlayerRange() {
     for (let i = 0; i < points.length; i++) {
         line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
     }
+
+
+
     pop();
 }
 
@@ -266,18 +281,18 @@ function drawMissiles() {
         const angle = createVector(ePos.x - sPos.x, ePos.y - sPos.y).heading();
         const length = dist(sPos.x, sPos.y, ePos.x, ePos.y);
 
-        const width = spellsData.EzrealR.width;
+        const width = spellsData.EzrealW.width;
 
         stroke(200, 0, 0);
         noFill();
         translate(sPos.x, sPos.y);
-        line(0, 0, ePos.x - sPos.x, ePos.y - sPos.y);
         rotate(angle);
         stroke(50);
         strokeWeight(2);
         fill(50, 100);
         rect(0, -width / 2, length, width);
         pop();
+
     }
 
 

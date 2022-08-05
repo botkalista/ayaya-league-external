@@ -5,3 +5,4 @@ dump
 settings.json
 cache
 tests
+*.exe

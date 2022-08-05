@@ -1,30 +1,29 @@
 
-
-import * as robot from 'robotjs';
+const robot = require('robotjs');
 
 class ActionController {
-    async sleep(ms: number) {
+    async sleep(ms) {
         await new Promise(r => setTimeout(r, ms));
     }
     leftClick() {
         robot.mouseClick('left');
     }
     rightClick() {
-        robot.mouseClick('left');
+        robot.mouseClick('right');
     }
-    leftClickAt(x: number, y: number) {
+    leftClickAt(x, y) {
         this.moveMouse(x, y);
         this.leftClick();
     }
-    rightClickAt(x: number, y: number) {
+    rightClickAt(x, y) {
         this.moveMouse(x, y);
         this.rightClick();
     }
-    moveMouse(x: number, y: number) {
+    moveMouse(x, y) {
         robot.moveMouse(x, y);
     }
 }
 
 const instance = new ActionController();
 
-export default instance;
+module.exports = instance;

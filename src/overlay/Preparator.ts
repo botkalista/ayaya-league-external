@@ -39,8 +39,8 @@ export class Preparator {
 
     prepareMissile(data: Missile) {
         const result = {
-            sPos: data.screenStartPos,
-            ePos: data.screenEndPos
+            sPos: data.gameStartPos,
+            ePos: data.gameEndPos
         }
         return result;
     }

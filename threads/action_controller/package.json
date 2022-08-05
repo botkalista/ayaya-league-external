@@ -1,0 +1,13 @@
+{
+  "name": "action_controller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ActionController.js",
+  "keywords": [],
+  "author": "Emily",
+  "license": "MIT",
+  "dependencies": {
+    "robotjs": "^0.6.0",
+    "ws": "^8.8.1"
+  }
+}

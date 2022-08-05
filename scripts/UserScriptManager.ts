@@ -6,15 +6,17 @@ import { factoryFromArray } from '../src/utils/Utils';
 import { TeamDistinct } from '../src/models/TeamDistinct';
 import { CachedClass } from '../src/models/CachedClass';
 import { Entity } from '../src/models/Entity';
-// import ActionController from '../src/ActionController';
+import { Vector2 } from '../src/models/Vector';
+import ActionControllerWrapper from '../src/ActionControllerWrapper';
 
-const ActionController = {}
+import * as SAT from 'sat';
+
 export class UserScriptManager extends CachedClass {
 
     constructor() { super(); }
 
     get mouse() {
-        return ActionController;
+        return ActionControllerWrapper;
     }
 
     get game() {
@@ -71,6 +73,15 @@ export class UserScriptManager extends CachedClass {
             this.set('minions', teamDistinctMinions);
             return teamDistinctMonsters;
         });
+    }
+
+    checkCollision(target: Entity, missile: Missile): { result: boolean, evadeAt: Vector2 } {
+        const response = new SAT.Response();
+        const res = SAT.testCirclePolygon(target.satHitbox, missile.satHitbox, response);
+        return {
+            result: res,
+            evadeAt: res ? new Vector2(response.overlapV.x, response.overlapV.y) : Vector2.zero()
+        }
     }
 
     debug() {
