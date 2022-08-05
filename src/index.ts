@@ -88,7 +88,7 @@ async function main() {
     //* Setup ActionControllerThread
     const nodePath = path.join(__dirname, '../../exe/node_16.15.0_x64.exe');
     const threadPath = path.join(__dirname, '../../threads/action_controller/ActionControllerThread.js');
-    const actionControllerProcess = child.exec(nodePath + ' ' + threadPath);
+    const actionControllerProcess = child.execFile(nodePath, [threadPath]);
 
     actionControllerProcess.stderr.on('data', e => {
         console.error('[THREAD_ACTION]', e);
