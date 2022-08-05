@@ -135,7 +135,7 @@ function loop() {
     finalData.performance.time = result.time;
     sendMessageToWin(overlayWindow, 'gameData', finalData);
     const settings = getSettings();
-    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 20));
+    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 10));
 }
 
 app.whenReady().then(main);

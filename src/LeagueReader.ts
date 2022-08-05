@@ -46,7 +46,8 @@ class AyayaLeagueReader {
     getMissiles(): number[] {
         const missileManager = Reader.readProcessMemory(OFFSET.oMissileManager, "DWORD", true);
         const rootNode = Reader.readProcessMemory(missileManager + 0x4, "DWORD");
-        const addresses = readMap(rootNode);
+        const missilesSize = Reader.readProcessMemory(missileManager + 0x8, "DWORD");
+        const addresses = readMap(rootNode, missilesSize + 1);
         return addresses.splice(1);
     }
 

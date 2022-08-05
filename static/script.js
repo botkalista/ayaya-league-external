@@ -145,22 +145,10 @@ function drawOverlayEnemySpells() {
 }
 
 function drawPlayerRange() {
-
-
-    // push();
-    // stroke(0, 220, 0);
-    // strokeWeight(3);
-    // noFill();
-    // 
-    // ellipse(me.x, me.y, me.range, me.range);
-    // pop();
-
-
     const points = gameData.me.circle3d;
-
     push();
-    stroke(0, 220, 0);
-    strokeWeight(3);
+    stroke(120);
+    strokeWeight(2);
     noFill();
     for (let i = 0; i < points.length; i++) {
         line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
@@ -171,8 +159,8 @@ function drawPlayerRange() {
 function drawEnemiesRange() {
     push();
 
-    stroke(0, 220, 0);
-    strokeWeight(3);
+    stroke(120, 20, 20);
+    strokeWeight(2);
     noFill();
 
     for (const enemy of gameData.enemyChampions) {
@@ -186,18 +174,27 @@ function drawEnemiesRange() {
 }
 
 function drawMissiles() {
-    push();
 
-    stroke(0);
-    strokeWeight(1);
-    noFill();
+
+
 
     for (const missile of gameData.missiles) {
+        push();
+        stroke(0);
+        strokeWeight(1);
+        fill(50, 50, 50, 100);
         const { sPos, ePos } = missile;
-        line(sPos.x, sPos.y, ePos.x, ePos.y);
+        // if (sPos)
+        // line(sPos.x, sPos.y, ePos.x, ePos.y);
+        const angle = createVector(ePos.x - sPos.x, ePos.y - sPos.y).heading();
+        const length = dist(sPos.x, sPos.y, ePos.x, ePos.y);
+        translate(sPos.x, sPos.y)
+        rotate(angle);
+        rect(0, 0, length, 10);
+        pop();
     }
 
-    pop();
+
 }
 
 function draw() {
@@ -217,9 +214,6 @@ function draw() {
 
         const _time = (gameData.performance.time || 0).toFixed(1);
         const max = (gameData.performance.max || 0).toFixed(1);
-        const readings = (gameData.performance.readings || []).map(e => {
-            return `${e.name}: ${e.delta.toFixed(1)}`
-        });
-        text(`Time: ${_time} ms\nMax: ${max} ms\nReadTime: ${settings.root.readingTime} ms\nReads:\n${readings.join('\n')}`, 20, 250);
+        text(`ReadTime: ${settings.root.readingTime} ms\nTime: ${_time} ms\nMax: ${max} ms\nMissiles: ${gameData.missiles.length}`, 20, 250);
     }
 }

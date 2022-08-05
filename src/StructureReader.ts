@@ -23,7 +23,7 @@ export function readName(address: number, forceFirstAddress: boolean = false): s
     return name;
 }
 
-export function readMap(rootNode: number) {
+export function readMap(rootNode: number, size?: number) {
     const checked = new Set<number>();
     const toCheck = new Set<number>();
     toCheck.add(rootNode);
@@ -32,11 +32,14 @@ export function readMap(rootNode: number) {
         checked.add(target);
         toCheck.delete(target);
         const nextObject1 = Reader.readProcessMemory(target + 0x0, "DWORD");
-        const nextObject2 = Reader.readProcessMemory(target + 0x4, "DWORD");
-        const nextObject3 = Reader.readProcessMemory(target + 0x8, "DWORD");
         if (!checked.has(nextObject1)) toCheck.add(nextObject1);
+        if (size && checked.size >= size) break;
+        const nextObject2 = Reader.readProcessMemory(target + 0x4, "DWORD");
         if (!checked.has(nextObject2)) toCheck.add(nextObject2);
+        if (size && checked.size >= size) break;
+        const nextObject3 = Reader.readProcessMemory(target + 0x8, "DWORD");
         if (!checked.has(nextObject3)) toCheck.add(nextObject3);
+        if (size && checked.size >= size) break;
     }
     return Array.from(checked.values());
 }
