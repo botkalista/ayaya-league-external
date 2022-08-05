@@ -17,6 +17,10 @@ export function readName(address: number, forceFirstAddress: boolean = false): s
         if ((length < 16 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
         const nameAddress = Reader.readProcessMemory(address, 'DWORD');
         const name = Reader.readProcessMemory(nameAddress, 'STR');
+
+        if (name.startsWith(' ') || name.length == 0) {
+            console.log('ERROR READING NAME AT', address);
+        }
         return name;
     } catch (ex) {
         return "__NO_NAME__"

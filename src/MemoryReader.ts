@@ -100,7 +100,7 @@ export class AyayaMemoryReader {
             const chars = [];
 
             const buff = mem.readBuffer(this.handle, address + (fromBaseAddress ? this.baseAddress : 0), 50)
-            for (let i = 0; i < buff.size; i++) {
+            for (let i = 0; i < buff.length; i++) {
                 const target = buff.at(i);
                 if (target == 0 && i > 0) break;
                 chars.push(String.fromCharCode(target));
