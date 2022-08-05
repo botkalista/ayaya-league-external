@@ -117,8 +117,10 @@ function loop() {
     const champs = AyayaLeague.getChampionsList(undefined, performance);
     performance.spot('champsRead');
     const enemyChampions = champs.filter(e => e.team == enemyTeamId).map(e => preparator.prepareChampion(e, screen, matrix, gameTime))
-
     performance.spot('champsPrepare');
+
+    const missiles = AyayaLeague.getMissilesList().map(e => preparator.prepareMissile(e, screen, matrix));
+    performance.spot('missiles');
 
     // --- performance ---
     const result = performance.end();
@@ -129,6 +131,7 @@ function loop() {
     const finalData = {
         me,
         enemyChampions,
+        missiles,
         performance: {
             // readings: result.readings,
             readings: [],

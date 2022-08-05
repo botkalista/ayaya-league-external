@@ -4,8 +4,9 @@ import * as fs from 'fs';
 
 let settings: Settings = {
     me: { range: true },
-    nmeChamps: { range: true, spells: true },
+    nmeChamps: { range: true },
     over: { nmeSpells: true, performance: true },
+    missiles: { show: true },
     root: { readingTime: 3000 }
 }
 

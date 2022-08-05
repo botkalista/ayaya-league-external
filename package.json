@@ -13,7 +13,8 @@
     "compile": "tsc --project tsconfig.json",
     "exe": "electron dist/index.js",
     "exe:nohook": "electron dist/index.js nohook",
-    "execute": "npm run compile && npm run exe"
+    "execute": "npm run compile && npm run exe",
+    "execute:nohook": "npm run compile && npm run exe nohook"
   },
   "keywords": [],
   "author": "Emily",

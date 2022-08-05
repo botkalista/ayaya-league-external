@@ -16,7 +16,8 @@ export const OFFSET = {
     oHeroManager: 0x1872A68,
     oMinionManager: 0x24c18b4,
     oTurretManager: 0x310792c,
-    oMissileManager: 0x24c1860,
+    oMissileManager: 0x3111450, // 0x24c1860 <-- ?
+
 
     oUnderMouse: 0x24c1a24,
 
@@ -25,7 +26,7 @@ export const OFFSET = {
 
 
     oNetClient: 0x310BA6C, //Not sure
-    oChatInstance: 0x31114A8, 
+    oChatInstance: 0x31114A8,
     fPrintChat: 0x5E2150, // E8 ? ? ? ? 6A 00 68 ? ? ? ? E8 ? ? ? ? 83 C4 04
 
 
@@ -49,6 +50,13 @@ export const OFFSET = {
     oObjAD: 0x134C,
     oObjBonusAD: 0x12C4,
 
+    // --- MISSILES ---
+    oMissileObjectEntry: 0x14,
+    oMissileSpellInfo: 0x0260,
+    oMissileSrcIdx: 0x2DC,
+    oMissileDestIdx: 0x330,
+    oMissileStartPos: 0x02DC,
+    oMissileEndPos: 0x02E8,
 
 
     oBuffManager: 0x2178, //Not sure
@@ -80,6 +88,14 @@ export const OFFSET = {
     oGameWindowHeight: 16,
 
 }
+
+// namespace MissileData {
+//     static constexpr int SpellInfo = 0x0260;
+//     static constexpr int SrcIdx = 0x2DC;
+//     static constexpr int DestIdx = 0x330;
+//     static constexpr int StartPos = 0x02DC;
+//     static constexpr int EndPos = 0x02E8;
+// }
 
 // int Offsets::MissileSpellInfo = 0x0260;
 // int Offsets::MissileSrcIdx = 0x2DC;

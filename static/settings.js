@@ -4,9 +4,10 @@ const { ipcRenderer } = require('electron');
 const state = Vue.reactive({
     settings: {
         me: { range: true },
-        nmeChamps: { range: true, spells: true },
+        nmeChamps: { range: true },
         over: { nmeSpells: true, performance: true },
-        root: { readingTime: 3000 }
+        root: { readingTime: 3000 },
+        missiles: { show: true }
     },
 });
 

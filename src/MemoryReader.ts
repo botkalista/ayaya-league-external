@@ -21,6 +21,7 @@ export class AyayaMemoryReader {
     get baseAddr() { return this.baseAddress; }
     get pHandle() { return this.handle; }
 
+    get dumpSize() { return this.dump ? this.dump.length : 0 }
 
     loadDump() {
         this.dump = fs.readFileSync('dump/dump.hex');

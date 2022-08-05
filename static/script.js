@@ -145,16 +145,26 @@ function drawOverlayEnemySpells() {
 }
 
 function drawPlayerRange() {
-    push();
 
+
+    // push();
+    // stroke(0, 220, 0);
+    // strokeWeight(3);
+    // noFill();
+    // 
+    // ellipse(me.x, me.y, me.range, me.range);
+    // pop();
+
+
+    const points = gameData.me.circle3d;
+
+    push();
     stroke(0, 220, 0);
     strokeWeight(3);
     noFill();
-
-    const { me } = gameData;
-
-    ellipse(me.x, me.y, me.range, me.range);
-
+    for (let i = 0; i < points.length; i++) {
+        line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
+    }
     pop();
 }
 
@@ -175,19 +185,16 @@ function drawEnemiesRange() {
     pop();
 }
 
-function drawEnemiesSpells() {
+function drawMissiles() {
     push();
 
     stroke(0);
-    strokeWeight(2);
-    fill(0);
+    strokeWeight(1);
+    noFill();
 
-    for (const enemy of gameData.enemyChampions) {
-        const { x, y, vis, spells } = enemy;
-        if (spells.length < 6) continue;
-        if (!vis) continue;
-        if (x > screen.width || y > screen.height || x < 0 || y < 0) continue;
-        text(`D: ${spells[4].cd} | F: ${spells[5].cd}`, x - 100, y + 100);
+    for (const missile of gameData.missiles) {
+        const { sPos, ePos } = missile;
+        line(sPos.x, sPos.y, ePos.x, ePos.y);
     }
 
     pop();
@@ -200,8 +207,8 @@ function draw() {
 
     if (gameData.me && settings.me && settings.me.range) drawPlayerRange();
     if (gameData.enemyChampions && settings.nmeChamps && settings.nmeChamps.range) drawEnemiesRange();
-    if (gameData.enemyChampions && settings.nmeChamps && settings.nmeChamps.spells) drawEnemiesSpells();
     if (gameData.enemyChampions && settings.over && settings.over.nmeSpells) drawOverlayEnemySpells();
+    if (gameData.missiles && settings.missiles && settings.missiles.show) drawMissiles();
 
     textSize(20);
     noStroke();

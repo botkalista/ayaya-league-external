@@ -96,8 +96,9 @@
             <label class="checkbox">
                 <input type="checkbox" v-model="settings.nmeChamps.range" @change="updateSettings()"> Enemy range
             </label>
+            <div class="separator"></div>
             <label class="checkbox">
-                <input type="checkbox" v-model="settings.nmeChamps.spells" @change="updateSettings()"> Enemy spells
+                <input type="checkbox" v-model="settings.missiles.show" @change="updateSettings()"> Missiles
             </label>
             <div class="separator"></div>
             <label class="checkbox">
@@ -110,7 +111,8 @@
             <div class="separator"></div>
             <div style="display: flex; align-items: center;gap: 5px;">
                 <input type="number" min="16" max="5000" v-model="settings.root.readingTime">
-                <button @click="updateSettings()" class="button is-warning is-small is-rounded" style="height: 22px;"> Update </button>
+                <button @click="updateSettings()" class="button is-warning is-small is-rounded" style="height: 22px;">
+                    Update </button>
             </div>
             <div class="separator"></div>
             <div class="separator"></div>
@@ -118,7 +120,7 @@
                 <button @click="reloadWindows" class="button is-info is-small"> Reload overlay </button>
                 <button @click="openOverlayDevTools" class="button is-info is-small"> Open devtools </button>
             </div>
-            
+
         </div>
 
     </div>

@@ -4,7 +4,7 @@ import { OFFSET } from './consts/Offsets'
 import { Entity } from './models/Entity';
 import { Spell } from './models/Spell';
 import { Vector2, Vector3, Vector4 } from './models/Vector';
-import { EntityReadOptions, readEntity, readMatrix, readVTable } from './StructureReader';
+import { EntityReadOptions, readEntity, readMap, readMatrix, readMissile, readVTable } from './StructureReader';
 import { matrixToArray } from './utils/Utils';
 import { Performance } from './utils/Performance';
 
@@ -54,11 +54,13 @@ class AyayaLeagueReader {
         const turrets = turretsAddresses.map(e => readEntity(e, opts));
         return turrets;
     }
+
     getMissilesList(_opts?: EntityReadOptions) {
         const opts: EntityReadOptions = _opts || { skipProps: ["spells"] }
         const missileManager = Reader.readProcessMemory(OFFSET.oMissileManager, "DWORD", true);
-        const missilesAddresses = readVTable(missileManager);
-        const missiles = missilesAddresses.map(e => readEntity(e, opts));
+        const rootNode = Reader.readProcessMemory(missileManager + 0x4, "DWORD");
+        const addresses = readMap(rootNode);
+        const missiles = addresses.splice(1).map(e => readMissile(e));
         return missiles;
     }
 
@@ -91,6 +93,37 @@ class AyayaLeagueReader {
         return out;
 
     }
+
+
+
+    getCircle3D(pos: Vector3, points: number, radius: number, screenSize: Vector2, viewProjMatrixArg?: number[]) {
+
+        const p = Math.PI * 2 / points;
+
+        const result: [Vector2, Vector2][] = []
+
+        for (let a = 0; a < Math.PI * 2; a += p) {
+            const start = new Vector3(
+                radius * Math.cos(a) + pos.x,
+                radius * Math.sin(a) + pos.z,
+                pos.y
+            );
+            const end = new Vector3(
+                radius * Math.cos(a + p) + pos.x,
+                radius * Math.sin(a + p) + pos.z,
+                pos.y
+            );
+            const start2 = new Vector3(start.x, start.z, start.y);
+            const end2 = new Vector3(end.x, end.z, end.y);
+            const startScreen = this.worldToScreen(start2, screenSize, viewProjMatrixArg);
+            const endScreen = this.worldToScreen(end2, screenSize, viewProjMatrixArg);
+            result.push([startScreen, endScreen]);
+        }
+
+        return result;
+
+    }
+
     getScreenSize(renderer: number) {
         const width = Reader.readProcessMemory(renderer + OFFSET.oGameWindowWidth, "DWORD");
         const height = Reader.readProcessMemory(renderer + OFFSET.oGameWindowHeight, "DWORD");

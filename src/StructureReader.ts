@@ -1,14 +1,17 @@
 
 import { OFFSET } from './consts/Offsets';
 import Reader from './MemoryReader';
+
 import { Entity } from './models/Entity';
 import { Spell } from './models/Spell';
+import { Missile } from './models/Missile';
+
 import * as math from 'mathjs';
 import { Performance } from './utils/Performance';
 
+
 type EntityKey = keyof Entity;
 type EntityKeys = (EntityKey)[];
-
 
 export type EntityReadOptions = Partial<{ onlyProps: EntityKeys, skipProps: EntityKeys }>;
 
@@ -30,6 +33,19 @@ export function readSpell(address: number): Spell {
     spell.name = readName(sNamePtr, true);
     return spell;
 }
+
+export function readMissile(address: number): Missile {
+    const missile = Reader.readProcessMemory(address + OFFSET.oMissileObjectEntry, "DWORD");
+    const sInfo = Reader.readProcessMemory(missile + OFFSET.oMissileSpellInfo, "DWORD");
+    const startPos = Reader.readProcessMemory(missile + OFFSET.oMissileStartPos, "VEC3");
+    const endPos = Reader.readProcessMemory(missile + OFFSET.oMissileEndPos, "VEC3");
+    const result = new Missile();
+    result.spellInfo = sInfo;
+    result.startPos = startPos;
+    result.endPos = endPos;
+    return result;
+}
+
 export function readEntity(address: number, opts?: EntityReadOptions, performance?: Performance): Entity | undefined {
 
     const entity = new Entity();
@@ -70,6 +86,26 @@ export function readEntity(address: number, opts?: EntityReadOptions, performanc
 
     return entity;
 }
+
+export function readMap(rootNode: number) {
+    const checked = new Set<number>();
+    const toCheck = new Set<number>();
+    toCheck.add(rootNode);
+    while (toCheck.size > 0) {
+        const target: number = Array.from(toCheck.values())[0];
+        checked.add(target);
+        toCheck.delete(target);
+        const nextObject1 = Reader.readProcessMemory(target + 0x0, "DWORD");
+        const nextObject2 = Reader.readProcessMemory(target + 0x4, "DWORD");
+        const nextObject3 = Reader.readProcessMemory(target + 0x8, "DWORD");
+        if (!checked.has(nextObject1)) toCheck.add(nextObject1);
+        if (!checked.has(nextObject2)) toCheck.add(nextObject2);
+        if (!checked.has(nextObject3)) toCheck.add(nextObject3);
+    }
+    return Array.from(checked.values());
+}
+
+
 export function readMatrix(address: number): math.Matrix {
     const buffer = Reader.readProcessMemoryBuffer(address, 64, true);
 

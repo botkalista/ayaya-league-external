@@ -1,8 +1,11 @@
 
 
-export class Vector2 {
+class Vector {
+}
 
-    constructor(public x: number, public y: number) { }
+export class Vector2 extends Vector {
+
+    constructor(public x: number, public y: number) { super() }
 
     static zero() {
         const instance = new Vector2(0, 0);
@@ -14,6 +17,13 @@ export class Vector2 {
         return instance;
     }
 
+    getFlat() {
+        const cp = this.copy();
+        cp.x = parseInt(cp.x.toFixed(0));
+        cp.y = parseInt(cp.y.toFixed(0));
+        return cp;
+    }
+
     copy() {
         const instance = new Vector2(this.x, this.y);
         return instance;
@@ -21,9 +31,9 @@ export class Vector2 {
 
 }
 
-export class Vector3 {
+export class Vector3 extends Vector {
 
-    constructor(public x: number, public y: number, public z: number) { }
+    constructor(public x: number, public y: number, public z: number) { super() }
 
     static zero() {
         const instance = new Vector3(0, 0, 0);
@@ -42,9 +52,9 @@ export class Vector3 {
 
 }
 
-export class Vector4 {
+export class Vector4 extends Vector {
 
-    constructor(public x: number, public y: number, public z: number, public w: number) { }
+    constructor(public x: number, public y: number, public z: number, public w: number) { super() }
 
     static zero() {
         const instance = new Vector4(0, 0, 0, 0);
