@@ -6,10 +6,16 @@ import { factoryFromArray } from '../src/utils/Utils';
 import { TeamDistinct } from '../src/models/TeamDistinct';
 import { CachedClass } from '../src/models/CachedClass';
 import { Entity } from '../src/models/Entity';
+// import ActionController from '../src/ActionController';
 
+const ActionController = {}
 export class UserScriptManager extends CachedClass {
 
     constructor() { super(); }
+
+    get mouse() {
+        return ActionController;
+    }
 
     get game() {
         return this.use('game', () => new Game());

@@ -35,6 +35,11 @@ export class Vector3 extends Vector {
 
     constructor(public x: number, public y: number, public z: number) { super() }
 
+    static fromData(data: { x: number, y: number, z: number }) {
+        const instance = new Vector3(data.x, data.y, data.z);
+        return instance;
+    }
+
     static zero() {
         const instance = new Vector3(0, 0, 0);
         return instance;

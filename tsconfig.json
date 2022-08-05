@@ -6,6 +6,6 @@
     "moduleResolution": "node",
     "outDir": "dist"
   },
-  "include": ["src/index.ts"],
+  "include": ["./src/index.ts"],
   "exclude": ["node_modules"]
 }

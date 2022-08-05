@@ -7,6 +7,12 @@ let settings = {};
 
 let assets = {};
 
+let spellsData = {}
+
+function preload() {
+    spellsData = loadJSON('data/missiles.json');
+}
+
 function getChampionImage(name) {
     if (assets[name]) return assets[name];
     const img = createImg(`http://ddragon.leagueoflegends.com/cdn/12.14.1/img/champion/${name}.png`, name);
@@ -52,6 +58,55 @@ function setup() {
     // frameRate(50);
 }
 
+
+//* -----------------------------------------------
+
+
+function __internal_worldToScreen(pos, screenSize, viewProjMatrix) {
+    const out = { x: 0, y: 0 }
+    const screen = { x: screenSize.x, y: screenSize.y };
+    const clipCoords = { x: 0, y: 0, z: 0, w: 0 }
+    clipCoords.x = pos.x * viewProjMatrix[0] + pos.y * viewProjMatrix[4] + pos.z * viewProjMatrix[8] + viewProjMatrix[12];
+    clipCoords.y = pos.x * viewProjMatrix[1] + pos.y * viewProjMatrix[5] + pos.z * viewProjMatrix[9] + viewProjMatrix[13];
+    clipCoords.z = pos.x * viewProjMatrix[2] + pos.y * viewProjMatrix[6] + pos.z * viewProjMatrix[10] + viewProjMatrix[14];
+    clipCoords.w = pos.x * viewProjMatrix[3] + pos.y * viewProjMatrix[7] + pos.z * viewProjMatrix[11] + viewProjMatrix[15];
+    if (clipCoords.w < 1.0) clipCoords.w = 1;
+    const m = { x: 0, y: 0, z: 0 };
+    m.x = clipCoords.x / clipCoords.w;
+    m.y = clipCoords.y / clipCoords.w;
+    m.z = clipCoords.z / clipCoords.w;
+    out.x = (screen.x / 2 * m.x) + (m.x + screen.x / 2);
+    out.y = -(screen.y / 2 * m.y) + (m.y + screen.y / 2);
+    return out;
+}
+function __internal_getCircle3D(pos, points, radius, screenSize, viewProjMatrixArg) {
+
+    const p = Math.PI * 2 / points;
+    const result = []
+
+    for (let a = 0; a < Math.PI * 2; a += p) {
+        const start = {
+            x: radius * Math.cos(a) + pos.x,
+            y: radius * Math.sin(a) + pos.z,
+            z: pos.y
+        }
+        const end = {
+            x: radius * Math.cos(a + p) + pos.x,
+            y: radius * Math.sin(a + p) + pos.z,
+            z: pos.y
+        }
+        const start2 = { x: start.x, y: start.z, z: start.y }
+        const end2 = { x: end.x, y: end.z, z: end.y }
+        const startScreen = __internal_worldToScreen(start2, screenSize, viewProjMatrixArg);
+        const endScreen = __internal_worldToScreen(end2, screenSize, viewProjMatrixArg);
+        result.push([startScreen, endScreen]);
+    }
+
+    return result;
+
+}
+
+
 function drawOverlayEnemySpells() {
     push();
 
@@ -89,7 +144,15 @@ function drawOverlayEnemySpells() {
             const img = getSpellImage(spell.name);
             if (!img) continue;
             const xPos = x + (W + S + S1) + (W + S) * (i - iStart);
-            image(img, xPos, y, W, H);
+          
+            try {
+                image(img, xPos, y, W, H);
+            } catch (ex) {
+                noStroke();
+                fill(0);
+                rect(xPos, y, W, H);
+            }
+
             if (spell.cd > 0 || spell.level == 0) {
                 noStroke();
                 fill(0, 0, 0, 150);
@@ -145,7 +208,11 @@ function drawOverlayEnemySpells() {
 }
 
 function drawPlayerRange() {
-    const points = gameData.me.circle3d;
+    const me = gameData.me;
+    const screen = gameData.screen;
+    const matrix = gameData.matrix;
+    const points = __internal_getCircle3D(me.pos, 50, me.range, screen, matrix);
+
     push();
     stroke(120);
     strokeWeight(2);
@@ -157,6 +224,10 @@ function drawPlayerRange() {
 }
 
 function drawEnemiesRange() {
+
+    const screen = gameData.screen;
+    const matrix = gameData.matrix;
+
     push();
 
     stroke(120, 20, 20);
@@ -165,9 +236,14 @@ function drawEnemiesRange() {
 
     for (const enemy of gameData.enemyChampions) {
         const { x, y, vis, range } = enemy;
+        const points = __internal_getCircle3D(enemy.pos, 50, range, screen, matrix);
         if (!vis) continue;
         if (x > screen.width || y > screen.height || x < 0 || y < 0) continue;
-        ellipse(x, y, range * 1.2, range * 1.2);
+
+        for (let i = 0; i < points.length; i++) {
+            line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
+        }
+
     }
 
     pop();
@@ -175,22 +251,32 @@ function drawEnemiesRange() {
 
 function drawMissiles() {
 
-
-
+    const screen = gameData.screen;
+    const matrix = gameData.matrix;
 
     for (const missile of gameData.missiles) {
         push();
-        stroke(0);
-        strokeWeight(1);
-        fill(50, 50, 50, 100);
-        const { sPos, ePos } = missile;
-        // if (sPos)
-        // line(sPos.x, sPos.y, ePos.x, ePos.y);
+
+        const _sPos = missile.sPos;
+        const _ePos = missile.ePos;
+
+        const sPos = __internal_worldToScreen(_sPos, screen, matrix);
+        const ePos = __internal_worldToScreen(_ePos, screen, matrix);
+
         const angle = createVector(ePos.x - sPos.x, ePos.y - sPos.y).heading();
         const length = dist(sPos.x, sPos.y, ePos.x, ePos.y);
-        translate(sPos.x, sPos.y)
+
+        const width = spellsData.EzrealR.width;
+
+        stroke(200, 0, 0);
+        noFill();
+        translate(sPos.x, sPos.y);
+        line(0, 0, ePos.x - sPos.x, ePos.y - sPos.y);
         rotate(angle);
-        rect(0, 0, length, 10);
+        stroke(50);
+        strokeWeight(2);
+        fill(50, 100);
+        rect(0, -width / 2, length, width);
         pop();
     }
 
@@ -200,8 +286,9 @@ function drawMissiles() {
 function draw() {
     clear();
 
-    if (!settings) return;
+    if (!gameData) return;
 
+    if (!settings) return;
     if (gameData.me && settings.me && settings.me.range) drawPlayerRange();
     if (gameData.enemyChampions && settings.nmeChamps && settings.nmeChamps.range) drawEnemiesRange();
     if (gameData.enemyChampions && settings.over && settings.over.nmeSpells) drawOverlayEnemySpells();

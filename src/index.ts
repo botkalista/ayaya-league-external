@@ -11,7 +11,6 @@ import { Performance } from './utils/Performance';
 import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from './models/CachedClass';
 
-
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
     AyayaLeague.reader.loadDump();
@@ -120,11 +119,14 @@ function loop() {
     CachedClass.set('myTeam', myTeam);
     CachedClass.set('nmeTeam', nmeTeam);
 
+
     const finalData = {
-        me,
-        enemyChampions: manager.champions.enemies,
-        missiles: manager.missiles,
-        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)) }
+        me: preparator.prepareChampion(me),
+        enemyChampions: manager.champions.enemies.map(e => preparator.prepareChampion(e)),
+        missiles: manager.missiles.map(preparator.prepareMissile),
+        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)) },
+        screen,
+        matrix
     }
 
     // --- performance ---

@@ -47,7 +47,6 @@ export function worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrix:
     out.y = -(screen.y / 2 * m.y) + (m.y + screen.y / 2);
     return out;
 }
-
 export function getCircle3D(pos: Vector3, points: number, radius: number, screenSize: Vector2, viewProjMatrixArg: number[]) {
 
     const p = Math.PI * 2 / points;

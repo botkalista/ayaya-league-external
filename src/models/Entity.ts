@@ -19,7 +19,7 @@ export class Entity extends CachedClass {
         return this.use('name', () => readName(this.address + OFFSET.oObjName))
     }
     get gamePos(): Vector3 {
-        return this.use('gamePos', () => Reader.readProcessMemory(this.address + OFFSET.oObjPosition, "VEC3"));
+        return this.use('gamePos', () => Vector3.fromData(Reader.readProcessMemory(this.address + OFFSET.oObjPosition, "VEC3")));
     }
     get screenPos(): Vector2 {
         return worldToScreen(this.gamePos, CachedClass.get('screen'), CachedClass.get('matrix'));
@@ -35,7 +35,7 @@ export class Entity extends CachedClass {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }
     get range(): number {
-        return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjAttackRange, "DWORD"));
+        return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjAttackRange, "FLOAT"));
     }
     get team(): number {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));

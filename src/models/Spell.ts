@@ -19,7 +19,7 @@ export class Spell extends CachedClass {
     get name(): string {
         return this.use('name', () => {
             const sNamePtr = Reader.readProcessMemory(this.data + OFFSET.oSpellInfoDataName, "DWORD");
-            return readName(sNamePtr, true);
+            return readName(sNamePtr);
         });
     }
 
@@ -30,7 +30,7 @@ export class Spell extends CachedClass {
         return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oSpellLevel, 'DWORD'));
     }
 
-    
+
     get ready(): boolean {
         return this.readyIn <= 0;
     }

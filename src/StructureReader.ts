@@ -16,11 +16,15 @@ type EntityKeys = (EntityKey)[];
 export type EntityReadOptions = Partial<{ onlyProps: EntityKeys, skipProps: EntityKeys }>;
 
 export function readName(address: number, forceFirstAddress: boolean = false): string {
-    const length = Reader.readProcessMemory(address + 0x10, 'DWORD');
-    if ((length < 17 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
-    const nameAddress = Reader.readProcessMemory(address, 'DWORD');
-    const name = Reader.readProcessMemory(nameAddress, 'STR');
-    return name;
+    try {
+        const length = Reader.readProcessMemory(address + 0x10, 'DWORD');
+        if ((length < 16 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
+        const nameAddress = Reader.readProcessMemory(address, 'DWORD');
+        const name = Reader.readProcessMemory(nameAddress, 'STR');
+        return name;
+    } catch (ex) {
+        return "__NO_NAME__"
+    }
 }
 
 export function readMap(rootNode: number, size?: number) {

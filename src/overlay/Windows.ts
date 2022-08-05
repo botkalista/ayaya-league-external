@@ -19,7 +19,7 @@ export function createOverlayWindow() {
     win.setMenu(null);
     win.setAlwaysOnTop(true, 'screen-saver');
     win.setIgnoreMouseEvents(true);
-    win.loadFile('../static/index.html');
+    win.loadFile('../../static/index.html');
     return win;
 }
 
@@ -42,7 +42,7 @@ export function createSettingsWindow() {
     });
     win.setMenu(null);
     win.setAlwaysOnTop(true, 'screen-saver');
-    win.loadFile('../static/settings.html');
+    win.loadFile('../../static/settings.html');
     //win.hide();
     return win;
 }
