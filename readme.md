@@ -10,13 +10,15 @@
 - Show player attack range
 - Show enemy champions attack range
 - Show enemy champions summoner spells cooldown
-- Settings window [CTRL + SPACE]
-
+- Settings window [CTRL + SPACE] (shortcut doesn't word while League is focused)
+- Show enemy champions ultimate cooldown
+- Show missiles (as lines)
 
 # TODO
 
-- Fix broken pointers
-- Fix champ detector (try to use heroList instead of guessing from all entities)
+- Add width and height of missiles
+- Use better serialization for settings
+- Add mouse automation
 
 
 # Media
