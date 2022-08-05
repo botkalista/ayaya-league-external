@@ -19,4 +19,4 @@ for (let i = 0; i < size * 20; i += CHUNK_SIZE) {
     writeStream.write(dump);
 }
 
-fs.writeFileSync('dump/dump.info', JSON.stringify({ baseAddress }));
+fs.writeFileSync('../dump/dump.info', JSON.stringify({ baseAddress }));
