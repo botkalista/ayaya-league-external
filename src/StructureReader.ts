@@ -17,74 +17,10 @@ export type EntityReadOptions = Partial<{ onlyProps: EntityKeys, skipProps: Enti
 
 export function readName(address: number, forceFirstAddress: boolean = false): string {
     const length = Reader.readProcessMemory(address + 0x10, 'DWORD');
-    if ((length < 15 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
+    if ((length < 17 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
     const nameAddress = Reader.readProcessMemory(address, 'DWORD');
     const name = Reader.readProcessMemory(nameAddress, 'STR');
     return name;
-}
-export function readSpell(address: number): Spell {
-    const spell = new Spell();
-    const sAddress = Reader.readProcessMemory(address + OFFSET.oSpellBook, "DWORD");
-    spell.readyAt = Reader.readProcessMemory(sAddress + OFFSET.oSpellReadyAt, "FLOAT");
-    spell.level = Reader.readProcessMemory(sAddress + OFFSET.oSpellLevel, 'DWORD');
-    const sInfo = Reader.readProcessMemory(sAddress + OFFSET.oSpellInfo, "DWORD");
-    const sData = Reader.readProcessMemory(sInfo + OFFSET.oSpellInfoData, "DWORD");
-    const sNamePtr = Reader.readProcessMemory(sData + OFFSET.oSpellInfoDataName, "DWORD");
-    spell.name = readName(sNamePtr, true);
-    return spell;
-}
-
-export function readMissile(address: number): Missile {
-    const missile = Reader.readProcessMemory(address + OFFSET.oMissileObjectEntry, "DWORD");
-    const sInfo = Reader.readProcessMemory(missile + OFFSET.oMissileSpellInfo, "DWORD");
-    const startPos = Reader.readProcessMemory(missile + OFFSET.oMissileStartPos, "VEC3");
-    const endPos = Reader.readProcessMemory(missile + OFFSET.oMissileEndPos, "VEC3");
-    const result = new Missile();
-    result.spellInfo = sInfo;
-    result.startPos = startPos;
-    result.endPos = endPos;
-    return result;
-}
-
-export function readEntity(address: number, opts?: EntityReadOptions, performance?: Performance): Entity | undefined {
-
-    const entity = new Entity();
-
-    function hasToRead(prop: EntityKey) {
-        if (!opts) return true;
-        if (opts.onlyProps && opts.onlyProps.includes(prop)) return true;
-        if (opts.skipProps && opts.skipProps.includes(prop)) return false;
-        if (opts.onlyProps) return false;
-        if (opts.skipProps) return true;
-    }
-
-    if (hasToRead("address")) entity.address = Reader.toHex(address);
-
-    if (hasToRead("name")) entity.name = readName(address + OFFSET.oObjName);
-
-    const netId = Reader.readProcessMemory(address + OFFSET.oObjNetId, "DWORD");
-    if (netId - 0x40000000 > 0x100000) return;
-    if (hasToRead("netId")) entity.netId = netId;
-
-    if (hasToRead("pos")) entity.pos = Reader.readProcessMemory(address + OFFSET.oObjPosition, "VEC3");
-    if (hasToRead("hp")) entity.hp = Reader.readProcessMemory(address + OFFSET.oObjHealth, "FLOAT");
-    if (hasToRead("maxHp")) entity.maxHp = Reader.readProcessMemory(address + OFFSET.oObjMaxHealth, "FLOAT");
-    if (hasToRead("visible")) entity.visible = Reader.readProcessMemory(address + OFFSET.oObjVisible, 'BOOL');
-    if (hasToRead("range")) entity.range = Reader.readProcessMemory(address + OFFSET.oObjAttackRange, 'FLOAT');
-    if (hasToRead("team")) entity.team = Reader.readProcessMemory(address + OFFSET.oObjTeam, "DWORD");
-
-    entity.spells = [];
-    if (hasToRead("spells")) {
-        if (entity.team == 100 || entity.team == 200) {
-            if (!entity.name.startsWith('PracticeTool')) {
-                for (let i = 0; i < 6; i++) {
-                    entity.spells.push(readSpell(address + (i * 4)));
-                }
-            }
-        }
-    }
-
-    return entity;
 }
 
 export function readMap(rootNode: number) {

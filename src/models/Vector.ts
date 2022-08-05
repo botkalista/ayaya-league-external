@@ -45,6 +45,16 @@ export class Vector3 extends Vector {
         return instance;
     }
 
+    get flat() { return this.getFlat(); }
+
+    getFlat() {
+        const cp = this.copy();
+        cp.x = parseInt(cp.x.toFixed(0));
+        cp.y = parseInt(cp.y.toFixed(0));
+        cp.z = parseInt(cp.z.toFixed(0));
+        return cp;
+    }
+
     copy() {
         const instance = new Vector3(this.x, this.y, this.z);
         return instance;

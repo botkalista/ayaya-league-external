@@ -8,6 +8,10 @@ import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
 import { Performance } from './utils/Performance';
 
+import { UserScriptManager } from '../scripts/UserScriptManager';
+import { CachedClass } from './models/CachedClass';
+
+
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
     AyayaLeague.reader.loadDump();
@@ -97,52 +101,39 @@ function main() {
 const performance = new Performance();
 
 function loop() {
-
     performance.start();
 
+    //* Create UserScriptManager
+    const manager = new UserScriptManager();
 
+    //* Load required global variables
     const gameTime = AyayaLeague.getGameTime();
+    const me = manager.me;
+    const myTeam = me.team;
+    const nmeTeam = myTeam == 100 ? 200 : 100;
+    const matrix = matrixToArray(AyayaLeague.getViewProjectionMatrix());
 
-    const _matrix = AyayaLeague.getViewProjectionMatrix();
-    const matrix = matrixToArray(_matrix);
+    //* Put global variables into global cache
+    CachedClass.set('screen', screen);
+    CachedClass.set('matrix', matrix);
+    CachedClass.set('gameTime', gameTime);
+    CachedClass.set('myTeam', myTeam);
+    CachedClass.set('nmeTeam', nmeTeam);
 
-
-    const localPlayer = AyayaLeague.getLocalPlayer();
-    const me = preparator.prepareChampion(localPlayer, screen, matrix, gameTime);
-
-    performance.spot('localPlayer');
-
-    const enemyTeamId = localPlayer.team == 100 ? 200 : 100;
-
-    const champs = AyayaLeague.getChampionsList(undefined, performance);
-    performance.spot('champsRead');
-    const enemyChampions = champs.filter(e => e.team == enemyTeamId).map(e => preparator.prepareChampion(e, screen, matrix, gameTime))
-    performance.spot('champsPrepare');
-
-    const missiles = AyayaLeague.getMissilesList().map(e => preparator.prepareMissile(e, screen, matrix));
-    performance.spot('missiles');
+    const finalData = {
+        me,
+        enemyChampions: manager.champions.enemies,
+        missiles: manager.missiles,
+        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)) }
+    }
 
     // --- performance ---
     const result = performance.end();
     if (result.time > highestReadTime) highestReadTime = result.time;
     // --- performance ---
 
-
-    const finalData = {
-        me,
-        enemyChampions,
-        missiles,
-        performance: {
-            // readings: result.readings,
-            readings: [],
-            time: result.time,
-            max: parseFloat(highestReadTime.toFixed(1))
-        }
-    }
-
+    finalData.performance.time = result.time;
     sendMessageToWin(overlayWindow, 'gameData', finalData);
-
-    // setTimeout(loop, Math.max(result.time + 10, 20));
     const settings = getSettings();
     setTimeout(loop, Math.max(result.time + settings.root.readingTime, 20));
 }
