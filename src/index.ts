@@ -175,7 +175,7 @@ function loop() {
         missiles: manager.missiles.map(preparator.prepareMissile),
         performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)) },
         screen,
-        matrix
+        matrix,
     }
 
 

@@ -80,7 +80,7 @@ export class UserScriptManager extends CachedClass {
         const res = SAT.testCirclePolygon(target.satHitbox, missile.satHitbox, response);
         return {
             result: res,
-            evadeAt: res ? new Vector2(response.overlapV.x, response.overlapV.y) : Vector2.zero()
+            evadeAt: res ? new Vector2(target.screenPos.x - response.overlapV.x, target.screenPos.y - response.overlapV.y) : Vector2.zero()
         }
     }
 

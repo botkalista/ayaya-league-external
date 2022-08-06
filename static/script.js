@@ -50,23 +50,15 @@ function addHandlars() {
         const data = JSON.parse(message);
         gameData = data;
 
-
-
-
-        gameData.missiles.push(
-            {
-                ePos: { x: 4011.968994140625, y: -68.89016723632812, z: 10945.3203125 },
-                sPos: { x: 3766.420166015625, y: -68.89016723632812, z: 9771.7333984375 }
-            }
-        );
-
+        gameData.enemyChampions[0].spells[3].cd = 32;
+        gameData.enemyChampions[0].spells[4].cd = 115;
+        gameData.enemyChampions[0].spells[5].cd = 224;
     });
 }
 
 function setup() {
     canvas = createCanvas(10, 10);
     addHandlars();
-    console.log(process.version)
     // frameRate(50);
 }
 
@@ -152,6 +144,7 @@ function drawOverlayEnemySpells() {
 
         for (let i = iStart; i < 6; i++) {
             const spell = spells[i];
+
             if (!spell) continue;
             const img = getSpellImage(spell.name);
             if (!img) continue;
@@ -172,9 +165,10 @@ function drawOverlayEnemySpells() {
                 if (spell.level > 0) {
                     noStroke();
                     fill(255);
-                    text(spells[4].cd, xPos, y, W, H);
+                    text(spell.cd, xPos, y, W, H);
                 }
             }
+
         }
 
 
@@ -270,6 +264,10 @@ function drawMissiles() {
     const matrix = gameData.matrix;
 
     for (const missile of gameData.missiles) {
+
+        if (missile.spellName.startsWith('SRU')) continue;
+        if (missile.spellName.includes('BasicAttack')) continue;
+
         push();
 
         const _sPos = missile.sPos;
@@ -291,7 +289,23 @@ function drawMissiles() {
         strokeWeight(2);
         fill(50, 100);
         rect(0, -width / 2, length, width);
+
+        noStroke();
+        fill(0);
+        // text(missile.spellName, 0, 0, 100, 20)
         pop();
+
+
+
+        // fill(0, 100);
+        // stroke(0, 100);
+        // const o = missile.debug.off;
+        // beginShape();
+        // for (const p of missile.debug.points) {
+        //     // ellipse(p.x + o.x, p.y + o.y, 20, 20);
+        //     vertex(p.x + o.x, p.y + o.y);
+        // }
+        // endShape();
 
     }
 

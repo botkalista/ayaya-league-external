@@ -51,7 +51,7 @@ export class Entity extends CachedClass {
     }
 
     get satHitbox() {
-        return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 120 / 2));
+        return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 60));
     }
 
 }

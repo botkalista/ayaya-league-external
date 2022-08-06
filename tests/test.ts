@@ -16,8 +16,7 @@ import { CachedClass } from '../src/models/CachedClass';
 //* Create UserScriptManager
 const manager = new UserScriptManager();
 
-
-
+console.log(manager.missiles.map(e => e.spellName));
 
 // //* Load required global variables
 // const gameTime = AyayaLeague.getGameTime();

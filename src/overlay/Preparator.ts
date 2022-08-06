@@ -40,7 +40,12 @@ export class Preparator {
     prepareMissile(data: Missile) {
         const result = {
             sPos: data.gameStartPos,
-            ePos: data.gameEndPos
+            ePos: data.gameEndPos,
+            spellName: data.spellName,
+            debug: {
+                points: data.satHitbox.calcPoints,
+                off: data.satHitbox.pos
+            }
         }
         return result;
     }

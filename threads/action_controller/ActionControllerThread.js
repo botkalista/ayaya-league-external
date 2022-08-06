@@ -10,7 +10,6 @@ server.on('connection', socket => {
         try {
             const [action, ...args] = e.toString().split('#');
             ActionController[action](...args);
-            lastAction = now;
         } catch (ex) {
             console.error(ex);
         }
