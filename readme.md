@@ -21,11 +21,15 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 1. Clone the repo `git clone https://github.com/botkalista/ayaya-league-external.git`
 
 2. Install Node.js 32bit (i use v16.10.0)
+	
 	Download for Windows: https://nodejs.org/dist/v16.15.0/node-v16.10.0-x86.msi
+	
 	Download for other OS: https://nodejs.org/fa/blog/release/v16.10.0/
 	
 3. Download the Node.js 64bit v16.15.0 binary, place it inside `/exe` folder and rename it `node_16.15.0_x64.exe`
+	
 	Download for Windows: https://nodejs.org/dist/v16.15.0/win-x86/node.exe
+	
 	Download for other OS: https://nodejs.org/fa/blog/release/v16.15.0/
 
 4. Run `npm i` and `npm run rebuild-deps`
