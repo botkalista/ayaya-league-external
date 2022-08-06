@@ -17,6 +17,8 @@ export class Vector2 extends Vector {
         return instance;
     }
 
+    get flat() { return this.getFlat(); }
+    
     getFlat() {
         const cp = this.copy();
         cp.x = parseInt(cp.x.toFixed(0));

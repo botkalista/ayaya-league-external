@@ -55,8 +55,7 @@ export class UserScriptManager extends CachedClass {
             const minions = entities.filter(e => e.name.includes('Minion'));
             const monsters = entities.filter(e => !minions.includes(e));
             const teamDistinctMinions = new TeamDistinct(minions);
-            const teamDistinctMonsters = new TeamDistinct(monsters);
-            this.set('monsters', teamDistinctMonsters);
+            this.set('monsters', monsters);
             return teamDistinctMinions;
         });
     }
@@ -69,9 +68,8 @@ export class UserScriptManager extends CachedClass {
             const minions = entities.filter(e => e.name.includes('Minion'));
             const monsters = entities.filter(e => !minions.includes(e));
             const teamDistinctMinions = new TeamDistinct(minions);
-            const teamDistinctMonsters = new TeamDistinct(monsters);
             this.set('minions', teamDistinctMinions);
-            return teamDistinctMonsters;
+            return monsters;
         });
     }
 

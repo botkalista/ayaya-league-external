@@ -12,6 +12,7 @@
     "start": "ts-node src/index.ts",
     "test": "ts-node tests/test.ts",
     "test:nohook": "ts-node tests/test.ts nohook",
+    "rebuild-deps": "cd ./node_modules/memoryjs && npm run build32",
     "compile": "tsc --project tsconfig.json",
     "exe": "electron dist/src/index.js",
     "exe:nohook": "electron dist/src/index.js nohook",
