@@ -1,4 +1,5 @@
 
+
 # AyayaLeague [_ayaya-league-external_]
 
 ## What's AyayaLeague ?
@@ -72,8 +73,11 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
       }
     }
     ```
-
-5. Start AyayaLeague (`npm run execute`) and enjoy your script :3
+5. Export the functions we just created
+    ```js
+    module.exports = { setup, onTick }
+    ```
+6. Start AyayaLeague (`npm run execute`) and enjoy your script :3
 
 ## Script functions
 
