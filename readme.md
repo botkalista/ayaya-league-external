@@ -22,7 +22,7 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 2. Install Node.js 32bit (i use v16.10.0)
 	
-	Download for Windows: https://nodejs.org/dist/v16.15.0/node-v16.10.0-x86.msi
+	Download for Windows: https://nodejs.org/dist/v16.10.0/node-v16.10.0-x86.msi
 	
 	Download for other OS: https://nodejs.org/fa/blog/release/v16.10.0/
 	
