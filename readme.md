@@ -268,18 +268,21 @@ Called at script load. Used to initialize the script.
 -  `static` *fromData*(x: `number`, y: `number`, z: `number`): [`Vector3`](#vector3)  - returns a vector with x=`x` y=`y` z=`z`
 
 
-## vFAQ (_very Frequently Asked Questions_)
+
+# vFAQ (_very Frequently Asked Questions_)
 
 1. ### Why nodejs ? it's slow.
 	Fuck you. It's fast enough.
 	
-	
+
+
 # TODO
 
 - Add width and height of missiles
 - Use better serialization for settings
 - Add keyboard automation
 - Add script manager to load/unload the script
+
 
 
 # Media
