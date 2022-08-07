@@ -107,7 +107,7 @@ Called at script load. Used to initialize the script.
 
 - *missiles* [`Missile`](#missile) - get all missiles
 
-- *monsters* [`Entity[]`](#entity)` - get all monsters
+- *monsters* [`Entity[]`](#entity) - get all monsters
 
 - *champions*:
 	- *all* [`Entity[]`](#entity) - get all champions
