@@ -48,10 +48,6 @@ function addHandlars() {
     ipcRenderer.on('gameData', function (evt, message) {
         const data = JSON.parse(message);
         gameData = data;
-
-        gameData.enemyChampions[0].spells[3].cd = 32;
-        gameData.enemyChampions[0].spells[4].cd = 115;
-        gameData.enemyChampions[0].spells[5].cd = 224;
     });
 }
 

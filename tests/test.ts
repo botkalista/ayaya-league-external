@@ -11,35 +11,22 @@ if (process.argv[2] == 'nohook') {
 import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from '../src/models/CachedClass';
 
+import A from '../src/ActionControllerWrapper'
+A.start('D:\\ayaya-league-external\\src\\cpp\\ALActionManager.exe');
 
-const Reader = AyayaLeague.reader;
-
-//* Create UserScriptManager
-const manager = new UserScriptManager();
-
-const me = manager.me;
-
-
-function getAiManager() {
-    const v1 = Reader.readProcessMemory(me.address + OFFSET.oObjAiManager, "DWORD");
-    const v2 = me.address + OFFSET.oObjAiManager - 8;
-    const v3 = Reader.readProcessMemory(v2 + 4, "DWORD");
-    let v4 = Reader.readProcessMemory(v2 + (4 * v1 + 12), "DWORD");
-    v4 = v4 ^ ~v3;
-    return Reader.readProcessMemory(v4 + 0x8, "DWORD");
+async function sleep(ms) {
+    return new Promise(e => setTimeout(e, ms));
+}
+async function main() {
+    const startMousePos = await A.getMousePos();
+    A.blockInput(true);
+    A.click("RIGHT", 500, 500, 10);
+    await sleep(100);
+    A.move(startMousePos.x, startMousePos.y);
+    A.blockInput(false);
 }
 
-
-
-
-setInterval(() => {
-    const AiManager = getAiManager();
-    const startPath = Reader.readProcessMemory(AiManager + OFFSET.oAiManagerEndPath, "VEC3");
-    console.log({ startPath })
-}, 100)
-
-
-
+main();
 
 
 // //* Load required global variables

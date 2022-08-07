@@ -21,8 +21,13 @@ export class Game extends CachedClass {
         const startMousePos = await ActionControllerWrapper.getMousePos();
         ActionControllerWrapper.blockInput(true);
         isAttack ? this.executeOrderAttack(pos, delay) : this.executeOrderMove(pos, delay);
+        await this.sleep(40);
         ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
         ActionControllerWrapper.blockInput(false);
+    }
+
+    private async sleep(ms) {
+        return new Promise(e => setTimeout(e, ms));
     }
 
     private executeOrderAttack(pos: Vector2, delay: number = 10) {

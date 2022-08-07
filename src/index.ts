@@ -88,7 +88,7 @@ async function main() {
     //* Setup ActionController
     const actionControllerProcess = ActionControllerWrapper.start();
     threads.push(actionControllerProcess);
-
+    await new Promise(e => setTimeout(e, 100));
 
     loadSettingsFromFile();
     registerHandlers();
