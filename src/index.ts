@@ -14,6 +14,7 @@ import ActionControllerWrapper from './ActionControllerWrapper';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child from 'child_process';
+import { Missile } from './models/Missile';
 
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
@@ -34,7 +35,7 @@ let screen: Vector2;
 
 const threads: child.ChildProcess[] = [];
 
-const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => any }[] = []
+const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => any, onMissileCreate: (m: Missile, e: UserScriptManager) => any }[] = []
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -137,6 +138,10 @@ async function main() {
 
 const performance = new Performance();
 
+
+
+let persistentMissiles: Missile[] = [];
+
 function loop() {
     performance.start();
 
@@ -156,6 +161,25 @@ function loop() {
     CachedClass.set('gameTime', gameTime);
     CachedClass.set('myTeam', myTeam);
     CachedClass.set('nmeTeam', nmeTeam);
+
+
+    //* Check missiles for onMissileCreate function
+    manager.missiles.forEach(missile => {
+
+        // If missile is inside persistent skip
+        if (persistentMissiles.find(m => m.address == missile.address)) return;
+
+        // Otherwise notify every script for the new missile
+        userScripts.forEach(s => s.onMissileCreate(missile, manager));
+
+        // Add it to persistent
+        persistentMissiles.push(missile);
+    });
+
+    // Remove deleted missiles from persistent
+    persistentMissiles = persistentMissiles.filter(m => manager.missiles.find(e => e.address == m.address));
+
+
 
 
     const finalData = {

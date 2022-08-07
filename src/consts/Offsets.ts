@@ -53,6 +53,10 @@ export const OFFSET = {
     oObjAiManager: 0x2C7C,
     oAiManagerStartPath: 0x1CC,
     oAiManagerEndPath: 0x1D8,
+    oAiManagerIsMoving: 0x1C0,
+    oAiManagerIsDashing: 0x214,
+    oAiManagerCurrentSegment: 0x1C4,
+    oAiManagerDashSpeed: 0x1F8,
 
 
     // --- MISSILES ---

@@ -1,4 +1,7 @@
-function setup() { }
+
+function setup() {
+    console.log('SimpleEvade.js loaded.')
+}
 
 /** 
  * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
@@ -7,29 +10,34 @@ function setup() { }
  * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
  * 
  * */
-async function onTick(manager, ticks) {
+async function onTick(manager, ticks) {}
 
-    const alliesSpellsNames = [];
-    manager.champions.allies.forEach(champ => {
-        champ.spells.forEach(spell => {
-            alliesSpellsNames.push(spell.name);
-        });
-    });
-    const enemiesMissiles = manager.missiles.filter(m => !alliesSpellsNames.includes(m.spellName));
-    const enemiesMissilesSpells = enemiesMissiles.filter(m => !m.isBasicAttack && !m.isTurretAttack && !m.isMinionAttack);
+/** 
+ * @param {import("../../src/models/Missile").Missile} missile Missile
+ * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
+ * 
+ * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
+ * 
+ * */
+async function onMissileCreate(missile, manager) {
 
-    const me = manager.me;
+    if (missile.isBasicAttack) return;
+    if (missile.isMinionAttack) return;
+    if (missile.isTurretAttack) return;
 
-    const testMissiles = manager.missiles.filter(m => !m.isBasicAttack && !m.isTurretAttack && !m.isMinionAttack);
+    const collision = manager.checkCollision(manager.me, missile);
 
-    testMissiles.forEach(async missile => {
-        const collision = manager.checkCollision(me, missile);
-        if (collision.result) {
-            const evadeAt = collision.evadeAt;
-            const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false, 10);
-            if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
-        }
-    });
+    if (!collision.result) return;
+
+    const evadeAt = collision.evadeAt;
+    const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false, 10);
+    if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
+
+
 }
 
-module.exports = { setup, onTick }
+module.exports = { setup, onTick, onMissileCreate }
+
+
+
+

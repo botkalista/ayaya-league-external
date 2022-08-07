@@ -192,6 +192,21 @@ Called at script load. Used to initialize the script.
 
 - *satHitbox* - Used internally to check collisions
 
+
+## AiManager
+
+**properties**
+
+- *startPath*  [`Vector3`](#vector3)  - start position of the player movement
+
+- *endPath*  [`Vector3`](#vector3)  - end position of the player movement
+
+- *isDashing*  `boolean`  - true if the entity is dashing
+
+- *isMoving*  `boolean`  - true if the entity is moving
+
+- *dashSpeed*  `number`  - speed of the dash
+
 ## CollisionResult
 
 **properties**
