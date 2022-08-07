@@ -18,12 +18,14 @@ async function sleep(ms) {
     return new Promise(e => setTimeout(e, ms));
 }
 async function main() {
-    const startMousePos = await A.getMousePos();
-    A.blockInput(true);
-    A.click("RIGHT", 500, 500, 10);
     await sleep(100);
-    A.move(startMousePos.x, startMousePos.y);
-    A.blockInput(false);
+
+    setInterval(() => {
+        A.isPressed(0x57);
+       
+    }, 500)
+
+
 }
 
 main();

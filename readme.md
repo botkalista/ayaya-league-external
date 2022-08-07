@@ -2,6 +2,9 @@
 
 # AyayaLeague [_ayaya-league-external_]
 
+**EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
+
+
 ## What's AyayaLeague ?
 
 AyayaLeague is an external script platform written in nodejs that supports custom user scripts.

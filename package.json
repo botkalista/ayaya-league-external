@@ -29,6 +29,7 @@
     "@types/sat": "^0.0.31",
     "@types/ws": "^8.5.3",
     "electron": "^20.0.0",
-    "node-abi": "^3.24.0"
+    "node-abi": "^3.24.0",
+    "node-fetch": "^2.6.1"
   }
 }

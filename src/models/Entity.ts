@@ -3,10 +3,11 @@ import AyayaLeague from '../LeagueReader';
 import { readName } from "../StructureReader";
 import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
-import { factoryFromArray, worldToScreen } from "../utils/Utils";
+import { factoryFromArray, worldToScreen, getChampionWindup } from "../utils/Utils";
 import { Spell } from "./Spell";
 import * as SAT from 'sat';
 import { AiManager } from './AiManager';
+
 
 const Reader = AyayaLeague.reader;
 
@@ -60,6 +61,13 @@ export class Entity extends CachedClass {
         });
     }
 
+    get attackDelay() {
+        return 1000 / CachedClass.get<any>('webapi_me').championStats.attackSpeed;
+    }
+
+    get windupTime() {
+        return (1 / CachedClass.get<any>('webapi_me').championStats.attackSpeed * 1000) * getChampionWindup(this.name);
+    }
 
     get satHitbox() {
         return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 60));

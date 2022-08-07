@@ -3,16 +3,12 @@ import * as math from 'mathjs';
 
 import { Vector2, Vector3, Vector4 } from '../models/Vector';
 
-// export function getNameFromBuffer(buffer): string {
-//     const _name: any[] = [];
-//     for (let i = 0; i < buffer.length; i++) {
-//         const s = String.fromCharCode(buffer.at(i))
-//         if (!allowedChars.includes(s)) break;
-//         _name.push(s);
-//     }
-//     const name = _name.join('');
-//     return name;
-// }
+import { ChampionsWindups } from '../consts/ChampionsWindups';
+
+export function getChampionWindup(championName: string) {
+    return parseFloat(ChampionsWindups.find(e => e.champName == championName).windup);
+}
+
 
 //* i hope this is right, i suck at typings
 export function factoryFromArray<T, R>(type: { new(a: any): R }, arr: T[]): R[] {

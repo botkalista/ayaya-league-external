@@ -30,7 +30,7 @@ async function onMissileCreate(missile, manager) {
     if (!collision.result) return;
 
     const evadeAt = collision.evadeAt;
-    const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false, 10);
+    const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
     if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
 
 

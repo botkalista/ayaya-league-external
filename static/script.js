@@ -268,8 +268,8 @@ function drawMissiles() {
         const length = dist(missile.sPos.x, missile.sPos.y, missile.ePos.x, missile.ePos.y);
         const angle = createVector(missile.ePos.x - missile.sPos.x, missile.ePos.y - missile.sPos.y).heading();
 
-        const startpos = createVector(missile.sPos.x, missile.sPos.y, missile.sPos.z);
-        const endpos = createVector(missile.ePos.x, missile.ePos.y, missile.ePos.z);
+        const startpos = createVector(missile.sPos.x, missile.sPos.y + 100, missile.sPos.z);
+        const endpos = createVector(missile.ePos.x, missile.ePos.y + 100, missile.ePos.z);
         const N = width;
         const L = p5.Vector.sub(endpos, startpos).mag();
         const x1p = startpos.x + N * (endpos.z - startpos.z) / L;

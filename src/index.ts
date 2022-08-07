@@ -14,6 +14,7 @@ import ActionControllerWrapper from './ActionControllerWrapper';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child from 'child_process';
+import * as fetch from 'node-fetch';
 import { Missile } from './models/Missile';
 
 if (process.argv[2] == 'nohook') {
@@ -85,6 +86,17 @@ function registerHandlers() {
 }
 
 async function main() {
+
+    //* Read webapi data
+
+    const webapi_interval = setInterval(async () => {
+        const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
+        const data = await res.json();
+        CachedClass.set('webapi_me', data);
+    }, 500);
+
+    CachedClass.set('webapi_interval', webapi_interval);
+
 
     //* Setup ActionController
     const actionControllerProcess = ActionControllerWrapper.start();

@@ -17,20 +17,30 @@ export class Game extends CachedClass {
         //TODO: Press button to cast spell
     }
 
-    async issueOrder(pos: Vector2, isAttack: boolean, delay: number = 10) {
+    async isKeyPressed(key: number) {
+        return await ActionControllerWrapper.isPressed(key);
+    }
+
+    async getMousePos() {
+        return await ActionControllerWrapper.getMousePos();
+    }
+
+    async issueOrder(pos: Vector2, isAttack: boolean) {
         const startMousePos = await ActionControllerWrapper.getMousePos();
         ActionControllerWrapper.blockInput(true);
-        isAttack ? await this.executeOrderAttack(pos, delay) : await this.executeOrderMove(pos, delay);
+        isAttack ? await this.executeOrderAttack(pos) : await this.executeOrderMove(pos);
         await ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
         ActionControllerWrapper.blockInput(false);
     }
 
-    private async executeOrderAttack(pos: Vector2, delay: number = 10) {
-        console.log(`executeOrderAttack not yet implemented.`);
+    private async executeOrderAttack(pos: Vector2) {
+        await ActionControllerWrapper.move(pos.x, pos.y);
+        await ActionControllerWrapper.press(0x1E);
+        await ActionControllerWrapper.click("LEFT", pos.x, pos.y, 10);
     }
 
-    private async executeOrderMove(pos: Vector2, delay: number = 10) {
-        await ActionControllerWrapper.click("RIGHT", pos.x, pos.y, delay);
+    private async executeOrderMove(pos: Vector2) {
+        await ActionControllerWrapper.click("RIGHT", pos.x, pos.y, 10);
     }
 
 }
