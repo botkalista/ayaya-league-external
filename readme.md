@@ -53,7 +53,7 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
       console.log('Script is loaded');
     }
     ```
-3. Write a [`onTick`](#ontick-manager-userscriptmanager-ticksnumber-) function to execute actions every tick. It accepts 2 arguments: [`manager`](#userscriptmanager) and `ticks`.
+3. Write a [`onTick`](#ontick) function to execute actions every tick. It accepts 2 arguments: [`manager`](#userscriptmanager) and `ticks`.
     ```js
     function onTick(manager, ticks) {
       if (manager.me.spells[3].ready == true) {
@@ -61,10 +61,19 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
       }
     }
     ```
-4. Optionally you can add the JSDoc before the function to get intellisense inside visual studio code
+4. Write a [`onMissileCreate`](#onmissilecreate) function to execute actions every time a new missile is created
     ```js
+    function onMissileCreate(missile, manager) {
+      if (missile.isAutoAttack) console.log('Auto attack missile created');
+      if (missile.isTurretShot) console.log('Turret shot missile created');
+    }
+    ```
+    
+5. Optionally you can add the JSDoc before the functions to get intellisense inside visual studio code
+    ```js
+    
     /**
-    * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
+    * @param {import("../UserScriptManager").UserScriptManager} manager
     * @param {number} ticks Ticks counter
     **/
     function onTick(manager, ticks) {
@@ -72,23 +81,36 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
         console.log('R is up');
       }
     }
+    
+    /**
+    * @param {import("../../src/models/Missile").Missile} missile
+    * @param {import("../UserScriptManager").UserScriptManager} manager
+    **/
+    function onMissileCreate(missile, manager) {
+      if (missile.isAutoAttack) console.log('Auto attack missile created');
+      if (missile.isTurretShot) console.log('Turret shot missile created');
+    }
+    
     ```
-5. Export the functions we just created
+6. Export the functions we just created
     ```js
-    module.exports = { setup, onTick }
+    module.exports = { setup, onTick, onMissileCreate }
     ```
-6. Start AyayaLeague (`npm run execute`) and enjoy your script :3
+7. Start AyayaLeague (`npm run execute`) and enjoy your script :3
 
 ## Script functions
 
-### onTick (manager: [UserScriptManager](#userscriptmanager), ticks:number )
-Called every tick. Used to execute actions inside user scripts.
+### onTick
 
- [`manager`](#userscriptmanager) - Used to get game informations
-`ticks` - Number of the ticks since script start
+*onTick*(manager: [`UserScriptManager`](#userscriptmanager), ticks:number) - Called every tick. Used to execute actions inside user scripts.
 
-### setup()
-Called at script load. Used to initialize the script.
+### setup
+
+*setup*() - Called at script load. Used to initialize the script.
+
+### onMissileCreate
+
+*onMissileCreate*(missile: [`Missile`](#missile), manager: [`UserScriptManager`](#userscriptmanager)) - Called every time a new missile is created
 
 
 ## UserScriptManager
@@ -153,6 +175,8 @@ Called at script load. Used to initialize the script.
 - *team* `number` - entity team identifier (`100` = Team1, `200` = Neutral, `300` = Team2)
 
 - *spells* [`Spell[]`](#spell) - entity spells
+
+- *AiManager* [`AiManager`](#aimanager) - used to check player movement
 
 - *satHitbox* - Used internally to check collisions
 
