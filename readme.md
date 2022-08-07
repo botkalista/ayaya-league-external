@@ -126,7 +126,7 @@ Called at script load. Used to initialize the script.
 
 **methods**
 
-- *checkCollision*(target:[`Entity`](#entity), missile:[`Missile`](#missile) ): [`CollisionResult`](#collisionresult) - checks the collision between target and missile
+- *checkCollision*(target:[`Entity`](#entity), missile:[`Missile`](#missile)): [`CollisionResult`](#collisionresult) - checks the collision between target and missile
 
 # Models
 
