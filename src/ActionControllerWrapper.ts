@@ -1,32 +1,49 @@
 
-import * as ws from 'ws';
 import * as child from 'child_process';
 import * as path from 'path';
+import { Vector2 } from './models/Vector';
+
 
 class ActionControllerWrapper {
-    private socket: ws;
+
+    private p: child.ChildProcess;
     private connected = false;
-    private lastActionTime = 0;
-    private blockInputProcess: child.ChildProcess;
-    connect() {
+
+    private onGetPos = (x: number, y: number) => { };
+
+    start() {
         if (this.connected) return;
-        this.socket = new ws("ws://127.0.0.1:7007");
-        this.blockInputProcess = child.execFile(path.join(__dirname, "../../src/cpp/BlockInput.exe"));
-        this.connected = true;
+        const exePath = path.join(__dirname, "../../src/cpp/ALActionManager.exe");
+        this.p = child.execFile(exePath);
+
+        this.p.stdout.on('data', e => {
+            const str = e.toString();
+            if (!str.startsWith('pos')) return;
+            const [a, x, y] = str.split('_');
+            this.onGetPos(x, y);
+        });
+
+        return this.p;
     }
-    leftClick() { if (!this.canSend()) return; this.socket.send('leftClick'); return true; }
-    rightClick() { if (!this.canSend()) return; this.socket.send('rightClick'); return true; }
-    leftClickAt(x: number, y: number) { if (!this.canSend()) return; this.socket.send(`leftClickAt#${x}#${y}`); return true; }
-    rightClickAt(x: number, y: number) { if (!this.canSend()) return; this.socket.send(`rightClickAt#${x}#${y}`); return true; }
-    moveMouse(x: number, y: number) { if (!this.canSend()) return; this.socket.send(`moveMouse#${x}#${y}`); return true; }
-    private canSend() {
-        const now = performance.now();
-        if (this.lastActionTime > now - 50) return false;
-        this.lastActionTime = now;
-        return true;
+
+    move(x: number, y: number) {
+        this.p.stdin.write(`move ${x} ${y}`);
+    }
+    click(button: "LEFT" | "RIGHT", x: number, y: number, delay: number = 10) {
+        const iButton = button == "LEFT" ? 1 : 2;
+        this.p.stdin.write(`click ${x} ${y} ${iButton} ${delay}`);
+    }
+    getMousePos(): Promise<Vector2> {
+        return new Promise(resolve => {
+            this.onGetPos = (x: number, y: number) => resolve(new Vector2(x, y));
+            this.p.stdin.write(`pos`);
+        });
+    }
+    setMousePos(x: number, y: number) {
+        this.p.stdin.write(`move ${parseInt(x.toFixed(0))} ${parseInt(y.toFixed(0))}`);
     }
     blockInput(block: boolean) {
-        this.blockInputProcess.stdin.write(block ? 'on\n' : 'off\n');
+        this.p.stdin.write(`block ${block ? 1 : 0}`);
     }
 }
 

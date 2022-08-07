@@ -17,14 +17,20 @@ export class Game extends CachedClass {
         //TODO: Press button to cast spell
     }
 
-    issueOrder(pos: Vector2, isAttack: boolean) {
+    async issueOrder(pos: Vector2, isAttack: boolean, delay: number = 10) {
+        const startMousePos = await ActionControllerWrapper.getMousePos();
         ActionControllerWrapper.blockInput(true);
-        if (isAttack) {
-            ActionControllerWrapper.rightClickAt(pos.x, pos.y);
-        } else {
-            ActionControllerWrapper.leftClickAt(pos.x, pos.y);
-        }
+        isAttack ? this.executeOrderAttack(pos, delay) : this.executeOrderMove(pos, delay);
+        ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
         ActionControllerWrapper.blockInput(false);
+    }
+
+    private executeOrderAttack(pos: Vector2, delay: number = 10) {
+        console.log(`executeOrderAttack not yet implemented.`);
+    }
+
+    private executeOrderMove(pos: Vector2, delay: number = 10) {
+        ActionControllerWrapper.click("RIGHT", pos.x, pos.y, delay);
     }
 
 }

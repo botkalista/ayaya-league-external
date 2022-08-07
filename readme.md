@@ -20,17 +20,13 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 1. Clone the repo `git clone https://github.com/botkalista/ayaya-league-external.git`
 
-2. Install Node.js 32bit (i use v16.10.0)
+2. Install Node.js 32bit v16.10.0
 	
 	Download for Windows: https://nodejs.org/dist/v16.10.0/node-v16.10.0-x86.msi
 	
 	Download for other OS: https://nodejs.org/fa/blog/release/v16.10.0/
 	
-3. Download the Node.js 64bit v16.15.0 binary, place it inside `/exe` folder and rename it `node_16.15.0_x64.exe`
-	
-	Download for Windows: https://nodejs.org/dist/v16.15.0/win-x86/node.exe
-	
-	Download for other OS: https://nodejs.org/fa/blog/release/v16.15.0/
+3. Install windows build tools if you don't have them `npm install --g --production windows-build-tools`
 
 4. Run `npm i` and `npm run rebuild-deps`
 
@@ -210,21 +206,9 @@ Called at script load. Used to initialize the script.
 
 - *time* `number` - get seconds passed after game start
 
-## Mouse
-
-*The mouse actions are limited to 1 every 100ms, if more actions are requested the method will return false and the action will not be executed*
-
 **methods**
 
-- *moveMouse* (x: `number`, y: `number`) :`boolean`  - move the mouse at `x`, `y`. Return true if the action was executed
-
-- *leftClick*: `boolean`  - click the left mouse button. Return true if the action was executed
- 
-- *rightClick*: `boolean`  - click the right mouse button. Return true if the action was executed
-
-- *leftClickAt*: (x:`number`, y: `number`): `boolean`  - click the left mouse button at `x`, `y`. Return true if the action was executed
-
-- *rightClickAt*: (x:`number`, y: `number`): `boolean`  - click the right mouse button at `x`, `y`. Return true if the action was executed
+- *issueOrder*(pos:[`Vector2`](#vector2), isAttack:`boolean`, delay?:`boolean`): `Promise<void>` - Clicks the right mouse button at `pos` or Clicks `a` button to `pos`. `delay` is the number of ms to wait between mouseup and mousedown.
 
 ## Vector2
 
