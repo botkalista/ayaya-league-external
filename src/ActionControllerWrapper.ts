@@ -1,13 +1,17 @@
 
 import * as ws from 'ws';
+import * as child from 'child_process';
+import * as path from 'path';
 
 class ActionControllerWrapper {
     private socket: ws;
     private connected = false;
     private lastActionTime = 0;
+    private blockInputProcess: child.ChildProcess;
     connect() {
         if (this.connected) return;
         this.socket = new ws("ws://127.0.0.1:7007");
+        this.blockInputProcess = child.execFile(path.join(__dirname, "../../src/cpp/BlockInput.exe"));
         this.connected = true;
     }
     leftClick() { if (!this.canSend()) return; this.socket.send('leftClick'); return true; }
@@ -20,6 +24,9 @@ class ActionControllerWrapper {
         if (this.lastActionTime > now - 50) return false;
         this.lastActionTime = now;
         return true;
+    }
+    blockInput(block: boolean) {
+        this.blockInputProcess.stdin.write(block ? 'on\n' : 'off\n');
     }
 }
 

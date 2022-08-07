@@ -35,7 +35,6 @@ export const OFFSET = {
 
     oObjNetId: 0xB4,
 
-
     oObjPlayerName: 0x54,
     oObjName: 0x2BA4,
     oObjLevel: 0x3384,
@@ -49,6 +48,12 @@ export const OFFSET = {
     oObjDead: 0x021C,
     oObjAD: 0x134C,
     oObjBonusAD: 0x12C4,
+
+
+    oObjAiManager: 0x2C7C,
+    oAiManagerStartPath: 0x1CC,
+    oAiManagerEndPath: 0x1D8,
+
 
     // --- MISSILES ---
     oMissileObjectEntry: 0x14,

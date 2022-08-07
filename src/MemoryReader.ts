@@ -86,7 +86,7 @@ export class AyayaMemoryReader {
                     return result;
                 }
             } catch (ex) {
-                // console.log('ERROR', ex);
+                console.log('ERROR', ex);
                 return 0;
             }
 

@@ -66,8 +66,8 @@ export function getCircle3D(pos: Vector3, points: number, radius: number, screen
         );
         const start2 = new Vector3(start.x, start.z, start.y);
         const end2 = new Vector3(end.x, end.z, end.y);
-        const startScreen = this.worldToScreen(start2, screenSize, viewProjMatrixArg);
-        const endScreen = this.worldToScreen(end2, screenSize, viewProjMatrixArg);
+        const startScreen = worldToScreen(start2, screenSize, viewProjMatrixArg);
+        const endScreen = worldToScreen(end2, screenSize, viewProjMatrixArg);
         result.push([startScreen, endScreen]);
     }
 

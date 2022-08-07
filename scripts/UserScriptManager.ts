@@ -7,17 +7,12 @@ import { TeamDistinct } from '../src/models/TeamDistinct';
 import { CachedClass } from '../src/models/CachedClass';
 import { Entity } from '../src/models/Entity';
 import { Vector2 } from '../src/models/Vector';
-import ActionControllerWrapper from '../src/ActionControllerWrapper';
 
 import * as SAT from 'sat';
 
 export class UserScriptManager extends CachedClass {
 
     constructor() { super(); }
-
-    get mouse() {
-        return ActionControllerWrapper;
-    }
 
     get game() {
         return this.use('game', () => new Game());

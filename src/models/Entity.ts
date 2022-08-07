@@ -6,6 +6,7 @@ import { Vector2, Vector3 } from "./Vector";
 import { factoryFromArray, worldToScreen } from "../utils/Utils";
 import { Spell } from "./Spell";
 import * as SAT from 'sat';
+import { AiManager } from './AiManager';
 
 const Reader = AyayaLeague.reader;
 
@@ -25,7 +26,6 @@ export class Entity extends CachedClass {
     get screenPos(): Vector2 {
         return worldToScreen(this.gamePos, CachedClass.get('screen'), CachedClass.get('matrix'));
     }
-
     get hp(): number {
         return this.use('hp', () => Reader.readProcessMemory(this.address + OFFSET.oObjHealth, "FLOAT"));
     }
@@ -41,7 +41,6 @@ export class Entity extends CachedClass {
     get team(): number {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));
     }
-
     get spells(): Spell[] {
         return this.use('spells', () => {
             if (this.team != 100 && this.team != 200) return [];
@@ -49,6 +48,18 @@ export class Entity extends CachedClass {
             return factoryFromArray(Spell, AyayaLeague.getSpellsOf(this.address))
         });
     }
+    get AiManager(): AiManager {
+        return this.use('AiManager', () => {
+            const v1 = Reader.readProcessMemory(this.address + OFFSET.oObjAiManager, "DWORD");
+            const v2 = this.address + OFFSET.oObjAiManager - 8;
+            const v3 = Reader.readProcessMemory(v2 + 4, "DWORD");
+            let v4 = Reader.readProcessMemory(v2 + (4 * v1 + 12), "DWORD");
+            v4 = v4 ^ ~v3;
+            const aiManagerAddress = Reader.readProcessMemory(v4 + 0x8, "DWORD");
+            return new AiManager(aiManagerAddress);
+        });
+    }
+
 
     get satHitbox() {
         return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 60));

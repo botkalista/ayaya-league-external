@@ -50,8 +50,7 @@ class AyayaLeagueReader {
         const addresses = readMap(rootNode, missilesSize + 1);
         return addresses.splice(1);
     }
-
-
+    
     // worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrixArg?: number[]) {
 
     //     let viewProjMatrix: number[] = [];

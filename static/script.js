@@ -1,7 +1,6 @@
 
 const { ipcRenderer } = require('electron');
 
-
 let gameData = {};
 let settings = {};
 
@@ -259,6 +258,97 @@ function drawEnemiesRange() {
 }
 
 function drawMissiles() {
+
+    const screen = gameData.screen;
+    const matrix = gameData.matrix;
+
+    for (const missile of gameData.missiles) {
+
+        if (missile.spellName.startsWith('SRU')) continue;
+        if (missile.spellName.includes('BasicAttack')) continue;
+
+
+        const width = spellsData.EzrealQ.width;
+        const length = dist(missile.sPos.x, missile.sPos.y, missile.ePos.x, missile.ePos.y);
+        const angle = createVector(missile.ePos.x - missile.sPos.x, missile.ePos.y - missile.sPos.y).heading();
+
+        const startpos = createVector(missile.sPos.x, missile.sPos.y, missile.sPos.z);
+        const endpos = createVector(missile.ePos.x, missile.ePos.y, missile.ePos.z);
+        const N = width;
+        const L = p5.Vector.sub(endpos, startpos).mag();
+        const x1p = startpos.x + N * (endpos.z - startpos.z) / L;
+        const x2p = endpos.x + N * (endpos.z - startpos.z) / L;
+        const y1p = startpos.z + N * (startpos.x - endpos.x) / L;
+        const y2p = endpos.z + N * (startpos.x - endpos.x) / L;
+        const startpos_p = createVector(x1p, startpos.y, y1p);
+        const endpos_p = createVector(x2p, endpos.y, y2p);
+        const startpos_p_s = __internal_worldToScreen(startpos_p, screen, matrix);
+        const endpos_p_s = __internal_worldToScreen(endpos_p, screen, matrix);
+        const x3p = startpos.x - N * (endpos.z - startpos.z) / L;
+        const x4p = endpos.x - N * (endpos.z - startpos.z) / L;
+        const y3p = startpos.z - N * (startpos.x - endpos.x) / L;
+        const y4p = endpos.z - N * (startpos.x - endpos.x) / L;
+        const startpos_q = createVector(x3p, startpos.y, y3p);
+        const endpos_q = createVector(x4p, endpos.y, y4p);
+        const startpos_q_s = __internal_worldToScreen(startpos_q, screen, matrix);
+        const endpos_q_s = __internal_worldToScreen(endpos_q, screen, matrix);
+
+
+        const sPos1 = startpos_p_s;
+        const sPos2 = startpos_q_s;
+        const ePos1 = endpos_p_s;
+        const ePos2 = endpos_q_s;
+
+
+        // stroke(0);
+        // line(sPos1.x, sPos1.y, sPos2.x, sPos2.y);
+        // line(sPos2.x, sPos2.y, ePos1.x, ePos1.y);
+        // line(ePos1.x, ePos1.y, ePos2.x, ePos2.y);
+        // line(ePos2.x, ePos2.y, sPos1.x, sPos1.y);
+
+
+        stroke(255);
+        noFill();
+        beginShape();
+        vertex(sPos1.x, sPos1.y);
+        vertex(ePos1.x, ePos1.y);
+        vertex(ePos2.x, ePos2.y);
+        vertex(sPos2.x, sPos2.y);
+        endShape(CLOSE);
+
+        // push();
+        // stroke(200, 0, 0);
+        // noFill();
+        // translate(missile.sPos.x, missile.sPos.y);
+        // rotate(angle);
+        // stroke(50);
+        // strokeWeight(2);
+        // fill(50, 100);
+        // rect(0, -width / 2, length, width);
+
+        // noStroke();
+        // fill(0);
+        // // text(missile.spellName, 0, 0, 100, 20)
+        // pop();
+
+
+
+        // fill(0, 100);
+        // stroke(0, 100);
+        // const o = missile.debug.off;
+        // beginShape();
+        // for (const p of missile.debug.points) {
+        //     // ellipse(p.x + o.x, p.y + o.y, 20, 20);
+        //     vertex(p.x + o.x, p.y + o.y);
+        // }
+        // endShape();
+
+    }
+
+
+}
+
+function drawMissiles_old() {
 
     const screen = gameData.screen;
     const matrix = gameData.matrix;

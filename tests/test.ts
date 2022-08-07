@@ -12,11 +12,35 @@ import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from '../src/models/CachedClass';
 
 
+const Reader = AyayaLeague.reader;
 
 //* Create UserScriptManager
 const manager = new UserScriptManager();
 
-console.log(manager.missiles.map(e => e.spellName));
+const me = manager.me;
+
+
+function getAiManager() {
+    const v1 = Reader.readProcessMemory(me.address + OFFSET.oObjAiManager, "DWORD");
+    const v2 = me.address + OFFSET.oObjAiManager - 8;
+    const v3 = Reader.readProcessMemory(v2 + 4, "DWORD");
+    let v4 = Reader.readProcessMemory(v2 + (4 * v1 + 12), "DWORD");
+    v4 = v4 ^ ~v3;
+    return Reader.readProcessMemory(v4 + 0x8, "DWORD");
+}
+
+
+
+
+setInterval(() => {
+    const AiManager = getAiManager();
+    const startPath = Reader.readProcessMemory(AiManager + OFFSET.oAiManagerEndPath, "VEC3");
+    console.log({ startPath })
+}, 100)
+
+
+
+
 
 // //* Load required global variables
 // const gameTime = AyayaLeague.getGameTime();
