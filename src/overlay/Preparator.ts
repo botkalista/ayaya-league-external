@@ -23,7 +23,7 @@ export class Preparator {
     prepareChampion(data: Entity) {
         const result = {
             pos: data.gamePos.getFlat(),
-            circle3D: getCircle3D(data.gamePos, 50, 500, CachedClass.get('screen'), CachedClass.get('matrix')),
+            circle3D: getCircle3D(data.gamePos, 50, data.range, CachedClass.get('screen'), CachedClass.get('matrix')),
             x: parseInt(data.screenPos.x.toFixed(0)),
             y: parseInt(data.screenPos.y.toFixed(0)),
             hp: parseInt(data.hp.toFixed(0)),
