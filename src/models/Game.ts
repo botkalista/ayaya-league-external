@@ -20,22 +20,17 @@ export class Game extends CachedClass {
     async issueOrder(pos: Vector2, isAttack: boolean, delay: number = 10) {
         const startMousePos = await ActionControllerWrapper.getMousePos();
         ActionControllerWrapper.blockInput(true);
-        isAttack ? this.executeOrderAttack(pos, delay) : this.executeOrderMove(pos, delay);
-        await this.sleep(40);
-        ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
+        isAttack ? await this.executeOrderAttack(pos, delay) : await this.executeOrderMove(pos, delay);
+        await ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
         ActionControllerWrapper.blockInput(false);
     }
 
-    private async sleep(ms) {
-        return new Promise(e => setTimeout(e, ms));
-    }
-
-    private executeOrderAttack(pos: Vector2, delay: number = 10) {
+    private async executeOrderAttack(pos: Vector2, delay: number = 10) {
         console.log(`executeOrderAttack not yet implemented.`);
     }
 
-    private executeOrderMove(pos: Vector2, delay: number = 10) {
-        ActionControllerWrapper.click("RIGHT", pos.x, pos.y, delay);
+    private async executeOrderMove(pos: Vector2, delay: number = 10) {
+        await ActionControllerWrapper.click("RIGHT", pos.x, pos.y, delay);
     }
 
 }

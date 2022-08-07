@@ -38,12 +38,12 @@ class ActionControllerWrapper {
         return true;
     }
 
-    move(x: number, y: number) {
-        if (!this.canCall()) return;
+    async move(x: number, y: number) {
+        while (!this.canCall()) await new Promise(r => setTimeout(r, 10));
         this.p.stdin.write(`move ${x} ${y}\n`);
     }
-    click(button: "LEFT" | "RIGHT", x: number, y: number, delay: number = 10) {
-        if (!this.canCall()) return;
+    async click(button: "LEFT" | "RIGHT", x: number, y: number, delay: number = 10) {
+        while (!this.canCall()) await new Promise(r => setTimeout(r, 10));
         const iButton = button == "LEFT" ? 1 : 2;
         this.p.stdin.write(`click ${x} ${y} ${iButton} ${delay}\n`);
     }
@@ -52,9 +52,6 @@ class ActionControllerWrapper {
             this.onGetPos = (x: number, y: number) => resolve(new Vector2(x, y));
             this.p.stdin.write(`pos\n`);
         });
-    }
-    setMousePos(x: number, y: number) {
-        this.p.stdin.write(`move ${parseInt(x.toFixed(0))} ${parseInt(y.toFixed(0))}\n`);
     }
     blockInput(block: boolean) {
         this.p.stdin.write(`block ${block ? 1 : 0}\n`);
