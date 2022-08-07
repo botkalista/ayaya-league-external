@@ -225,6 +225,8 @@ Called at script load. Used to initialize the script.
 
 - *getFlat*: [`Vector2`](#vector2) - returns a copy of the vector with x, y as `integer` (instead of `float`)
 
+- *mult*(x: `number`, y:`number`): [`Vector2`](#vector2)  - returns a copy of the vector with his x, y multiplied by `x`, `y`
+
 - `static` *zero*: [`Vector2`](#vector2)  - returns a vector with x=0 y=0
 
 -  `static` *fromVector*(v: [`Vector2`](#vector2)): [`Vector2`](#vector2)  - returns a copy of the vector `v`
@@ -248,6 +250,8 @@ Called at script load. Used to initialize the script.
 - *copy*: [`Vector3`](#vector3) - returns a copy of the vector
 
 - *getFlat*: [`Vector3`](#vector3) - returns a copy of the vector with x, y, z as `integer` (instead of `float`)
+
+- *mult*(x: `number`, y:`number`, z:`number`): [`Vector3`](#vector3)  - returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
 - `static` *zero*: [`Vector3`](#vector3)  - returns a vector with x=0 y=0 z=0
 

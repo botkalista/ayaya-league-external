@@ -1,5 +1,4 @@
-
-function setup() {}
+function setup() { }
 
 /** 
  * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
@@ -8,7 +7,7 @@ function setup() {}
  * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
  * 
  * */
-function onTick(manager, ticks) {
+async function onTick(manager, ticks) {
 
     const alliesSpellsNames = [];
     manager.champions.allies.forEach(champ => {
@@ -25,7 +24,7 @@ function onTick(manager, ticks) {
         const collision = manager.checkCollision(me, missile);
         if (collision.result) {
             const evadeAt = collision.evadeAt;
-            const action = manager.mouse.rightClickAt(evadeAt.x * 1.2, evadeAt.y * 1.2);
+            const action = await manager.game.issueOrder(evadeAt.mult(1.2, 1.2), false, 10);
             if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1.2, evadeAt.y * 1.2]);
         }
     });

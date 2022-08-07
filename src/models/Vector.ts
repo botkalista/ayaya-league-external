@@ -17,8 +17,15 @@ export class Vector2 extends Vector {
         return instance;
     }
 
+    mult(x: number, y: number) {
+        const cp = this.copy();
+        cp.x *= x;
+        cp.y *= y;
+        return cp;
+    }
+
     get flat() { return this.getFlat(); }
-    
+
     getFlat() {
         const cp = this.copy();
         cp.x = parseInt(cp.x.toFixed(0));
@@ -50,6 +57,14 @@ export class Vector3 extends Vector {
     static fromVector(vector: Vector3) {
         const instance = vector.copy();
         return instance;
+    }
+
+    mult(x: number, y: number, z: number) {
+        const cp = this.copy();
+        cp.x *= x;
+        cp.y *= y;
+        cp.z *= z;
+        return cp;
     }
 
     get flat() { return this.getFlat(); }
