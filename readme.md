@@ -2,6 +2,7 @@
 
 # AyayaLeague [_ayaya-league-external_]
 
+
 **EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
 
 
@@ -31,20 +32,28 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 	
 3. Install windows build tools if you don't have them `npm install --g --production windows-build-tools`
 
-4. Run `npm i` and `npm run rebuild-deps`
+4. Run `check-dependencies` to check that everything is ok and automatically build packages
 
 5. Enter into a league game (must be `windowed` or `no borders`)
 
-6. Run `npm run execute`
+6. Run `npm start`
 
 7. Enjoy :3
+
+
+# Set game settings
+
+To use correctly the script you must adjust some settings inside League.
+- Set screen mode to `no borders`
+- Set *Player Move Click* to **U** inside *Settings > Shortcuts -> Player Movement*
+- Set *Player Attack Only* to **I** inside *Settings > Shortcuts -> Player Movement*
 
 
 # User Scripts
 
 Every user script is located into: `/scripts/userscripts/`
 
-AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
+AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwalker.js`.
 
 ## How to write a script
 
@@ -99,7 +108,7 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
     ```js
     module.exports = { setup, onTick, onMissileCreate }
     ```
-7. Start AyayaLeague (`npm run execute`) and enjoy your script :3
+7. Start AyayaLeague (`npm run start`) and enjoy your script :3
 
 ## Script functions
 
@@ -124,34 +133,32 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **properties**
 
-- *game* [`Game`](#game) - get game informations
+- *game* [`Game`](#game) - Get game informations and execute actions
 
-- *mouse* [`Mouse`](#mouse) - execute mouse actions
+- *me* [`Entity`](#entity) - Get local player
 
-- *me* [`Entity`](#entity) - get local player
+- *missiles* [`Missile`](#missile) - Get all missiles
 
-- *missiles* [`Missile`](#missile) - get all missiles
-
-- *monsters* [`Entity[]`](#entity) - get all monsters
+- *monsters* [`Entity[]`](#entity) - Get all monsters
 
 - *champions*:
-	- *all* [`Entity[]`](#entity) - get all champions
-	- *allies* [`Entity[]`](#entity) - get allied champions
-	- *enemies* [`Entity[]`](#entity) - get enemy champions
+	- *all* [`Entity[]`](#entity) - Get all champions
+	- *allies* [`Entity[]`](#entity) - Get allied champions
+	- *enemies* [`Entity[]`](#entity) - Get enemy champions
 
 - *turrets*:
-	- *all* [`Entity[]`](#entity) - get all turrets
-	- *allies* [`Entity[]`](#entity) - get allied turrets
-	- *enemies* [`Entity[]`](#entity) - get enemy turrets
+	- *all* [`Entity[]`](#entity) - Get all turrets
+	- *allies* [`Entity[]`](#entity) - Get allied turrets
+	- *enemies* [`Entity[]`](#entity) - Get enemy turrets
 
 - *minions*: 
-	- *all* [`Entity[]`](#entity) - get all minions
-	- *allies* [`Entity[]`](#entity) - get allied minions
-	- *enemies* [`Entity[]`](#entity) - get enemy minions
+	- *all* [`Entity[]`](#entity) - Get all minions
+	- *allies* [`Entity[]`](#entity) - Get allied minions
+	- *enemies* [`Entity[]`](#entity) - Get enemy minions
 
 **methods**
 
-- *checkCollision*(target:[`Entity`](#entity), missile:[`Missile`](#missile)): [`CollisionResult`](#collisionresult) - checks the collision between target and missile
+- *checkCollision*(target:[`Entity`](#entity), missile:[`Missile`](#missile)): [`CollisionResult`](#collisionresult) - Checks the collision between target and missile
 
 # Models
 
@@ -159,27 +166,27 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **properties**
 
-- *netId* `number` - entity network identifier
+- *netId* `number` - Entity network identifier
 
-- *name* `string` - entity name
+- *name* `string` - Entity name
 
-- *gamePos* [`Vector3`](#vector3) - entity position relative to the game map
+- *gamePos* [`Vector3`](#vector3) - Entity position relative to the game map
 
-- *screenPos* [`Vector3`](#vector3) - entity position relative to the screen
+- *screenPos* [`Vector3`](#vector3) - Entity position relative to the screen
 
-- *hp* `number` - entity current health points
+- *hp* `number` - Entity current health points
 
-- *maxHp* `number` - entity max health points
+- *maxHp* `number` - Entity max health points
 
-- *visible* `boolean` - true if the entity is outside fog of war
+- *visible* `boolean` - True if the entity is outside fog of war
 
-- *range* `number` - entity attack range 
+- *range* `number` - Entity attack range 
 
-- *team* `number` - entity team identifier (`100` = Team1, `200` = Neutral, `300` = Team2)
+- *team* `number` - Entity team identifier (`100` = Team1, `200` = Neutral, `300` = Team2)
 
-- *spells* [`Spell[]`](#spell) - entity spells
+- *spells* [`Spell[]`](#spell) - Entity spells
 
-- *AiManager* [`AiManager`](#aimanager) - used to check player movement
+- *AiManager* [`AiManager`](#aimanager) - Used to check player movement
 
 - *satHitbox* - Used internally to check collisions
 
@@ -187,35 +194,37 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **properties**
 
-- *name* `string` - spell name
+- *name* `string` - Spell name
 
-- *readyAt* `number` - timestamp when the spell will be ready
+- *readyAt* `number` - Timestamp when the spell will be ready
 
-- *level* `number` - spell level (*always 1 for summoner spells*)
+- *level* `number` - Spell level (*always 1 for summoner spells*)
 
-- *ready* `boolean` - true if the spell is not on cooldown
+- *ready* `boolean` - True if the spell is not on cooldown
 
-- *readyIn* `boolean` - seconds to wait before the spell is ready
+- *readyIn* `boolean` - Seconds to wait before the spell is ready
 
 ## Missile
 
 **properties**
 
-- *gameStartPos* [`Vector3`](#vector3) - missile start position relative to the game map
+- *gameStartPos* [`Vector3`](#vector3) - Missile start position relative to the game map
 
-- *gameEndPos* [`Vector3`](#vector3) - missile end position relative to the game map
+- *gameEndPos* [`Vector3`](#vector3) - Missile end position relative to the game map
 
-- *screenStartPos* [`Vector3`](#vector3) - missile start position relative to the screen
+- *screenStartPos* [`Vector3`](#vector3) - Missile start position relative to the screen
 
-- *screenEndPos* [`Vector3`](#vector3) - missile end position relative to the screen
+- *screenEndPos* [`Vector3`](#vector3) - Missile end position relative to the screen
 
-- *isBasicAttack* `boolean` - true if the missile is a basic attack
+- *team* `number` - Missile team identifier (`100` = Team1, `200` = Neutral, `300` = Team2)
 
-- *isTurretAttack* `boolean` - true if the missile is a turret shot
+- *isBasicAttack* `boolean` - True if the missile is a basic attack
 
-- *isMinionAttack* `boolean` - true if the missile is a minion attack
+- *isTurretAttack* `boolean` - True if the missile is a turret shot
 
-- *spellName* `string` - name of the spell that created the missile
+- *isMinionAttack* `boolean` - True if the missile is a minion attack
+
+- *spellName* `string` - Name of the spell that created the missile
 
 - *satHitbox* - Used internally to check collisions
 
@@ -224,23 +233,23 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **properties**
 
-- *startPath*  [`Vector3`](#vector3)  - start position of the player movement
+- *startPath*  [`Vector3`](#vector3)  - Start position of the player movement
 
-- *endPath*  [`Vector3`](#vector3)  - end position of the player movement
+- *endPath*  [`Vector3`](#vector3)  - End position of the player movement
 
-- *isDashing*  `boolean`  - true if the entity is dashing
+- *isDashing*  `boolean`  - True if the entity is dashing
 
-- *isMoving*  `boolean`  - true if the entity is moving
+- *isMoving*  `boolean`  - True if the entity is moving
 
-- *dashSpeed*  `number`  - speed of the dash
+- *dashSpeed*  `number`  - Speed of the dash
 
 ## CollisionResult
 
 **properties**
 
-- *result* `boolean` - true if there is a collision
+- *result* `boolean` - True if there is a collision
 
-- *evadeAt* [`Vector3`](#vector3) - screen position to move the player in order to dodge the missile
+- *evadeAt* [`Vector3`](#vector3) - Screen position to move the player in order to dodge the missile
 
 ## Game
 
@@ -250,7 +259,10 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **methods**
 
-- *issueOrder*(pos:[`Vector2`](#vector2), isAttack:`boolean`, delay?:`boolean`): `Promise<void>` - Clicks the right mouse button at `pos` or Clicks `a` button to `pos`. `delay` is the number of ms to wait between mouseup and mousedown.
+- *issueOrder*(pos:[`Vector2`](#vector2), isAttack:`boolean`, delay?:`boolean`): `void` - Moves the player to `pos` position. If isAttack is true attacks at `pos` position.
+<br> **NOTE**: You must set PlayerMoveClick to **U** and PlayerAttackOnly to **I**. [**Read more here**](#set-game-settings)
+
+- *isKeyPressed*(key:`number`): `boolean` - Return true if the key is pressed. You can get the key numbers [**here**](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 
 ## Vector2
 
@@ -263,17 +275,17 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **methods**
 
-- *copy*: [`Vector2`](#vector2) - returns a copy of the vector
+- *copy*: [`Vector2`](#vector2) - Returns a copy of the vector
 
-- *getFlat*: [`Vector2`](#vector2) - returns a copy of the vector with x, y as `integer` (instead of `float`)
+- *getFlat*: [`Vector2`](#vector2) - Returns a copy of the vector with x, y as `integer` (instead of `float`)
 
-- *mult*(x: `number`, y:`number`): [`Vector2`](#vector2)  - returns a copy of the vector with his x, y multiplied by `x`, `y`
+- *mult*(x: `number`, y:`number`): [`Vector2`](#vector2)  - Returns a copy of the vector with his x, y multiplied by `x`, `y`
 
-- `static` *zero*: [`Vector2`](#vector2)  - returns a vector with x=0 y=0
+- `static` *zero*: [`Vector2`](#vector2)  - Returns a vector with x=0 y=0
 
--  `static` *fromVector*(v: [`Vector2`](#vector2)): [`Vector2`](#vector2)  - returns a copy of the vector `v`
+-  `static` *fromVector*(v: [`Vector2`](#vector2)): [`Vector2`](#vector2)  - Returns a copy of the vector `v`
 
--  `static` *fromData*(x: `number`, y: `number`): [`Vector2`](#vector2)  - returns a vector with x=`x` y=`y` 
+-  `static` *fromData*(x: `number`, y: `number`): [`Vector2`](#vector2)  - Returns a vector with x=`x` y=`y` 
 
 
 ## Vector3
@@ -289,17 +301,17 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 **methods**
 
-- *copy*: [`Vector3`](#vector3) - returns a copy of the vector
+- *copy*: [`Vector3`](#vector3) - Returns a copy of the vector
 
-- *getFlat*: [`Vector3`](#vector3) - returns a copy of the vector with x, y, z as `integer` (instead of `float`)
+- *getFlat*: [`Vector3`](#vector3) - Returns a copy of the vector with x, y, z as `integer` (instead of `float`)
 
-- *mult*(x: `number`, y:`number`, z:`number`): [`Vector3`](#vector3)  - returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
+- *mult*(x: `number`, y:`number`, z:`number`): [`Vector3`](#vector3)  - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
 - `static` *zero*: [`Vector3`](#vector3)  - returns a vector with x=0 y=0 z=0
 
--  `static` *fromVector*(v: [`Vector3`](#vector3)): [`Vector3`](#vector3)  - returns a copy of the vector `v`
+-  `static` *fromVector*(v: [`Vector3`](#vector3)): [`Vector3`](#vector3)  - Returns a copy of the vector `v`
 
--  `static` *fromData*(x: `number`, y: `number`, z: `number`): [`Vector3`](#vector3)  - returns a vector with x=`x` y=`y` z=`z`
+-  `static` *fromData*(x: `number`, y: `number`, z: `number`): [`Vector3`](#vector3)  - Returns a vector with x=`x` y=`y` z=`z`
 
 
 
@@ -314,9 +326,6 @@ AyayaLeague comes with a default UserScript called `SimpleEvade.js`.
 
 - Add width and height of missiles
 - Use better serialization for settings
-- Add keyboard automation
-- Add script manager to load/unload the script
-
 
 
 # Media
