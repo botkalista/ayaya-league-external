@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "lib": ["ES2016", "DOM"],
     "moduleResolution": "node",
-    "outDir": "dist"
+    "outDir": "dist",
+    "checkJs": false
   },
   "include": ["./src/index.ts"],
   "exclude": ["node_modules"]
