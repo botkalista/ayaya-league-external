@@ -8,6 +8,9 @@ let assets = {};
 
 let spellsData = {}
 
+
+
+
 function preload() {
     spellsData = loadJSON('data/missiles.json');
 }
@@ -50,6 +53,8 @@ function addHandlars() {
         gameData = data;
     });
 }
+
+
 
 function setup() {
     canvas = createCanvas(10, 10);
@@ -417,5 +422,7 @@ function draw() {
         const _time = (gameData.performance.time || 0).toFixed(1);
         const max = (gameData.performance.max || 0).toFixed(1);
         text(`ReadTime: ${settings.root.readingTime} ms\nTime: ${_time} ms\nMax: ${max} ms\nMissiles: ${gameData.missiles.length}`, 20, 250);
+
     }
+
 }

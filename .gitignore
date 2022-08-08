@@ -4,4 +4,4 @@ dist
 dump
 settings.json
 cache
-tests
+**/cpp/build

@@ -9,7 +9,7 @@ export function createOverlayWindow() {
         y: 0,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
         },
         frame: false,
         alwaysOnTop: true,
@@ -26,7 +26,7 @@ export function createOverlayWindow() {
 export function createSettingsWindow() {
     const win = new BrowserWindow({
         width: 250,
-        height: 300,
+        height: 380,
         x: 250,
         y: 250,
         webPreferences: {

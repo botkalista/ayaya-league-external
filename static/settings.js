@@ -33,6 +33,9 @@ const app = Vue.createApp({
         },
         openOverlayDevTools() {
             ipcRenderer.send('openOverlayDevTools');
+        },
+        reloadScripts() {
+            ipcRenderer.send('reloadScripts');
         }
     }
 });

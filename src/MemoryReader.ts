@@ -1,6 +1,7 @@
 
 import * as mem from 'memoryjs';
 import * as fs from 'fs';
+import * as path from 'path';
 
 import type { Process } from './models/mem/Process';
 import type { Module } from './models/mem/Module';
@@ -24,13 +25,17 @@ export class AyayaMemoryReader {
     get dumpSize() { return this.dump ? this.dump.length : 0 }
 
     loadDump() {
-        this.dump = fs.readFileSync('dump/dump.hex');
-        this.dumpInfo = JSON.parse(fs.readFileSync('dump/dump.info', 'utf8'));
+        this.dump = fs.readFileSync('./dump/dump.hex');
+        this.dumpInfo = JSON.parse(fs.readFileSync('./dump/dump.info', 'utf8'));
     }
 
     setMode(readMode: "LEAGUE" | "DUMP") {
         this.mode = readMode;
         console.log('Mode set to', this.mode)
+    }
+
+    getMode() {
+        return this.mode;
     }
 
     hookLeagueProcess() {

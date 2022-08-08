@@ -62,7 +62,7 @@ export class Entity extends CachedClass {
     }
 
     get attackDelay() {
-        return 1000 / CachedClass.get<any>('webapi_me').championStats.attackSpeed;
+        return 1000 / (CachedClass.get<any>('webapi_me') || {})?.championStats?.attackSpeed;
     }
 
     get windupTime() {

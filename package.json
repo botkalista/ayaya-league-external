@@ -9,15 +9,11 @@
     "ws": "^8.8.1"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "test": "ts-node tests/test.ts",
-    "test:nohook": "ts-node tests/test.ts nohook",
-    "rebuild-deps": "cd ./node_modules/memoryjs && npm run build32",
-    "compile": "tsc --project tsconfig.json",
-    "exe": "electron dist/src/index.js",
-    "exe:nohook": "electron dist/src/index.js nohook",
-    "execute": "npm run compile && npm run exe",
-    "execute:nohook": "npm run compile && npm run exe nohook"
+    "start": "npm run compile && electron dist/src/index.js",
+    "rebuild-dep-m": "cd ./node_modules/memoryjs && node-gyp clean configure build --arch=ia32 --target=16.15.0",
+    "rebuild-dep-a": "cd ./src/cpp && node-gyp rebuild --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
+    "check-dependencies": "node prepare.js",
+    "compile": "tsc --project tsconfig.json"
   },
   "keywords": [],
   "author": "Emily",
@@ -28,8 +24,7 @@
     "@types/node": "^18.6.3",
     "@types/sat": "^0.0.31",
     "@types/ws": "^8.5.3",
-    "electron": "^20.0.0",
-    "node-abi": "^3.24.0",
+    "electron": "^20.0.1",
     "node-fetch": "^2.6.1"
   }
 }

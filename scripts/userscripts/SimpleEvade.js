@@ -10,7 +10,7 @@ function setup() {
  * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
  * 
  * */
-async function onTick(manager, ticks) {}
+async function onTick(manager, ticks) { }
 
 /** 
  * @param {import("../../src/models/Missile").Missile} missile Missile
@@ -19,19 +19,19 @@ async function onTick(manager, ticks) {}
  * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
  * 
  * */
-async function onMissileCreate(missile, manager) {
+function onMissileCreate(missile, manager) {
 
-    // if (missile.isBasicAttack) return;
-    // if (missile.isMinionAttack) return;
-    // if (missile.isTurretAttack) return;
+    if (missile.isBasicAttack) return;
+    if (missile.isMinionAttack) return;
+    if (missile.isTurretAttack) return;
 
-    // const collision = manager.checkCollision(manager.me, missile);
+    if (missile.team == manager.me.team) return;
 
-    // if (!collision.result) return;
-
-    // const evadeAt = collision.evadeAt;
-    // const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
-    // if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
+    const collision = manager.checkCollision(manager.me, missile);
+    if (!collision.result) return;
+    const evadeAt = collision.evadeAt;
+    manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
+    console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
 
 
 }

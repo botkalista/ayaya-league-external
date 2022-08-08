@@ -20,14 +20,8 @@ async function sleep(ms) {
 }
 async function main() {
     await sleep(100);
-
     const renderer = AyayaLeague.getRenderBase();
-
-
-
-
     setInterval(() => {
-
         const screen = AyayaLeague.getScreenSize(renderer);
         const matrix = matrixToArray(AyayaLeague.getViewProjectionMatrix());
         //* Put global variables into global cache
@@ -41,7 +35,6 @@ async function main() {
             }
         })
     }, 500)
-
 
 }
 

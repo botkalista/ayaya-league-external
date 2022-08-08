@@ -24,11 +24,10 @@ function setup() {
  * */
 async function onTick(manager, ticks) {
 
-    const test = await manager.game.isKeyPressed(0x4D);
-    if (test < 0) process.exit();
+    const active = manager.game.isKeyPressed(0x4E);
+    if (!active) return;
 
-    const active = await manager.game.isKeyPressed(0x4E);
-    if (active == 0) return;
+
 
     const targets = manager.champions.enemies;
     if (targets.length == 0) return;
@@ -38,18 +37,21 @@ async function onTick(manager, ticks) {
         const eBoundingBox = 30;
         return (dist < pRange + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
     }, { d: 999, e: targets[0] });
-
     if (closestInRange.d == 999) return;
+
+
 
     if (canAttack(manager.me.attackDelay) && _canAttack) {
         lastAaTick = Date.now();
-        await manager.game.issueOrder(closestInRange.e.screenPos, true);
+        const t = manager.game.issueOrder(closestInRange.e.screenPos, true);
+        console.log('IssueOrder took', t, 'ms');
     }
 
     if (canMove) {
         canMove = false;
         const pos = await manager.game.getMousePos();
-        await manager.game.issueOrder(pos, false);
+        const t = manager.game.issueOrder(pos, false);
+        console.log('IssueOrder took', t, 'ms');
     }
 
 }
@@ -62,7 +64,7 @@ async function onTick(manager, ticks) {
  * 
  * */
 function onMissileCreate(missile, manager) {
-    if (missile.spellName.startsWith(manager.me.name + 'BasicAttack')) {
+    if (missile.spellName.startsWith(manager.me.name)) {
         canMove = true;
         _canAttack = true;
     }

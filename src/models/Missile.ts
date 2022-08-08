@@ -15,6 +15,9 @@ export class Missile extends CachedClass {
     private get entry(): number {
         return this.use('entry', () => Reader.readProcessMemory(this.address + OFFSET.oMissileObjectEntry, "DWORD"));
     }
+    get team(): number {
+        return this.use('team', () => Reader.readProcessMemory(this.entry + OFFSET.oObjTeam, "DWORD"));
+    }
     get gameStartPos(): Vector3 {
         return this.use('gStartPos', () => Reader.readProcessMemory(this.entry + OFFSET.oMissileStartPos, "VEC3"));
     }

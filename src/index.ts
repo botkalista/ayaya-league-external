@@ -1,5 +1,7 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
+console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node, 'ARCH', process.arch)
+
 import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents } from 'electron';
 import AyayaLeague from './LeagueReader';
 import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
@@ -38,7 +40,7 @@ let screen: Vector2;
 
 const threads: child.ChildProcess[] = [];
 
-const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => Promise<any>, onMissileCreate: (m: Missile, e: UserScriptManager) => any }[] = []
+const userScripts: { _modulename: string, setup?: () => Promise<any>, onTick?: (e: UserScriptManager) => Promise<any>, onMissileCreate?: (m: Missile, e: UserScriptManager) => Promise<any> }[] = []
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -75,7 +77,10 @@ function registerHandlers() {
     });
 
 
-
+    onMessage<never>('reloadScripts', async (e, data) => {
+        await unloadUserScripts();
+        await loadUserScripts();
+    });
 
     onMessage<never>('reloadWindows', (e, data) => {
         overlayWindow.reload();
@@ -85,6 +90,36 @@ function registerHandlers() {
     onMessage<never>('openOverlayDevTools', (e, data) => {
         overlayWindow.webContents.openDevTools();
     });
+}
+
+async function loadUserScripts() {
+    const basePath = path.join(__dirname, '../../scripts/userscripts');
+    const userScriptsPaths = fs.readdirSync(basePath);
+    for (const scriptPath of userScriptsPaths) {
+        try {
+            if (scriptPath.endsWith('.ts')) {
+                console.log('Skipped', scriptPath, ' - You need to compile it to js');
+                continue;
+            }
+            const p = path.join(basePath, scriptPath);
+            const imp = await require(p);
+            userScripts.push({ ...imp, _modulename: p });
+        } catch (ex) {
+            console.error('Error loading', scriptPath, ex);
+        }
+    }
+
+    for (const script of userScripts) script.setup && await script.setup();
+
+    console.log('Loaded', userScripts.length, 'user scripts.');
+}
+
+async function unloadUserScripts() {
+    for (const script of userScripts) {
+        delete require.cache[script._modulename];
+    }
+
+    userScripts.length = 0;
 }
 
 async function main() {
@@ -99,11 +134,6 @@ async function main() {
 
     CachedClass.set('webapi_interval', webapi_interval);
 
-
-    //* Setup ActionController
-    const actionControllerProcess = ActionControllerWrapper.start();
-    threads.push(actionControllerProcess);
-    await new Promise(e => setTimeout(e, 100));
 
     loadSettingsFromFile();
     registerHandlers();
@@ -122,30 +152,10 @@ async function main() {
 
 
     //* Load user scripts
-    const basePath = path.join(__dirname, '../../scripts/userscripts');
-    const userScriptsPaths = fs.readdirSync(basePath);
-
-    for (const scriptPath of userScriptsPaths) {
-        try {
-            if (scriptPath.endsWith('.ts')) {
-                console.log('Skipped', scriptPath, ' - You need to compile it to js');
-                continue;
-            }
-            const imp = await require(path.join(basePath, scriptPath));
-            userScripts.push(imp);
-        } catch (ex) {
-            console.error('Error loading', scriptPath, ex);
-        }
-    }
-
-    console.log('Loaded', userScripts.length, 'user scripts.');
-
-    userScripts.forEach(s => s.setup());
+    await loadUserScripts();
 
 
-    //* Connect to ActionControllerThread
-    // ActionControllerWrapper.connect();
-
+    //* Start loop
     loop();
 
 }
@@ -184,7 +194,7 @@ async function loop() {
         if (persistentMissiles.find(m => m.address == missile.address)) return;
 
         // Otherwise notify every script for the new missile
-        userScripts.forEach(s => s.onMissileCreate(missile, manager));
+        userScripts.forEach(s => s.onMissileCreate && s.onMissileCreate(missile, manager));
 
         // Add it to persistent
         persistentMissiles.push(missile);
