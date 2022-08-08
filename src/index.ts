@@ -1,3 +1,5 @@
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+
 import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents } from 'electron';
 import AyayaLeague from './LeagueReader';
 import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
@@ -36,7 +38,7 @@ let screen: Vector2;
 
 const threads: child.ChildProcess[] = [];
 
-const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => any, onMissileCreate: (m: Missile, e: UserScriptManager) => any }[] = []
+const userScripts: { setup: () => any, onTick: (e: UserScriptManager) => Promise<any>, onMissileCreate: (m: Missile, e: UserScriptManager) => any }[] = []
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -154,7 +156,7 @@ const performance = new Performance();
 
 let persistentMissiles: Missile[] = [];
 
-function loop() {
+async function loop() {
     performance.start();
 
     //* Create UserScriptManager
@@ -204,8 +206,9 @@ function loop() {
     }
 
 
-
-    userScripts.forEach(s => s.onTick(manager));
+    for (const userScript of userScripts) {
+        await userScript.onTick(manager);
+    }
 
     // --- performance ---
     const result = performance.end();

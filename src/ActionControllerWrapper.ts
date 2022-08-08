@@ -20,7 +20,7 @@ class ActionControllerWrapper {
 
         this.p.stdout.on('data', e => {
             const str = e.toString().trim();
-            console.log(str);
+            // console.log(str);
             if (str.startsWith('pos')) {
                 const [a, x, y] = str.split('_');
                 this.onGetPos(parseInt(x), parseInt(y));
@@ -43,9 +43,12 @@ class ActionControllerWrapper {
         return true;
     }
 
-    isPressed(key: number): Promise<boolean> {
+    isPressed(key: number): Promise<number> {
         return new Promise(resolve => {
-            this.onGetKey = (k: number) => resolve(k != 0);
+            this.onGetKey = (k: number) => {
+                this.onGetKey = (k: number) => { }
+                resolve(k);
+            };
             this.p.stdin.write(`check ${key}\n`);
         });
     }
@@ -65,7 +68,10 @@ class ActionControllerWrapper {
     }
     getMousePos(): Promise<Vector2> {
         return new Promise(resolve => {
-            this.onGetPos = (x: number, y: number) => resolve(new Vector2(x, y));
+            this.onGetPos = (x: number, y: number) => {
+                this.onGetPos = (x: number, y: number) => { }
+                resolve(new Vector2(x, y));
+            }
             this.p.stdin.write(`pos\n`);
         });
     }

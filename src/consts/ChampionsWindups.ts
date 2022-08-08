@@ -315,12 +315,12 @@ export const ChampionsWindups = [
     "modWindup": "N/A"
   },
   {
-    "champName": "Kled &amp; Skaarl",
+    "champName": "Kled",
     "windup": "17.5",
     "modWindup": "N/A"
   },
   {
-    "champName": "Kog'Maw",
+    "champName": "KogMaw",
     "windup": "16.62",
     "modWindup": "N/A"
   },

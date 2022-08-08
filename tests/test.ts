@@ -12,6 +12,7 @@ import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from '../src/models/CachedClass';
 
 import A from '../src/ActionControllerWrapper'
+import { getChampionWindup } from '../src/utils/Utils';
 A.start('D:\\ayaya-league-external\\src\\cpp\\ALActionManager.exe');
 
 async function sleep(ms) {
@@ -20,11 +21,13 @@ async function sleep(ms) {
 async function main() {
     await sleep(100);
 
-    setInterval(() => {
-        A.isPressed(0x57);
-       
-    }, 500)
+    
 
+     setInterval(() => {
+        A.press(0x1E);
+        //  A.isPressed(0x57);
+
+     }, 500)
 
 }
 

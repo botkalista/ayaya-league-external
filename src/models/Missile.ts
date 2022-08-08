@@ -41,14 +41,6 @@ export class Missile extends CachedClass {
         return this.use('isMinion', () => (this.spellName.includes('SRU')));
     }
 
-    get name(): string {
-        return this.use('name', () => {
-            const name = Reader.readProcessMemory(this.entry + OFFSET.oObjName, "DWORD");
-            const missileName = readName(name);
-            return missileName;
-        });
-    }
-
     get spellName(): string {
         return this.use('spellName', () => {
             const sInfo = Reader.readProcessMemory(this.entry + OFFSET.oMissileSpellInfo, "DWORD");

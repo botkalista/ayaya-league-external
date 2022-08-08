@@ -26,17 +26,21 @@ export class Game extends CachedClass {
     }
 
     async issueOrder(pos: Vector2, isAttack: boolean) {
+        const isIssueing = CachedClass.get<number>('isIssueing');
+        if (isIssueing) return;
+        CachedClass.set('isIssuing', true);
         const startMousePos = await ActionControllerWrapper.getMousePos();
         ActionControllerWrapper.blockInput(true);
-        isAttack ? await this.executeOrderAttack(pos) : await this.executeOrderMove(pos);
+        isAttack ? await this.executeOrderAttack(pos.getFlat()) : await this.executeOrderMove(pos.getFlat());
         await ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
         ActionControllerWrapper.blockInput(false);
+        CachedClass.set('isIssuing', false);
     }
 
     private async executeOrderAttack(pos: Vector2) {
         await ActionControllerWrapper.move(pos.x, pos.y);
-        await ActionControllerWrapper.press(0x1E);
-        await ActionControllerWrapper.click("LEFT", pos.x, pos.y, 10);
+        ActionControllerWrapper.press(0x1E);
+        // await ActionControllerWrapper.click("LEFT", pos.x, pos.y, 10);
     }
 
     private async executeOrderMove(pos: Vector2) {
