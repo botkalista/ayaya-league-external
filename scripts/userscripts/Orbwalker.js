@@ -6,15 +6,13 @@ let canMove = false;
 let _canAttack = true;
 
 function canAttack(attackDelay) {
-    const canAttack = lastAaTick + attackDelay < performance.now();
-    console.log({ attackDelay: attackDelay.toFixed(0), lastAaTick: lastAaTick.toFixed(), time: performance.now().toFixed(), canAttack })
+    const canAttack = lastAaTick + attackDelay < Date.now();
     return canAttack;
 }
 
 
 function setup() {
     console.log('Orbwalker.js loaded.')
-
 }
 
 /** 
@@ -27,14 +25,10 @@ function setup() {
 async function onTick(manager, ticks) {
 
     const test = await manager.game.isKeyPressed(0x4D);
-    if (test < 0) {
-        process.exit();
-    }
+    if (test < 0) process.exit();
 
     const active = await manager.game.isKeyPressed(0x4E);
     if (active == 0) return;
-
-    console.log('active', active, performance.now().toFixed(0));
 
     const targets = manager.champions.enemies;
     if (targets.length == 0) return;
@@ -42,18 +36,18 @@ async function onTick(manager, ticks) {
         const dist = Math.hypot(e.screenPos.x - manager.me.screenPos.x, e.screenPos.y - manager.me.screenPos.y);
         const pRange = manager.me.range;
         const eBoundingBox = 30;
-        return (dist < pRange + eBoundingBox * 2 && dist < p[0]) ? [dist, e] : p;
-    }, [999, targets[0]]);
+        return (dist < pRange + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
+    }, { d: 999, e: targets[0] });
 
-    if (closestInRange[0] == 999) return;
+    if (closestInRange.d == 999) return;
 
     if (canAttack(manager.me.attackDelay) && _canAttack) {
-        console.log('IM ATTACKING');
-        await manager.game.issueOrder(closestInRange[1].screenPos, true);
-        lastAaTick = performance.now();
+        lastAaTick = Date.now();
+        await manager.game.issueOrder(closestInRange.e.screenPos, true);
     }
 
     if (canMove) {
+        canMove = false;
         const pos = await manager.game.getMousePos();
         await manager.game.issueOrder(pos, false);
     }

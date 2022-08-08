@@ -12,7 +12,7 @@ import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from '../src/models/CachedClass';
 
 import A from '../src/ActionControllerWrapper'
-import { getChampionWindup } from '../src/utils/Utils';
+import { getChampionWindup, matrixToArray } from '../src/utils/Utils';
 A.start('D:\\ayaya-league-external\\src\\cpp\\ALActionManager.exe');
 
 async function sleep(ms) {
@@ -21,13 +21,27 @@ async function sleep(ms) {
 async function main() {
     await sleep(100);
 
-    
+    const renderer = AyayaLeague.getRenderBase();
 
-     setInterval(() => {
-        A.press(0x1E);
-        //  A.isPressed(0x57);
 
-     }, 500)
+
+
+    setInterval(() => {
+
+        const screen = AyayaLeague.getScreenSize(renderer);
+        const matrix = matrixToArray(AyayaLeague.getViewProjectionMatrix());
+        //* Put global variables into global cache
+        CachedClass.set('screen', screen);
+        CachedClass.set('matrix', matrix);
+        const m = new UserScriptManager();
+        m.monsters.forEach(e => {
+            if (e.name.startsWith('Sru_Crab')) {
+                const pos = e.screenPos.getFlat();
+                A.move(pos.x, pos.y);
+            }
+        })
+    }, 500)
+
 
 }
 

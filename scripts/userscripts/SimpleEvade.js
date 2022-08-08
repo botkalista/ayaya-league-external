@@ -21,17 +21,17 @@ async function onTick(manager, ticks) {}
  * */
 async function onMissileCreate(missile, manager) {
 
-    if (missile.isBasicAttack) return;
-    if (missile.isMinionAttack) return;
-    if (missile.isTurretAttack) return;
+    // if (missile.isBasicAttack) return;
+    // if (missile.isMinionAttack) return;
+    // if (missile.isTurretAttack) return;
 
-    const collision = manager.checkCollision(manager.me, missile);
+    // const collision = manager.checkCollision(manager.me, missile);
 
-    if (!collision.result) return;
+    // if (!collision.result) return;
 
-    const evadeAt = collision.evadeAt;
-    const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
-    if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
+    // const evadeAt = collision.evadeAt;
+    // const action = await manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
+    // if (action) console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
 
 
 }
