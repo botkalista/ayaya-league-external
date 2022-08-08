@@ -140,7 +140,7 @@ async function main() {
 
     console.log('Loaded', userScripts.length, 'user scripts.');
 
-    userScripts.forEach(s => s.setup());
+    userScripts.forEach(s => { if (s.setup) s.setup(); });
 
 
     //* Connect to ActionControllerThread
@@ -184,7 +184,7 @@ async function loop() {
         if (persistentMissiles.find(m => m.address == missile.address)) return;
 
         // Otherwise notify every script for the new missile
-        userScripts.forEach(s => s.onMissileCreate(missile, manager));
+        userScripts.forEach(s => { if (s.onMissileCreate) s.onMissileCreate(missile, manager); });
 
         // Add it to persistent
         persistentMissiles.push(missile);
