@@ -15,7 +15,7 @@ using v8::Value;
 
 void isKeyPressed(const FunctionCallbackInfo<Value>& args) {
     int arg1 = args[0].As<Number>()->Value();
-    bool res = GetAsyncKeyState(arg1) & 0x0001;
+    bool res = GetAsyncKeyState(arg1) & 0x8000;
     args.GetReturnValue().Set(res);
 }
 

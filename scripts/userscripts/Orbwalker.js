@@ -1,9 +1,9 @@
+const { contextIsolated } = require("process");
 
 
 
 let lastAaTick = 0;
 let canMove = false;
-let _canAttack = true;
 
 function canAttack(attackDelay) {
     const canAttack = lastAaTick + attackDelay < Date.now();
@@ -27,8 +27,6 @@ async function onTick(manager, ticks) {
     const active = manager.game.isKeyPressed(0x4E);
     if (!active) return;
 
-
-
     const targets = manager.champions.enemies;
     if (targets.length == 0) return;
     const closestInRange = manager.champions.enemies.reduce((p, e) => {
@@ -40,18 +38,14 @@ async function onTick(manager, ticks) {
     if (closestInRange.d == 999) return;
 
 
-
-    if (canAttack(manager.me.attackDelay) && _canAttack) {
+    if (canAttack(manager.me.attackDelay)) {
+        manager.game.issueOrder(closestInRange.e.screenPos, true);
         lastAaTick = Date.now();
-        const t = manager.game.issueOrder(closestInRange.e.screenPos, true);
-        console.log('IssueOrder took', t, 'ms');
     }
-
     if (canMove) {
         canMove = false;
         const pos = await manager.game.getMousePos();
-        const t = manager.game.issueOrder(pos, false);
-        console.log('IssueOrder took', t, 'ms');
+        manager.game.issueOrder(pos, false);
     }
 
 }
@@ -65,8 +59,7 @@ async function onTick(manager, ticks) {
  * */
 function onMissileCreate(missile, manager) {
     if (missile.spellName.startsWith(manager.me.name)) {
-        canMove = true;
-        _canAttack = true;
+        canMove = !canAttack(manager.me.attackDelay);
     }
 }
 

@@ -34,7 +34,7 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 2. Extract the folder content
 
-3. Run `AyayaLeague.exe` (*run it from a terminal if you want to read console.log outputs*)
+3. Run `AyayaLeague.exe` as Administrator (*run it from a terminal if you want to read console.log outputs*)
 
 ### From source code
 
@@ -52,7 +52,7 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 5. Enter into a league game (must be `windowed` or `no borders`)
 
-6. Run `npm start`
+6. Run `npm start` from a terminal with Administrator privileges
 
 7. Enjoy :3
 

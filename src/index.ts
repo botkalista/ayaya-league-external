@@ -37,10 +37,11 @@ let highestReadTime = 0;
 
 let renderer: number;
 let screen: Vector2;
+let ticks = 1;
 
 const threads: child.ChildProcess[] = [];
 
-const userScripts: { _modulename: string, setup?: () => Promise<any>, onTick?: (e: UserScriptManager) => Promise<any>, onMissileCreate?: (m: Missile, e: UserScriptManager) => Promise<any> }[] = []
+const userScripts: { _modulename: string, setup?: () => Promise<any>, onTick?: (e: UserScriptManager, t: number) => Promise<any>, onMissileCreate?: (m: Missile, e: UserScriptManager) => Promise<any> }[] = []
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -109,7 +110,13 @@ async function loadUserScripts() {
         }
     }
 
-    for (const script of userScripts) script.setup && await script.setup();
+    for (const script of userScripts) {
+        try {
+            script.setup && await script.setup();
+        } catch (ex) {
+            console.error('Error on script', script._modulename, 'function setup\n', ex);
+        }
+    }
 
     console.log('Loaded', userScripts.length, 'user scripts.');
 }
@@ -194,7 +201,13 @@ async function loop() {
         if (persistentMissiles.find(m => m.address == missile.address)) return;
 
         // Otherwise notify every script for the new missile
-        userScripts.forEach(s => s.onMissileCreate && s.onMissileCreate(missile, manager));
+        userScripts.forEach(s => {
+            try {
+                s.onMissileCreate && s.onMissileCreate(missile, manager)
+            } catch (ex) {
+                console.error('Error on script', s._modulename, 'function onMissileCreate\n', ex);
+            }
+        });
 
         // Add it to persistent
         persistentMissiles.push(missile);
@@ -217,7 +230,11 @@ async function loop() {
 
 
     for (const userScript of userScripts) {
-        await userScript.onTick(manager);
+        try {
+            await userScript.onTick(manager, ticks);
+        } catch (ex) {
+            console.error('Error on script', userScript._modulename, 'function onTick\n', ex);
+        }
     }
 
     // --- performance ---
@@ -228,6 +245,7 @@ async function loop() {
     finalData.performance.time = result.time;
     sendMessageToWin(overlayWindow, 'gameData', finalData);
     const settings = getSettings();
+    ticks++;
     setTimeout(loop, Math.max(result.time + settings.root.readingTime, 10));
 }
 

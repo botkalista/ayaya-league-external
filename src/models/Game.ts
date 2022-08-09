@@ -25,23 +25,28 @@ export class Game extends CachedClass {
         return ActionControllerWrapper.getMousePos();
     }
 
+    private syncWait(ms: number) {
+        const t = Date.now();
+        while (Date.now() - t < ms) { }
+    }
+
     issueOrder(pos: Vector2, isAttack: boolean) {
         const startMousePos = this.getMousePos();
         const position = pos.getFlat();
         if (isAttack) {
             ActionControllerWrapper.blockInput(true);
             ActionControllerWrapper.move(position.x, position.y);
+            this.syncWait(5);
             ActionControllerWrapper.press(23);
-            const _tmp = Date.now();
-            while (Date.now() - _tmp < 5) { }
+            this.syncWait(15);
             ActionControllerWrapper.release(23);
             ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
             ActionControllerWrapper.blockInput(false);
         } else {
             ActionControllerWrapper.move(position.x, position.y);
+            this.syncWait(5);
             ActionControllerWrapper.press(22);
-            const _tmp = performance.now();
-            while (performance.now() - _tmp < 5) { }
+            this.syncWait(6);
             ActionControllerWrapper.release(22);
         }
     }
