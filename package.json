@@ -11,7 +11,7 @@
   "scripts": {
     "start": "npm run compile && electron dist/src/index.js",
     "rebuild-dep-m": "cd ./node_modules/memoryjs && node-gyp clean configure build --arch=ia32 --target=16.15.0",
-    "rebuild-dep-a": "cd ./src/cpp && node-gyp rebuild --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
+    "rebuild-dep-a": "cd ./src/cpp && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
     "check-dependencies": "node prepare.js",
     "compile": "tsc --project tsconfig.json"
   },
