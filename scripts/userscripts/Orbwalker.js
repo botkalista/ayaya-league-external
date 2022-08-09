@@ -24,7 +24,7 @@ function setup() {
  * */
 async function onTick(manager, ticks) {
 
-    const active = manager.game.isKeyPressed(0x4E);
+    const active = manager.game.isKeyPressed(0x4E); // N
     if (!active) return;
 
     const targets = manager.champions.enemies;
