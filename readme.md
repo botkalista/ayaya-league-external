@@ -22,6 +22,16 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 ## How to setup and run
 
+### Prebuilt version
+
+1. Download prebuilt version of AyayaLeague [**HERE**](https://github.com/botkalista/ayaya-league-external/releases/tag/Release)
+
+2. Extract the folder content
+
+3. Run `AyayaLeague.exe` (*run it from a terminal if you want to read console.log outputs*)
+
+### From source code
+
 1. Clone the repo `git clone https://github.com/botkalista/ayaya-league-external.git`
 
 2. Install Node.js 32bit v16.10.0
@@ -51,7 +61,7 @@ To use correctly the script you must adjust some settings inside League.
 
 # User Scripts
 
-Every user script is located into: `/scripts/userscripts/`
+Every user script is located into: `/scripts/userscripts/` (on prebuilt version `/resources/app/scripts/userscripts/`)
 
 AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwalker.js`.
 

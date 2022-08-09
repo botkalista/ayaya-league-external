@@ -1,19 +1,21 @@
 {
   "name": "ayaya-league-external",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "dependencies": {
     "mathjs": "^11.0.1",
     "memoryjs": "^3.4.0",
     "sat": "^0.9.0",
-    "ws": "^8.8.1"
+    "ws": "^8.8.1",
+    "node-fetch": "^2.6.1"
   },
   "scripts": {
     "start": "npm run compile && electron dist/src/index.js",
     "rebuild-dep-m": "cd ./node_modules/memoryjs && node-gyp clean configure build --arch=ia32 --target=16.15.0",
     "rebuild-dep-a": "cd ./src/cpp && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
     "check-dependencies": "node prepare.js",
-    "compile": "tsc --project tsconfig.json"
+    "compile": "tsc --project tsconfig.json",
+    "build-executable": "node build-executable.js"
   },
   "keywords": [],
   "author": "Emily",
@@ -25,6 +27,7 @@
     "@types/sat": "^0.0.31",
     "@types/ws": "^8.5.3",
     "electron": "^20.0.1",
-    "node-fetch": "^2.6.1"
+    "electron-packager": "^15.5.1",
+    "fs-extra": "^10.1.0"
   }
 }
