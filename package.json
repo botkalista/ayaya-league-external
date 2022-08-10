@@ -6,8 +6,7 @@
     "mathjs": "^11.0.1",
     "memoryjs": "^3.4.0",
     "node-fetch": "^2.6.1",
-    "sat": "^0.9.0",
-    "ws": "^8.8.1"
+    "sat": "^0.9.0"
   },
   "scripts": {
     "start": "npm run compile && electron dist/src/index.js",
