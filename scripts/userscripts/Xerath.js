@@ -4,6 +4,8 @@
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager
  */
 
+const { Vector2, Vector3 } = require("../../src/models/Vector");
+
 
 function setup() {
     console.log('Xerath.js loaded.')
@@ -31,6 +33,11 @@ const qRanges = [
 let qTimer = 0;
 let qTarget;
 
+function getCurrentQRange(time) {
+    const ret = 735 + (102.14 * ((time - qTimer) / 0.25));
+    return Math.max(ret, 1450);
+}
+
 /**
  * @param {Entity[]} enemies 
  * @param {number} range 
@@ -38,8 +45,9 @@ let qTarget;
 function getLowestHealthTargetWithinRange(enemies, range, manager) {
     return enemies.reduce((p, e) => {
         const dist = Math.hypot(e.screenPos.x - manager.me.screenPos.x, e.screenPos.y - manager.me.screenPos.y);
-        const eBoundingBox = 65; // Ashe bounding box
-        return (dist < range / 2 + eBoundingBox && e.hp < p.hp) ? { hp: e.hp, e } : p;
+        const eBoundingBox = e.boundingBox;
+        const mBoundingBox = manager.me.boundingBox;
+        return (dist < (range + eBoundingBox + mBoundingBox) / 2 && e.hp < p.hp) ? { hp: e.hp, e } : p;
     }, { hp: 9999, e: enemies[0] });
 }
 
@@ -48,10 +56,15 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
-
-    return; // DEBUG
     if (manager.me.name != 'Xerath') return;
-    if (manager.playerState == 'isCharging' || manager.playerState == 'isCasting') return;
+
+    if (manager.playerState == 'isCharging'
+        || manager.playerState == 'isCasting'
+        || manager.playerState == 'isAttacking') return;
+
+    const active = manager.game.isKeyPressed(0x5);
+    if (!active) return;
+
 
     const me = manager.me;
     const Q = me.spells[0];
@@ -59,42 +72,49 @@ async function onTick(manager, ticks) {
     if (Q.ready && me.mana > qCost[Q.level]) {
         const target = getLowestHealthTargetWithinRange(manager.champions.enemies, 1450, manager); //1450 Max Q range
         if (target.hp == 9999) return; //DA CAMBIARE PER CONTINUARE RESTO ONTICK
-
         qTarget = target.e.address;
-
         manager.game.pressKey(manager.spellSlot.Q);
         qTimer = manager.game.time;
         manager.setPlayerState("isCharging");
         return;
-
     }
 
 }
 
 /** 
- * @param {Entity} player
+ * @param {Entity} hero
  * @param {Manager} manager
  */
-function onMoveCreate(player, manager) {
+function onMoveCreate(hero, manager) {
     if (manager.me.name != 'Xerath') return;
-    if (player.address != qTarget) return;
+    if (hero.address != qTarget) return;
     if (manager.playerState != 'isCharging') return;
+
+    const active = manager.game.isKeyPressed(0x5);
+    if (!active) return;
+
     const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
-    const dist = Math.hypot(player.screenPos.x - manager.me.screenPos.x, player.screenPos.y - manager.me.screenPos.y);
-    const qCurrentRange = qRanges.find(e => e.t <= manager.game.time - qTimer) || { r: 0 }.r;
-    if (dist > qCurrentRange) return;
-    const castPos = manager.worldToScreen(player.AiManager.endPath).getFlat();
+
+    const dQ = hero.AiManager.endPath.sub(hero.gamePos.normalize());
+    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
+
+    const qPredicted_pos = hero.gamePos.add(dQ.mult(dQ_travel));
+
+    if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager.game.time)) return;
+
     manager.setPlayerState('isCasting');
+
     const oldMousePos = getMousePos();
+
     blockInput(true);
+    const castPos = manager.worldToScreen(hero.AiManager.endPath).getFlat();    
     setMousePos(castPos.x, castPos.y);
-    sleep(15);
+    sleep(3);
     releaseKey(manager.spellSlot.Q);
     sleep(10);
+    qTimer = 0;
     setMousePos(oldMousePos.x, oldMousePos.y);
     blockInput(false);
-    qTimer = 0;
-    qTarget = undefined;
     manager.setPlayerState('idle');
 
 }

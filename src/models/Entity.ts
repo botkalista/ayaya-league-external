@@ -39,6 +39,9 @@ export class Entity extends CachedClass {
     get maxMana(): number {
         return this.use('maxMana', () => Reader.readProcessMemory(this.address + OFFSET.oObjMaxMana, "FLOAT"));
     }
+    get movSpeed():number {
+        return this.use('movSpeed', () => Reader.readProcessMemory(this.address + OFFSET.oObjMovSpeed, "FLOAT"));
+    }
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }

@@ -41,6 +41,7 @@ export const OFFSET = {
     oObjDead: 0x021C,
     oObjAD: 0x134C,
     oObjBonusAD: 0x12C4,
+    oObjMovSpeed: 0x138C,
 
 
     oObjAiManager: 0x2C7C, //0F B6 83 ?? ?? ?? ?? 33 C9

@@ -5,6 +5,15 @@ export class Vector2 {
 
     constructor(public x: number, public y: number) { }
 
+    get length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    get normalize() {
+        const l = this.length;
+        return new Vector2(this.x / l, this.y / l);
+    }
+
     @desc('Returns a vector with x=0 y=0')
     @res(Vector2)
     static zero() {
@@ -65,6 +74,16 @@ export class Vector3 {
     constructor(public x: number, public y: number, public z: number) { }
 
 
+    get length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
+    get normalizeVec(): Vector3 {
+        const l = this.length;
+        return new Vector3(this.x / l, this.y / l, this.z / l);
+    }
+
+
     static fromData(data: { x: number, y: number, z: number }) {
         const instance = new Vector3(data.x, data.y, data.z);
         return instance;
@@ -89,13 +108,34 @@ export class Vector3 {
     @arg('x', 0)
     @arg('y', 0)
     @res(Vector3)
-    mult(x: number, y: number, z: number) {
+    mult(x: number, y: number, z: number): Vector3 {
         const cp = this.copy();
         cp.x *= x;
         cp.y *= y;
         cp.z *= z;
         return cp;
     }
+
+    add(x: number, y: number, z: number): Vector3 {
+        const cp = this.copy();
+        cp.x += x;
+        cp.y += y;
+        cp.z += z;
+        return cp;
+    }
+
+    sub(x: number, y: number, z: number): Vector3 {
+        const cp = this.copy();
+        cp.x -= x;
+        cp.y -= y;
+        cp.z -= z;
+        return cp;
+    }
+
+    dist(v: Vector3): number {
+        return Math.hypot(v.x - this.x, v.y - this.y, v.z - this.z);
+    }
+
 
     @desc('Returns true if vectors have the same `x`, `y`, `z`')
     @arg('vec', Vector3)
@@ -107,7 +147,7 @@ export class Vector3 {
 
     get flat() { return this.getFlat(); }
 
-    
+
     @desc('Returns a copy of the vector with x, y, z as `integer` (instead of `float`)')
     @res(Vector3)
     getFlat() {

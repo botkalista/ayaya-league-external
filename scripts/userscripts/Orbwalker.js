@@ -30,6 +30,8 @@ function setup() {
 
 async function onTick(manager, ticks) {
 
+    return;
+
     const active = manager.game.isKeyPressed(0x5); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
     if (!active) return;
 
@@ -67,6 +69,7 @@ async function onTick(manager, ticks) {
  * 
  * */
 function onMissileCreate(missile, manager) {
+    return;
     if (missile.spellName.startsWith(manager.me.name + 'BasicAttack') ||
         missile.spellName.startsWith(manager.me.name + 'BioArcaneBarrageAttack')) {
         canPlayerMove = true;
