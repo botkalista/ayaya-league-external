@@ -135,77 +135,7 @@ class AyayaLeagueReader {
         // const data = readEntity(object);
         // return data;
     }
-    printChat() {
 
-        const chatInstance = Reader.readProcessMemory(OFFSET.oChatInstance, "PTR", true);
-        const args = [
-            { type: Reader.memInstance.T_VOID, value: chatInstance },
-            { type: Reader.memInstance.T_CHAR, value: "test" },
-            { type: Reader.memInstance.T_INT, value: 1 },
-        ]
-
-        const res = Reader.callFunction(args, 0x4, Reader.baseAddr + OFFSET.fPrintChat);
-
-        console.log(res);
-
-        //     extern std::uint32_t PrintChat (offset function)
-        // [[nodiscard]] __forceinline auto getChat() noexcept { return *reinterpret_cast<Chat**>(GetModuleHandle(nullptr) + offsets::global::ChatInstance); }
-
-        // void printChat(const char* message) noexcept
-        // 	{
-        // 		static const auto PrintChat{ reinterpret_cast<void(__thiscall*)(void*, const char*, int)>(std::uintptr_t(::GetModuleHandle(nullptr)) + offsets::functions::PrintChat) };
-        // 		PrintChat(this, message, 0xFFFFFF);
-        // 	}
-
-
-        // bool Print(const char* cMessage, int iColor, HANDLE pHandle) {
-        //     DWORD* ChatClient = (DWORD*)getBase(pHandle) + 0x24A83B0;
-        //     DWORD* PrintChat = (DWORD*)getBase(pHandle) + 0x5BF020;
-        //     reinterpret_cast<void(__thiscall*) (DWORD*, const char*, int)>
-        //             (PrintChat)
-        //             ((DWORD*)ChatClient, cMessage, iColor);
-        //         return true;
-
-        // }
-
-
-        // static void PrintChat(const char* Message) {
-        //     typedef void(__thiscall* tPrintChat)(DWORD ChatClient, const char* Message, int Color);
-        //     tPrintChat fnPrintChat = (tPrintChat)(baseAddr + oPrintChat);
-        //     fnPrintChat(*(DWORD*)(baseAddr + oChatClientPtr), Message, 1);
-        // }
-
-    }
-    getPing() {
-        // void Game::GetPing(MemS& ms) {
-        //     uint32_t cpuPingAdr;
-        //     uint32_t networkPing;
-        //     double netPing;
-        //     double cpuPing;
-        //     DWORD netClientPtr;
-        //     DWORD Address1;
-        //     DWORD Address2;
-        //     DWORD Address3;
-        //     DWORD cpuInstance;
-
-        //     Mem::Read(hProcess, moduleBaseAddr + 0x3116F58, &netClientPtr, sizeof(DWORD));
-        //     Mem::Read(hProcess, netClientPtr + 0x44, &Address1, sizeof(DWORD));
-        //     Mem::Read(hProcess, Address1 + 0x4, &Address2, sizeof(DWORD));
-        //     Mem::Read(hProcess, Address2 + 0x4, &Address3, sizeof(DWORD));
-
-        //     networkPing = Address3 + 0x18 + 0xD8;
-
-        //     Mem::Read(hProcess, moduleBaseAddr + 0x30E9228, &cpuInstance, sizeof(DWORD));
-
-        //     cpuPingAdr = cpuInstance + 0x18;
-
-        //     Mem::Read(hProcess, networkPing, &netPing, sizeof(double));
-        //     Mem::Read(hProcess, cpuPingAdr, &cpuPing, sizeof(double));
-
-        //     ms.ping = static_cast<int>((netPing + cpuPing) * 1000.0);
-
-        // }
-    }
     /**
      *  @deprecated Not Working
      */

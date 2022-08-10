@@ -57,15 +57,15 @@ export class Game extends CachedClass {
 
     }
 
-    isKeyPressed(key: number) {
+    isKeyPressed(key: number): boolean {
         return ActionControllerWrapper.isPressed(key);
     }
 
-    getMousePos() {
+    getMousePos(): Vector2 {
         return ActionControllerWrapper.getMousePos();
     }
 
-    setMousePos(x: number, y: number) {
+    setMousePos(x: number, y: number): void {
         ActionControllerWrapper.move(x, y);
     }
 

@@ -48,6 +48,7 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
+    if (manager.me.name != 'Xerath') return;
     if (manager.playerState == 'isCharging' || manager.playerState == 'isCasting') return;
 
     const me = manager.me;
@@ -73,7 +74,7 @@ async function onTick(manager, ticks) {
  * @param {Manager} manager
  */
 function onMoveCreate(player, manager) {
-
+    if (manager.me.name != 'Xerath') return;
     if (player.address != qTarget) return;
     if (manager.playerState != 'isCharging') return;
     const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;

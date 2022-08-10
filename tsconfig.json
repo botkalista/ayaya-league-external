@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "lib": ["ES2016", "DOM"],
     "moduleResolution": "node",
-    "outDir": "dist",
+    "experimentalDecorators": true,
+    "outDir": "dist"
   },
   "include": ["./src/index.ts"],
   "exclude": ["node_modules"]

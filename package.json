@@ -5,9 +5,9 @@
   "dependencies": {
     "mathjs": "^11.0.1",
     "memoryjs": "^3.4.0",
+    "node-fetch": "^2.6.1",
     "sat": "^0.9.0",
-    "ws": "^8.8.1",
-    "node-fetch": "^2.6.1"
+    "ws": "^8.8.1"
   },
   "scripts": {
     "start": "npm run compile && electron dist/src/index.js",
@@ -15,8 +15,7 @@
     "rebuild-dep-a": "cd ./src/cpp && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
     "check-dependencies": "node prepare.js",
     "compile": "tsc --project tsconfig.json",
-    "build": "node build.js",
-    "t": "electron tests/test.js"
+    "build": "node build.js"
   },
   "keywords": [],
   "author": "Emily",

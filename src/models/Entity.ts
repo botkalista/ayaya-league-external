@@ -43,6 +43,9 @@ export class Entity extends CachedClass {
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }
+    get dead(): number {
+        return this.use('dead', () => Reader.readProcessMemory(this.address + OFFSET.oObjDead, "BOOL"));
+    }
     get range(): number {
         return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjAttackRange, "FLOAT"));
     }

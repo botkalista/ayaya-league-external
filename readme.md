@@ -140,6 +140,12 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 
 *onMissileCreate*(missile: [`Missile`](#missile), manager: [`UserScriptManager`](#userscriptmanager)) - Called every time a new missile is created
 
+### onMoveCreate
+
+*onMoveCreate*(player: [`Entity`](#entity), manager: [`UserScriptManager`](#userscriptmanager)) - Called every an enemy clicks to move
+
+
+
 
 ## UserScriptManager
 
@@ -149,7 +155,11 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 
 **properties**
 
+- *spellSlot*: `SpellSlot` - Enum of game key codes
+
 - *game* [`Game`](#game) - Get game informations and execute actions
+
+- *playerState* [`PlayerState`](#playerstate) - Get player state
 
 - *me* [`Entity`](#entity) - Get local player
 
@@ -176,6 +186,10 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 
 - *checkCollision*(target:[`Entity`](#entity), missile:[`Missile`](#missile)): [`CollisionResult`](#collisionresult) - Checks the collision between target and missile
 
+- *worldToScreen*(pos:[`Vector3`](#vector3)): `Vector2` - Return `pos` converted to screen position
+
+- *setPlayerState*(state: [`PlayerState`](#playerstate)) - Set the player state
+
 # Models
 
 ## Entity
@@ -195,6 +209,8 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 - *maxHp* `number` - Entity max health points
 
 - *visible* `boolean` - True if the entity is outside fog of war
+
+- *dead* `boolean` - True if the entity is dead
 
 - *range* `number` - Entity attack range 
 
@@ -278,7 +294,23 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 - *issueOrder*(pos:[`Vector2`](#vector2), isAttack:`boolean`, delay?:`boolean`): `void` - Moves the player to `pos` position. If isAttack is true attacks at `pos` position.
 <br> **NOTE**: You must set PlayerMoveClick to **U** and PlayerAttackOnly to **I**. [**Read more here**](#set-game-settings)
 
-- *isKeyPressed*(key:`number`): `boolean` - Return true if the key is pressed. You can get the key numbers [**here**](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
+- *castSpell*(slot:`number`, pos1?:[`Vector2`](#vector2), pos2?: [`Vector2`](#vector2), selfCast?:`boolean`): `void` - Cast the spell `slot` at `pos1` if provided to `pos2` if provided.<br>Self cast the spell if `selfCast` is true.<br>Use `pos2` for spells like Viktor Q or Viego W.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager) for `slot`
+
+- *isKeyPressed*(key:`number`): `boolean` - Return true if the key is pressed.<br>You can get the key numbers [**here**](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
+
+- *pressKey*(key:`number`): `void`- Press the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
+
+- *release*(key:`number`): `void`- Release the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
+
+- *getMousePos*(): [`Vector2`](#vector2) - Return the mouse position
+
+- *setMousePos*(x:`number`, y:`number`): `void` - Set the mouse position to `x`, `y`
+
+- *blockInput*(value:`boolean`) - If true blocks user input (keyboard+mouse), if false unlocks it.
+
+- *sleep*(ms:`number`) - Wait `ms` milliseconds synchronously
+
+
 
 ## Vector2
 
@@ -291,13 +323,15 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 
 **methods**
 
-- *copy*: [`Vector2`](#vector2) - Returns a copy of the vector
+- *copy*(): [`Vector2`](#vector2) - Returns a copy of the vector
 
-- *getFlat*: [`Vector2`](#vector2) - Returns a copy of the vector with x, y as `integer` (instead of `float`)
+- *getFlat*(): [`Vector2`](#vector2) - Returns a copy of the vector with x, y as `integer` (instead of `float`)
+
+- *isEqual*(vec: [`Vector2`](#vector2)): [`Vector2`](#vector2) - Returns true if vectors have the same `x`, `y`
 
 - *mult*(x: `number`, y:`number`): [`Vector2`](#vector2)  - Returns a copy of the vector with his x, y multiplied by `x`, `y`
 
-- `static` *zero*: [`Vector2`](#vector2)  - Returns a vector with x=0 y=0
+- `static` *zero*(): [`Vector2`](#vector2)  - Returns a vector with x=0 y=0
 
 -  `static` *fromVector*(v: [`Vector2`](#vector2)): [`Vector2`](#vector2)  - Returns a copy of the vector `v`
 
@@ -317,18 +351,31 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
 
 **methods**
 
-- *copy*: [`Vector3`](#vector3) - Returns a copy of the vector
+- *copy*(): [`Vector3`](#vector3) - Returns a copy of the vector
 
-- *getFlat*: [`Vector3`](#vector3) - Returns a copy of the vector with x, y, z as `integer` (instead of `float`)
+- *getFlat*(): [`Vector3`](#vector3) - Returns a copy of the vector with x, y, z as `integer` (instead of `float`)
+
+- *isEqual*:(vec: [`Vector3`](#vector3)): [`Vector3`](#vector3) - Returns true if vectors have the same `x`, `y`, `z`
 
 - *mult*(x: `number`, y:`number`, z:`number`): [`Vector3`](#vector3)  - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
-- `static` *zero*: [`Vector3`](#vector3)  - returns a vector with x=0 y=0 z=0
+- `static` *zero*(): [`Vector3`](#vector3)  - returns a vector with x=0 y=0 z=0
 
 -  `static` *fromVector*(v: [`Vector3`](#vector3)): [`Vector3`](#vector3)  - Returns a copy of the vector `v`
 
 -  `static` *fromData*(x: `number`, y: `number`, z: `number`): [`Vector3`](#vector3)  - Returns a vector with x=`x` y=`y` z=`z`
 
+# Enums
+
+## PlayerState
+
+- `isCasting`
+- `isMoving`
+- `isAttacking`
+- `isEvading`
+- `isCharging`
+- `isChanneling`
+- `idle`
 
 
 # vFAQ (_very Frequently Asked Questions_)

@@ -38,8 +38,8 @@ export class UserScriptManager extends CachedClass {
         return CachedClass.get<PlayerState>('playerState');
     }
 
-    setPlayerState(value: PlayerState) {
-        CachedClass.set<PlayerState>('playerState', value);
+    setPlayerState(state: PlayerState) {
+        CachedClass.set<PlayerState>('playerState', state);
     }
 
     worldToScreen(pos: Vector3) {

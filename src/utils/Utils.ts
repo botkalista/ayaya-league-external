@@ -1,4 +1,3 @@
-// import { allowedChars } from "../consts/Offsets";
 import * as math from 'mathjs';
 
 import { Vector2, Vector3, Vector4 } from '../models/Vector';
