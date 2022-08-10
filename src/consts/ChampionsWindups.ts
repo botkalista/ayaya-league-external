@@ -315,11 +315,6 @@ export const ChampionsWindups = [
     "modWindup": "N/A"
   },
   {
-    "champName": "Kled",
-    "windup": "17.5",
-    "modWindup": "N/A"
-  },
-  {
     "champName": "KogMaw",
     "windup": "16.62",
     "modWindup": "N/A"

@@ -22,6 +22,10 @@ export class Performance {
         this.readings = [];
     }
 
+    getReads() {
+        return this.readings;
+    }
+
     end() {
         return { readings: this.readings, time: performance.now() - this.tStart };
     }

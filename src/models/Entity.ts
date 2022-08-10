@@ -3,11 +3,10 @@ import AyayaLeague from '../LeagueReader';
 import { readName } from "../StructureReader";
 import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
-import { factoryFromArray, worldToScreen, getChampionWindup } from "../utils/Utils";
+import { factoryFromArray, worldToScreen, getChampionWindup, getChampionRadius, getChampionBaseAttackSpeed, getChampionWindupMod } from "../utils/Utils";
 import { Spell } from "./Spell";
 import * as SAT from 'sat';
 import { AiManager } from './AiManager';
-
 
 const Reader = AyayaLeague.reader;
 
@@ -72,13 +71,26 @@ export class Entity extends CachedClass {
         });
     }
 
+
     get attackDelay() {
-        return 1000 / (CachedClass.get<any>('webapi_me') || {})?.championStats?.attackSpeed;
+        return 1000 / CachedClass.get<any>('webapi_me').championStats.attackSpeed;
     }
 
     get windupTime() {
-        return (1 / CachedClass.get<any>('webapi_me').championStats.attackSpeed * 1000) * getChampionWindup(this.name);
+        const windupPercent = 100 / getChampionWindup(this.name);
+        const baseAttackSpeed = getChampionBaseAttackSpeed(this.name);
+        const bWindupTime = 1 / baseAttackSpeed * windupPercent;
+        const totalAttackSpeed: number = CachedClass.get<any>('webapi_me').championStats.attackSpeed;
+        const cAttackTime = 1 / totalAttackSpeed;
+        const windupModifier = getChampionWindupMod(this.name) == 0 ? 0 : 100 / getChampionWindupMod(this.name);
+        const result = bWindupTime + ((cAttackTime * windupPercent) - bWindupTime) * windupModifier;
+        return (1 / totalAttackSpeed * 1000) * result / 20;
     }
+
+    get boundingBox() {
+        return this.use('boundingBox', () => getChampionRadius(this.name));
+    }
+
 
     get satHitbox() {
         return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 60));

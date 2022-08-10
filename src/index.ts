@@ -142,7 +142,7 @@ async function main() {
         const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
         const data = await res.json();
         CachedClass.set('webapi_me', data);
-    }, 500);
+    }, 250);
 
     CachedClass.set('webapi_interval', webapi_interval);
 
@@ -185,6 +185,7 @@ async function loop() {
     //* Create UserScriptManager
     const manager = new UserScriptManager();
 
+
     //* Load required global variables
     const gameTime = AyayaLeague.getGameTime();
     const me = manager.me;
@@ -199,20 +200,35 @@ async function loop() {
     CachedClass.set('myTeam', myTeam);
     CachedClass.set('nmeTeam', nmeTeam);
 
+    performance.spot('first_part');
+
     publishOnMissileCreate(manager);
+
+    performance.spot('missile_publish');
+
     publishOnMoveCreate(manager);
 
+    performance.spot('on_move_create_publish');
+
     const finalData = {
-        me: preparator.prepareChampion(me),
-        enemyChampions: manager.champions.enemies.map(e => preparator.prepareChampion(e)),
+        me: undefined,
+        enemyChampions: undefined,
         missiles: manager.missiles.map(preparator.prepareMissile),
-        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)) },
+        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)), reads: performance.getReads() },
         screen,
         matrix,
     }
 
+    performance.spot('drawer data');
+    finalData.me = preparator.prepareChampion(me, performance);
+    performance.spot('drawer - me');
+    finalData.enemyChampions = manager.champions.enemies.map(e => preparator.prepareChampion(e));
+    performance.spot('drawer - nmeChamps');
+
     // Publish onTick to scripts
     publishScriptsOnTicks(manager);
+
+    performance.spot('on_tick_publish');
 
     // --- performance ---
     const result = performance.end();
@@ -223,26 +239,27 @@ async function loop() {
     sendMessageToWin(overlayWindow, 'gameData', finalData);
     const settings = getSettings();
     ticks++;
+
+    manager.dispose();
     setTimeout(loop, Math.max(result.time + settings.root.readingTime, 5));
 }
 
 
-async function publishOnMoveCreate(manager: UserScriptManager) {
+function publishOnMoveCreate(manager: UserScriptManager) {
 
-    manager.champions.enemies.forEach(champ => {
+    for (const champ of manager.champions.enemies) {
         const oldPos = aiEndPositions.get(champ.address);
         if (oldPos && champ.AiManager.endPath.isEqual(oldPos)) return;
         aiEndPositions.set(champ.address, champ.AiManager.endPath);
-
-        console.log('PUBLISHING')
         publishToScript('onMoveCreate', champ, manager);
-    });
+    }
+
 }
 
-async function publishOnMissileCreate(manager: UserScriptManager) {
+function publishOnMissileCreate(manager: UserScriptManager) {
 
     //* Check missiles for onMissileCreate function
-    manager.missiles.forEach(missile => {
+    for (const missile of manager.missiles) {
 
         // If missile is inside persistent skip
         if (persistentMissiles.find(m => m.address == missile.address)) return;
@@ -252,7 +269,7 @@ async function publishOnMissileCreate(manager: UserScriptManager) {
 
         // Add it to persistent
         persistentMissiles.push(missile);
-    });
+    }
 
     // Remove deleted missiles from persistent
     persistentMissiles = persistentMissiles.filter(m => manager.missiles.find(e => e.address == m.address));
@@ -271,7 +288,9 @@ function publishScriptsOnTicks(manager: UserScriptManager) {
 function publishToScript(fName: keyof UserScript, ...args: any) {
     for (const userScript of userScripts) {
         try {
-            userScript[fName] && (userScript[fName] as (...a) => any)(...args);
+            setImmediate(() => {
+                userScript[fName] && (userScript[fName] as (...a) => any)(...args);
+            });
         } catch (ex) {
             console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');
         }

@@ -94,18 +94,18 @@ export class Game extends CachedClass {
             CachedClass.set<PlayerState>('playerState', "isAttacking");
             ActionControllerWrapper.blockInput(true);
             ActionControllerWrapper.move(position.x, position.y);
-            this.sleep(5);
+            this.sleep(1);
             ActionControllerWrapper.press(23);
-            this.sleep(10);
+            this.sleep(15);
             ActionControllerWrapper.release(23);
             ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
             ActionControllerWrapper.blockInput(false);
         } else {
             CachedClass.set<PlayerState>('playerState', "isMoving");
             ActionControllerWrapper.move(position.x, position.y);
-            this.sleep(5);
+            this.sleep(1);
             ActionControllerWrapper.press(22);
-            this.sleep(10);
+            this.sleep(15);
             ActionControllerWrapper.release(22);
         }
         CachedClass.set<PlayerState>('playerState', "idle");

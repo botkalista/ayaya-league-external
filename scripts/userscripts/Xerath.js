@@ -48,6 +48,8 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
+
+    return; // DEBUG
     if (manager.me.name != 'Xerath') return;
     if (manager.playerState == 'isCharging' || manager.playerState == 'isCasting') return;
 

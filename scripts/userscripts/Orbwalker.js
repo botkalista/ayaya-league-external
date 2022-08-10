@@ -1,11 +1,19 @@
 let lastAaTick = 0;
-let canMove = false;
+let canPlayerMove = true;
 
-function canAttack(attackDelay) {
-    const canAttack = lastAaTick + attackDelay < Date.now();
+function getTime(manager) {
+    return manager.game.time * 1000
+}
+
+function canAttack(attackDelay, manager) {
+    const canAttack = lastAaTick + attackDelay < getTime(manager);
     return canAttack;
 }
 
+function canMove(windupTime, manager) {
+    const canMove = lastAaTick + windupTime < getTime(manager);
+    return canPlayerMove || canMove;
+}
 
 function setup() {
     console.log('Orbwalker.js loaded.')
@@ -22,26 +30,29 @@ function setup() {
 
 async function onTick(manager, ticks) {
 
-    const active = manager.game.isKeyPressed(0x20); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
+    const active = manager.game.isKeyPressed(0x5); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
     if (!active) return;
+
+    if (manager.playerState == 'isAttacking') return;
 
     const targets = manager.champions.enemies;
     if (targets.length == 0) return;
-
     const closestInRange = manager.champions.enemies.reduce((p, e) => {
         const dist = Math.hypot(e.screenPos.x - manager.me.screenPos.x, e.screenPos.y - manager.me.screenPos.y);
         const pRange = manager.me.range;
-        const eBoundingBox = 65; // Ashe bounding box
+        const eBoundingBox = manager.me.boundingBox;
         return (dist < (pRange / 2) + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
     }, { d: 999, e: targets[0] });
 
-    if (closestInRange.d == 999) canMove = true;
+    if (closestInRange.d == 999) { canPlayerMove = true; console.log('NO TARGETS') }
 
-    if (canAttack(manager.me.attackDelay) && (closestInRange.d != 999) && manager.playerState == "idle") {
+    if ((closestInRange.d != 999) && canAttack(manager.me.attackDelay, manager) && manager.playerState == "idle" || manager.playerState == undefined) {
+        console.log('ATTACKING')
+        canPlayerMove = false;
+        lastAaTick = getTime(manager);
         manager.game.issueOrder(closestInRange.e.screenPos, true);
-        lastAaTick = Date.now();
-        canMove = false;
-    } else if (canMove && (manager.playerState == "idle" || manager.playerState == "isCharging")) {
+    } else if (canMove(manager.me.windupTime, manager) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
+        console.log(canPlayerMove)
         const pos = await manager.game.getMousePos();
         manager.game.issueOrder(pos, false);
     }
@@ -56,8 +67,9 @@ async function onTick(manager, ticks) {
  * 
  * */
 function onMissileCreate(missile, manager) {
-    if (missile.spellName.startsWith(manager.me.name + "BasicAttack")) {
-        canMove = !canAttack(manager.me.attackDelay);
+    if (missile.spellName.startsWith(manager.me.name + 'BasicAttack') ||
+        missile.spellName.startsWith(manager.me.name + 'BioArcaneBarrageAttack')) {
+        canPlayerMove = true;
     }
 }
 

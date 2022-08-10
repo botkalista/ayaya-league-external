@@ -403,6 +403,9 @@ function drawMissiles_old() {
 
 }
 
+
+const maxReads = {}
+
 function draw() {
     clear();
 
@@ -418,11 +421,18 @@ function draw() {
     noStroke();
     fill(255);
     if (gameData.performance && settings.over && settings.over.performance) {
-
         const _time = (gameData.performance.time || 0).toFixed(1);
         const max = (gameData.performance.max || 0).toFixed(1);
         text(`ReadTime: ${settings.root.readingTime} ms\nTime: ${_time} ms\nMax: ${max} ms\nMissiles: ${gameData.missiles.length}`, 20, 250);
 
+        const reads = gameData.performance.reads.map(e => {
+            if (maxReads[e.name] && maxReads[e.name] > e.delta) return `${e.name}: ${e.delta.toFixed(0)} | ${maxReads[e.name].toFixed(0)}`;
+            maxReads[e.name] = e.delta;
+            return `${e.name}: ${e.delta.toFixed(0)} | ${maxReads[e.name].toFixed(0)}`;
+        });
+
+
+        text(`Reads:\n${reads.join('\n')}`, 20, 500);
     }
 
 }

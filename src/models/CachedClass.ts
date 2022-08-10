@@ -26,7 +26,13 @@ export abstract class CachedClass {
         CachedClass._set(key, result, cache);
         return result;
     }
+    private static _clear(cache: CacheMap) {
+        cache.clear();
+    }
 
+    protected clear() {
+        return CachedClass._clear(this.localCache);
+    }
     protected get<T>(key: string): T {
         return CachedClass._get(key, this.localCache);
     }

@@ -6,6 +6,7 @@ import { Vector2 } from '../models/Vector';
 import { Missile } from '../models/Missile';
 import { getCircle3D, worldToScreen } from '../utils/Utils';
 import { CachedClass } from '../models/CachedClass';
+import { Performance } from '../utils/Performance';
 
 export class Preparator {
 
@@ -20,17 +21,27 @@ export class Preparator {
         return result;
     }
 
-    prepareChampion(data: Entity) {
+    prepareChampion(data: Entity, performance?: Performance) {
+
+        const name = data.name;
+        if (performance) performance.spot('prepareChamp - name');
+        const pos = data.gamePos.getFlat();
+        if (performance) performance.spot('prepareChamp - pos');
+        const x = parseInt(data.screenPos.x.toFixed(0));
+        if (performance) performance.spot('prepareChamp - x');
+        const y = parseInt(data.screenPos.y.toFixed(0));
+        if (performance) performance.spot('prepareChamp - y');
+        const hp = parseInt(data.hp.toFixed(0));
+        if (performance) performance.spot('prepareChamp - hp');
+        const maxHp = parseInt(data.maxHp.toFixed(0));
+        if (performance) performance.spot('prepareChamp - maxhp');
+        const range = parseInt(data.range.toFixed(0));
+        if (performance) performance.spot('prepareChamp - range');
+        const vis = data.visible;
+        if (performance) performance.spot('prepareChamp - vis');
         const result = {
-            pos: data.gamePos.getFlat(),
-            circle3D: getCircle3D(data.gamePos, 50, 500, CachedClass.get('screen'), CachedClass.get('matrix')),
-            x: parseInt(data.screenPos.x.toFixed(0)),
-            y: parseInt(data.screenPos.y.toFixed(0)),
-            hp: parseInt(data.hp.toFixed(0)),
-            name: data.name,
-            maxHp: parseInt(data.maxHp.toFixed(0)),
-            range: parseInt(data.range.toFixed(0)),
-            vis: data.visible,
+            pos, x, y, hp, name, maxHp,
+            range, vis,
             spells: data.spells.map(e => this.prepareSpell(e))
         }
 

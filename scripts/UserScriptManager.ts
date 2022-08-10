@@ -34,6 +34,11 @@ export class UserScriptManager extends CachedClass {
 
     public spellSlot = SpellSlot;
 
+
+    dispose() {
+        this.clear();
+    }
+
     get playerState(): PlayerState {
         return CachedClass.get<PlayerState>('playerState');
     }

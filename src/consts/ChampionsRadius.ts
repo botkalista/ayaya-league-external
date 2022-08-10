@@ -62,7 +62,7 @@ export const ChampionsRadius = [
     { name: "Kha'Zix", size: 65 },
     { name: "Kindred", size: 65 },
     { name: "Kled", size: 65 },
-    { name: "Kog'Maw", size: 65 },
+    { name: "KogMaw", size: 65 },
     { name: "LeBlanc", size: 65 },
     { name: "Lee Sin", size: 65 },
     { name: "Leona", size: 65 },

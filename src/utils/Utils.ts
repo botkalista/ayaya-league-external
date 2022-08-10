@@ -3,10 +3,26 @@ import * as math from 'mathjs';
 import { Vector2, Vector3, Vector4 } from '../models/Vector';
 
 import { ChampionsWindups } from '../consts/ChampionsWindups';
+import { ChampionsRadius } from '../consts/ChampionsRadius';
+import { ChampionsBaseAttackSpeed } from '../consts/ChampionsBaseAttackSpeed';
 
 export function getChampionWindup(championName: string) {
     return parseFloat(ChampionsWindups.find(e => e.champName == championName).windup);
 }
+
+export function getChampionWindupMod(championName: string) {
+    const modWindup = ChampionsWindups.find(e => e.champName == championName).modWindup;
+    return parseFloat(modWindup == 'N/A' ? '0' : modWindup);
+}
+
+export function getChampionBaseAttackSpeed(championName: string) {
+    return ChampionsBaseAttackSpeed.find(e => e.name == championName).base;
+}
+
+export function getChampionRadius(championName: string) {
+    return ChampionsRadius.find(e => e.name == championName).size;
+}
+
 
 
 //* i hope this is right, i suck at typings
