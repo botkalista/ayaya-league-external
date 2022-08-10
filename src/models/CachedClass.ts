@@ -16,7 +16,7 @@ export abstract class CachedClass {
     private static _has(key: string, cache: CacheMap): boolean {
         return cache.has(key);
     }
-    private static _set(key: string, value: any, cache: CacheMap) {
+    private static _set<T>(key: string, value: T, cache: CacheMap) {
         return cache.set(key, value);
     }
     private static _use<T>(key: string, fn: () => T, cache: CacheMap): T {
@@ -33,7 +33,7 @@ export abstract class CachedClass {
     protected has(key: string): boolean {
         return CachedClass._has(key, this.localCache);
     }
-    protected set(key: string, value: any) {
+    protected set<T>(key: string, value: T) {
         return CachedClass._set(key, value, this.localCache);
     }
     protected use<T>(key: string, fn: () => T): T {
@@ -46,7 +46,7 @@ export abstract class CachedClass {
     static has(key: string): boolean {
         return this._has(key, CachedClass.globalCache);
     }
-    static set(key: string, value: any) {
+    static set<T>(key: string, value: T) {
         return this._set(key, value, CachedClass.globalCache);
     }
     static use<T>(key: string, fn: () => T): T {

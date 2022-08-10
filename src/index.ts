@@ -7,19 +7,18 @@ import AyayaLeague from './LeagueReader';
 import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
 import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } from './overlay/Settings'
 import { Settings } from './overlay/models/Settings';
-import { Vector2 } from './models/Vector';
+import { Vector2, Vector3 } from './models/Vector';
 import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
 import { Performance } from './utils/Performance';
 import { UserScriptManager } from '../scripts/UserScriptManager';
 import { CachedClass } from './models/CachedClass';
-import ActionControllerWrapper from './ActionControllerWrapper';
 
 import * as path from 'path';
 import * as fs from 'fs';
-import * as child from 'child_process';
 import * as fetch from 'node-fetch';
 import { Missile } from './models/Missile';
+import { Entity } from './models/Entity';
 
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
@@ -39,9 +38,15 @@ let renderer: number;
 let screen: Vector2;
 let ticks = 1;
 
-const threads: child.ChildProcess[] = [];
+type UserScript = {
+    _modulename: string,
+    setup?: () => Promise<any>,
+    onTick?: (e: UserScriptManager, t: number) => any,
+    onMissileCreate?: (m: Missile, e: UserScriptManager) => any,
+    onMoveCreate?: (p: Entity, e: UserScriptManager) => any
+}
 
-const userScripts: { _modulename: string, setup?: () => Promise<any>, onTick?: (e: UserScriptManager, t: number) => Promise<any>, onMissileCreate?: (m: Missile, e: UserScriptManager) => Promise<any> }[] = []
+const userScripts: UserScript[] = [];
 
 function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
@@ -159,8 +164,7 @@ async function main() {
 
 
     //* Load user scripts
-    await loadUserScripts();
-
+    await loadUserScripts()
 
     //* Start loop
     loop();
@@ -172,6 +176,8 @@ const performance = new Performance();
 
 
 let persistentMissiles: Missile[] = [];
+let aiEndPositions = new Map<number, Vector3>();
+let lastOnTickPublish = 0;
 
 async function loop() {
     performance.start();
@@ -193,31 +199,8 @@ async function loop() {
     CachedClass.set('myTeam', myTeam);
     CachedClass.set('nmeTeam', nmeTeam);
 
-
-    //* Check missiles for onMissileCreate function
-    manager.missiles.forEach(missile => {
-
-        // If missile is inside persistent skip
-        if (persistentMissiles.find(m => m.address == missile.address)) return;
-
-        // Otherwise notify every script for the new missile
-        userScripts.forEach(s => {
-            try {
-                s.onMissileCreate && s.onMissileCreate(missile, manager)
-            } catch (ex) {
-                console.error('Error on script', s._modulename, 'function onMissileCreate\n', ex);
-            }
-        });
-
-        // Add it to persistent
-        persistentMissiles.push(missile);
-    });
-
-    // Remove deleted missiles from persistent
-    persistentMissiles = persistentMissiles.filter(m => manager.missiles.find(e => e.address == m.address));
-
-
-
+    publishOnMissileCreate(manager);
+    publishOnMoveCreate(manager);
 
     const finalData = {
         me: preparator.prepareChampion(me),
@@ -228,14 +211,8 @@ async function loop() {
         matrix,
     }
 
-
-    for (const userScript of userScripts) {
-        try {
-            await userScript.onTick(manager, ticks);
-        } catch (ex) {
-            console.error('Error on script', userScript._modulename, 'function onTick\n', ex);
-        }
-    }
+    // Publish onTick to scripts
+    publishScriptsOnTicks(manager);
 
     // --- performance ---
     const result = performance.end();
@@ -246,7 +223,59 @@ async function loop() {
     sendMessageToWin(overlayWindow, 'gameData', finalData);
     const settings = getSettings();
     ticks++;
-    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 10));
+    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 5));
+}
+
+
+async function publishOnMoveCreate(manager: UserScriptManager) {
+
+    manager.champions.enemies.forEach(champ => {
+        const oldPos = aiEndPositions.get(champ.address);
+        if (oldPos && champ.AiManager.endPath.isEqual(oldPos)) return;
+        aiEndPositions.set(champ.address, champ.AiManager.endPath);
+
+        console.log('PUBLISHING')
+        publishToScript('onMoveCreate', champ, manager);
+    });
+}
+
+async function publishOnMissileCreate(manager: UserScriptManager) {
+
+    //* Check missiles for onMissileCreate function
+    manager.missiles.forEach(missile => {
+
+        // If missile is inside persistent skip
+        if (persistentMissiles.find(m => m.address == missile.address)) return;
+
+        // Otherwise notify every script for the new missile
+        publishToScript('onMissileCreate', missile, manager);
+
+        // Add it to persistent
+        persistentMissiles.push(missile);
+    });
+
+    // Remove deleted missiles from persistent
+    persistentMissiles = persistentMissiles.filter(m => manager.missiles.find(e => e.address == m.address));
+
+
+}
+
+function publishScriptsOnTicks(manager: UserScriptManager) {
+    if (manager.game.time * 1000 < lastOnTickPublish + 30) return;
+    publishToScript('onTick', manager, ticks);
+    lastOnTickPublish = manager.game.time * 1000;
+
+}
+
+//TODO: Add typings
+function publishToScript(fName: keyof UserScript, ...args: any) {
+    for (const userScript of userScripts) {
+        try {
+            userScript[fName] && (userScript[fName] as (...a) => any)(...args);
+        } catch (ex) {
+            console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');
+        }
+    }
 }
 
 app.whenReady().then(main);
@@ -254,5 +283,4 @@ app.whenReady().then(main);
 
 app.on('will-quit', () => {
     globalShortcut.unregisterAll();
-    threads.forEach(t => t.kill());
 });

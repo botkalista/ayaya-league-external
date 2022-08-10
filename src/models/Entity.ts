@@ -12,7 +12,8 @@ import { AiManager } from './AiManager';
 const Reader = AyayaLeague.reader;
 
 export class Entity extends CachedClass {
-    constructor(public address: number) { super() };
+
+    constructor(public address: number) { super(); };
 
 
     get netId(): number {
@@ -33,6 +34,12 @@ export class Entity extends CachedClass {
     get maxHp(): number {
         return this.use('maxHp', () => Reader.readProcessMemory(this.address + OFFSET.oObjMaxHealth, "FLOAT"));
     }
+    get mana(): number {
+        return this.use('mana', () => Reader.readProcessMemory(this.address + OFFSET.oObjMana, "FLOAT"));
+    }
+    get maxMana(): number {
+        return this.use('maxMana', () => Reader.readProcessMemory(this.address + OFFSET.oObjMaxMana, "FLOAT"));
+    }
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }
@@ -49,9 +56,10 @@ export class Entity extends CachedClass {
             return factoryFromArray(Spell, AyayaLeague.getSpellsOf(this.address))
         });
     }
+
     get AiManager(): AiManager {
         return this.use('AiManager', () => {
-            const v1 = Reader.readProcessMemory(this.address + OFFSET.oObjAiManager, "DWORD");
+            const v1 = Reader.readProcessMemory(this.address + OFFSET.oObjAiManager, "BYTE");
             const v2 = this.address + OFFSET.oObjAiManager - 8;
             const v3 = Reader.readProcessMemory(v2 + 4, "DWORD");
             let v4 = Reader.readProcessMemory(v2 + (4 * v1 + 12), "DWORD");

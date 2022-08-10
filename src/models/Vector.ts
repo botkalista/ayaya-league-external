@@ -24,6 +24,11 @@ export class Vector2 extends Vector {
         return cp;
     }
 
+    isEqual(vector: Vector2): boolean {
+        return this.x == vector.x && this.y == vector.y;
+    }
+
+
     get flat() { return this.getFlat(); }
 
     getFlat() {
@@ -57,6 +62,10 @@ export class Vector3 extends Vector {
     static fromVector(vector: Vector3) {
         const instance = vector.copy();
         return instance;
+    }
+
+    isEqual(vector: Vector3): boolean {
+        return this.x == vector.x && this.y == vector.y && this.z == vector.z;
     }
 
     mult(x: number, y: number, z: number) {

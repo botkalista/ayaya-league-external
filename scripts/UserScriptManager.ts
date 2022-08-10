@@ -2,17 +2,51 @@
 import { Missile } from '../src/models/Missile';
 import { Game } from '../src/models/Game';
 import AyayaLeague from '../src/LeagueReader';
-import { factoryFromArray } from '../src/utils/Utils';
+import { factoryFromArray, worldToScreen } from '../src/utils/Utils';
 import { TeamDistinct } from '../src/models/TeamDistinct';
 import { CachedClass } from '../src/models/CachedClass';
 import { Entity } from '../src/models/Entity';
-import { Vector2 } from '../src/models/Vector';
+import { Vector2, Vector3 } from '../src/models/Vector';
 
 import * as SAT from 'sat';
+
+export type PlayerState = "isCasting" | "isMoving" | "isAttacking" | "isEvading" | "isCharging" | "isChanneling" | "idle";
+
+enum SpellSlot {
+    Item1 = 0x31,
+    Item2 = 0x32,
+    Item3 = 0x33,
+    Trinket = 0x34,
+    Item5 = 0x35,
+    Item6 = 0x36,
+    Item7 = 0x37,
+    Q = 16,
+    W = 0x57,
+    E = 0x45,
+    R = 0x52,
+    D = 0x44,
+    F = 0x46
+}
 
 export class UserScriptManager extends CachedClass {
 
     constructor() { super(); }
+
+    public spellSlot = SpellSlot;
+
+    get playerState(): PlayerState {
+        return CachedClass.get<PlayerState>('playerState');
+    }
+
+    setPlayerState(value: PlayerState) {
+        CachedClass.set<PlayerState>('playerState', value);
+    }
+
+    worldToScreen(pos: Vector3) {
+        const screen = CachedClass.get<Vector2>('screen');
+        const matrix = CachedClass.get<number[]>('matrix');
+        return worldToScreen(pos, screen, matrix);
+    }
 
     get game() {
         return this.use('game', () => new Game());

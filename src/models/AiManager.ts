@@ -1,6 +1,7 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '../LeagueReader';
 import { OFFSET } from "../consts/Offsets";
+import { Vector3 } from "./Vector";
 
 
 const Reader = AyayaLeague.reader;
@@ -8,19 +9,19 @@ const Reader = AyayaLeague.reader;
 
 export class AiManager extends CachedClass {
     constructor(public address: number) { super() }
-    get startPath() {
-        return this.use('startPath', () => Reader.readProcessMemory(this.address + OFFSET.oAiManagerStartPath, "POS3"));
+    get startPath(): Vector3 {
+        return this.use('startPath', () => Vector3.fromData(Reader.readProcessMemory(this.address + OFFSET.oAiManagerStartPath, "VEC3")));
     }
-    get endPath() {
-        return this.use('endPath', () => Reader.readProcessMemory(this.address + OFFSET.oAiManagerEndPath, "POS3"));
+    get endPath(): Vector3 {
+        return this.use('endPath', () => Vector3.fromData(Reader.readProcessMemory(this.address + OFFSET.oAiManagerEndPath, "VEC3")));
     }
-    get isDashing() {
+    get isDashing(): boolean {
         return this.use('isDashing', () => Reader.readProcessMemory(this.address + OFFSET.oAiManagerIsDashing, "BOOL"));
     }
-    get isMoving() {
+    get isMoving(): boolean {
         return this.use('isMoving', () => Reader.readProcessMemory(this.address + OFFSET.oAiManagerIsMoving, "BOOL"));
     }
-    get dashSpeed() {
+    get dashSpeed(): boolean {
         return this.use('dashSpeed', () => Reader.readProcessMemory(this.address + OFFSET.oAiManagerDashSpeed, "DWORD"));
     }
     // get currentSegment() {

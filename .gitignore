@@ -7,4 +7,5 @@ cache
 **/cpp/build
 tmp-build
 AyayaLeague-win32-ia32
-AyayaLeague.zip
+AyayaLeague-win32-ia32.zip
+tests

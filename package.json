@@ -15,7 +15,8 @@
     "rebuild-dep-a": "cd ./src/cpp && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
     "check-dependencies": "node prepare.js",
     "compile": "tsc --project tsconfig.json",
-    "build": "node build.js"
+    "build": "node build.js",
+    "t": "electron tests/test.js"
   },
   "keywords": [],
   "author": "Emily",

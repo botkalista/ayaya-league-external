@@ -20,6 +20,8 @@ async function onTick(manager, ticks) { }
  * 
  * */
 function onMissileCreate(missile, manager) {
+    
+    return; //DEBUG
 
     if (missile.isBasicAttack) return;
     if (missile.isMinionAttack) return;
