@@ -25,6 +25,7 @@ function main() {
 
     console.log('Installing dependencies');
     try { child.execSync('npm i', { stdio: 'ignore' }); } catch (ex) { }
+    try { child.execSync('npm i --save-dev', { stdio: 'ignore' }); } catch (ex) { }
 
     //* rebuild modules for current platform
 
