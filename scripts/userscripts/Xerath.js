@@ -30,7 +30,8 @@ const qRanges = [
 
 let qTimer = 0;
 let qTarget;
-let released = true;
+
+let isChargingQ = false;
 
 function getCurrentQRange(time) {
     const ret = 735 + (102.14 * ((time - qTimer) / 0.25));
@@ -55,22 +56,25 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
+
     if (manager.me.name != 'Xerath') return;
 
-
-
-    if (manager.playerState == 'isCharging') {
-        const currentQRange = getCurrentQRange(manager.game.time);
-        if (currentQRange >= 1450) {
-            const hero = manager.champions.enemies.find(e => e.address == qTarget);
-            castQ(hero, manager)
-        }
+    if (manager.game.isKeyPressed(0x20)) {
+        isChargingQ = false;
     }
-    if (manager.playerState == 'isCharging') return;
 
     const active = manager.game.isKeyPressed(0x5);
-    if (!active) return released = true;
-    released = false;
+    if (!active) return;
+
+    if (isChargingQ) return;
+
+    const currentQRange = getCurrentQRange(manager.game.time);
+
+    if (currentQRange >= 1450) {
+        const hero = manager.champions.enemies.find(e => e.address == qTarget);
+        castQ(hero, manager)
+        return;
+    }
 
     const me = manager.me;
     const Q = me.spells[0];
@@ -82,6 +86,7 @@ async function onTick(manager, ticks) {
         manager.game.pressKey(manager.spellSlot.Q);
         qTimer = manager.game.time;
         manager.setPlayerState("isCharging");
+        isChargingQ = true;
         return;
     }
 }
@@ -91,9 +96,9 @@ async function onTick(manager, ticks) {
  * @param {Manager} manager
  */
 function onDraw(ctx, manager) {
-    const range = manager.me.range;
-    const bb = manager.me.boundingBox;
-    ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
+    // const range = manager.me.range;
+    // const bb = manager.me.boundingBox;
+    // ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
 
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
@@ -110,30 +115,40 @@ function onDraw(ctx, manager) {
 function onMoveCreate(hero, manager) {
     if (manager.me.name != 'Xerath') return;
     if (hero.address != qTarget) return;
-    if (manager.playerState != 'isCharging') return;
+    if (!isChargingQ) return;
     const active = manager.game.isKeyPressed(0x5);
     if (!active) return;
-    castQ(manager);
+    castQ(hero, manager);
 }
 
+/** 
+ * @param {Entity} hero
+ * @param {Manager} manager
+ */
 function castQ(hero, manager) {
-    const dQ = hero.AiManager.endPath.sub(hero.gamePos.normalize());
-    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-    const qPredicted_pos = hero.gamePos.add(dQ.mult(dQ_travel));
-    if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager.game.time)) return;
-    const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
-    manager.setPlayerState('isCasting');
-    const oldMousePos = getMousePos();
-    blockInput(true);
-    const castPos = manager.worldToScreen(hero.AiManager.endPath).getFlat();
-    setMousePos(castPos.x, castPos.y);
-    sleep(3);
-    releaseKey(manager.spellSlot.Q);
-    sleep(10);
-    qTimer = 0;
-    setMousePos(oldMousePos.x, oldMousePos.y);
-    blockInput(false);
-    manager.setPlayerState('idle');
+    try {
+        const dQ = hero.AiManager.endPath.sub(hero.gamePos.normalize());
+        const dQ_travel = hero.movSpeed * 0.528; // Q cast time
+        const qPredicted_pos = hero.gamePos.add(dQ.mult(dQ_travel));
+        if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager.game.time)) return;
+        const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
+        manager.setPlayerState('isCasting');
+        const oldMousePos = getMousePos();
+        blockInput(true);
+        const castPos = manager.worldToScreen(hero.AiManager.endPath).getFlat();
+        setMousePos(castPos.x, castPos.y);
+        sleep(3);
+        releaseKey(manager.spellSlot.Q);
+        sleep(10);
+        qTimer = 0;
+        setMousePos(oldMousePos.x, oldMousePos.y);
+        blockInput(false);
+        manager.setPlayerState('idle');
+        casting = false;
+    } catch (ex) {
+        console.log(ex);
+        console.log({ hero })
+    }
 }
 
 /** 
