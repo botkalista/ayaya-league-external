@@ -78,7 +78,7 @@ export class Vector3 {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
-    get normalizeVec(): Vector3 {
+    normalize(): Vector3 {
         const l = this.length;
         return new Vector3(this.x / l, this.y / l, this.z / l);
     }

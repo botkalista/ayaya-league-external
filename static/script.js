@@ -3,12 +3,10 @@ const { ipcRenderer } = require('electron');
 
 let gameData = {};
 let settings = {};
-
 let assets = {};
-
 let spellsData = {}
 
-
+const __savedData = new Map();
 
 
 function preload() {
@@ -65,7 +63,12 @@ function setup() {
 
 //* -----------------------------------------------
 
-
+/**
+ * @param {*} pos 
+ * @param {*} screenSize 
+ * @param {*} viewProjMatrix 
+ * @returns 
+ */
 function __internal_worldToScreen(pos, screenSize, viewProjMatrix) {
     const out = { x: 0, y: 0 }
     const screen = { x: screenSize.x, y: screenSize.y };
@@ -110,6 +113,22 @@ function __internal_getCircle3D(pos, points, radius, screenSize, viewProjMatrixA
 
 }
 
+function __saveData(payload) {
+    const [key, fn, ...args] = payload;
+    const value = window[fn] && window[fn](...args);
+    __savedData.set(key, value);
+}
+
+function __getData(key) {
+    return __savedData.get(key);
+}
+
+function __drawCircle3dFromSavedData(key) {
+    const data = __getData(key);
+    for (let i = 0; i < data.length; i++) {
+        line(data[i][0].x, data[i][0].y, data[i][1].x, data[i][1].y);
+    }
+}
 
 function drawOverlayEnemySpells() {
     push();
@@ -433,6 +452,16 @@ function draw() {
 
 
         text(`Reads:\n${reads.join('\n')}`, 20, 500);
+    }
+
+    try {
+        const commands = JSON.parse(ipcRenderer.sendSync('drawingContext'));
+        for (const command of commands) {
+            const [fn, ...args] = command;
+            window[fn] && window[fn](...args);
+        }
+    } catch (ex) {
+        console.error(ex);
     }
 
 }

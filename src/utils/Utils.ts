@@ -20,7 +20,7 @@ export function getChampionBaseAttackSpeed(championName: string) {
 }
 
 export function getChampionRadius(championName: string) {
-    return ChampionsRadius.find(e => e.name == championName).size;
+    return (ChampionsRadius.find(e => e.name == championName) || { size: 65 }).size;
 }
 
 
