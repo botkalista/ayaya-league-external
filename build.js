@@ -6,7 +6,8 @@ const ignoreFiles = [
     '^/dump',
     '^/media',
     '^/tests',
-    '^/tmp-build'
+    '^/tmpbuild',
+    'AyayaLeague-win32-ia32.zip'
 ]
 
 const ignorePattern = `--ignore="(${ignoreFiles.join('|')})"`;

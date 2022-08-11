@@ -14,19 +14,19 @@ import { OFFSET } from '../src/consts/Offsets';
 export type PlayerState = "isCasting" | "isMoving" | "isAttacking" | "isEvading" | "isCharging" | "isChanneling" | "idle";
 
 enum SpellSlot {
-    Item1 = 0x31,
-    Item2 = 0x32,
-    Item3 = 0x33,
-    Trinket = 0x34,
-    Item5 = 0x35,
-    Item6 = 0x36,
-    Item7 = 0x37,
-    Q = 16,
-    W = 0x57,
-    E = 0x45,
-    R = 0x52,
-    D = 0x44,
-    F = 0x46
+    Item1 = 0x2,
+    Item2 = 0x3,
+    Item3 = 0x4,
+    Trinket = 0x5,
+    Item5 = 0x6,
+    Item6 = 0x7,
+    Item7 = 0x9,
+    Q = 0x10,
+    W = 0x11,
+    E = 0x12,
+    R = 0x13,
+    D = 0x20,
+    F = 0x21
 }
 
 
