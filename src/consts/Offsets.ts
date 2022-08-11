@@ -62,8 +62,26 @@ export const OFFSET = {
     oMissileEndPos: 0x02E8,
 
 
+    oSpellBook: 0x2330,
+
+    oSpellBookActiveSpellEntry: 0x20,
+
+    oActiveSpellEntryIsBasic: 0xC4,
+    oActiveSpellEntryStartPos: 0x84,
+    oActiveSpellEntryEndPos: 0x90,
+
     oBuffManager: 0x2178,
-    oSpellBook: 0x27B8, // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
+    oBuffArray: 0x10,
+    oBuffArrayLength: 0x14,
+    oBuffSize: 0x8,
+
+    oBuffName: 0x4,
+    oBuffStartTime: 0xC,
+    oBuffEndTime: 0x10,
+    oBuffCount: 0x24,
+
+
+    oSpellSlots: 0x27B8, // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
     oSpellReadyAt: 0x24,
     oSpellLevel: 0x1C,
     oSpellDamage: 0x94,

@@ -3,6 +3,8 @@ import AyayaLeague from '../LeagueReader';
 import { readName } from "../StructureReader";
 import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
+import { ActiveSpellEntry } from './ActiveSpellEntry';
+import { BuffManager } from './BuffManager';
 import { factoryFromArray, worldToScreen, getChampionWindup, getChampionRadius, getChampionBaseAttackSpeed, getChampionWindupMod } from "../utils/Utils";
 import { Spell } from "./Spell";
 import * as SAT from 'sat';
@@ -39,7 +41,7 @@ export class Entity extends CachedClass {
     get maxMana(): number {
         return this.use('maxMana', () => Reader.readProcessMemory(this.address + OFFSET.oObjMaxMana, "FLOAT"));
     }
-    get movSpeed():number {
+    get movSpeed(): number {
         return this.use('movSpeed', () => Reader.readProcessMemory(this.address + OFFSET.oObjMovSpeed, "FLOAT"));
     }
     get visible(): number {
@@ -54,12 +56,21 @@ export class Entity extends CachedClass {
     get team(): number {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));
     }
+
     get spells(): Spell[] {
         return this.use('spells', () => {
             if (this.team != 100 && this.team != 200) return [];
             if (this.name.startsWith('PracticeTool')) return [];
             return factoryFromArray(Spell, AyayaLeague.getSpellsOf(this.address))
         });
+    }
+
+    get activeSpellEntry() {
+        return this.use('activeSpellEntry', () => new ActiveSpellEntry(Reader.readProcessMemory(this.address + OFFSET.oSpellBook + OFFSET.oSpellBookActiveSpellEntry, "DWORD")));
+    }
+
+    get buffManager() {
+        return this.use('buffManager', () => new BuffManager(this.address + OFFSET.oBuffManager));
     }
 
     get AiManager(): AiManager {
@@ -73,7 +84,6 @@ export class Entity extends CachedClass {
             return new AiManager(aiManagerAddress);
         });
     }
-
 
     get attackDelay() {
         return 1000 / CachedClass.get<any>('webapi_me').championStats.attackSpeed;

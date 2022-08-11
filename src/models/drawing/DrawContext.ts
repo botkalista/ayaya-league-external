@@ -34,4 +34,11 @@ export class DrawContext {
         this.commands.push([`__drawCircle3dFromSavedData`, '__internalCircle']);
     }
 
+
+    text(str: string, x: number, y: number, size: number, color: Color = 0) {
+        this.commands.push([`fill`, color]);
+        this.commands.push([`noStroke`]);
+        this.commands.push([`fontSize`, size]);
+        this.commands.push(['text', str, x, y]);
+    }
 }

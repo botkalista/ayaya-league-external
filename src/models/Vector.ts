@@ -165,6 +165,11 @@ export class Vector3 {
         return instance;
     }
 
+
+    toString() {
+        return `${this.x} ${this.y} ${this.z}`;
+    }
+
 }
 
 export class Vector4 {

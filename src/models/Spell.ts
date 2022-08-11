@@ -10,7 +10,7 @@ export class Spell extends CachedClass {
     constructor(public address: number) { super() };
 
     private get spellbook(): number {
-        return this.use('spellbook', () => Reader.readProcessMemory(this.address + OFFSET.oSpellBook, "DWORD"));
+        return this.use('spellbook', () => Reader.readProcessMemory(this.address + OFFSET.oSpellSlots, "DWORD"));
     }
     private get info(): number {
         return this.use('info', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellInfo, "DWORD"));

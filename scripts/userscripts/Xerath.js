@@ -99,7 +99,6 @@ function onDraw(ctx, manager) {
     // const range = manager.me.range;
     // const bb = manager.me.boundingBox;
     // ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
-
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
         ctx.circle(target.gamePos, (target.boundingBox / 2), 10, 0, 3);
