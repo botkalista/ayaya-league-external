@@ -30,7 +30,7 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 ### Prebuilt version
 
-1. Download prebuilt version of AyayaLeague [**HERE**](https://github.com/botkalista/ayaya-league-external/releases/tag/Version1)
+1. Download prebuilt version of AyayaLeague [**HERE**](https://github.com/botkalista/ayaya-league-external/releases)
 
 2. Extract the folder content
 
