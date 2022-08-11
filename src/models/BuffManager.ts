@@ -17,12 +17,16 @@ export class BuffManager extends CachedClass {
             const result: Buff[] = [];
             for (let i = 0; i < 100; i++) {
                 const buffAddress = Reader.readProcessMemory(buffsArray + (i * OFFSET.oBuffSize), "DWORD");
-                if (buffAddress >= buffsSize) break;
+                if (buffAddress >= buffsSize && i > 30) break;
                 const buff = new Buff(buffAddress);
                 result.push(buff);
             }
             return result;
         });
+    }
+
+    byName(name: string) {
+        return this.buffs.find(e => e.name == name);
     }
 
 

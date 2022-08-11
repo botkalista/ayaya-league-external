@@ -28,15 +28,17 @@ const qRanges = [
     { t: 1.75, r: 1450 }
 ]
 
-let qTimer = 0;
 let qTarget;
+let pewpew = false;
 
-let isChargingQ = false;
+const qBuffName = 'XerathArcanopulseChargeUp';
 
-function getCurrentQRange(time) {
-    const ret = 735 + (102.14 * ((time - qTimer) / 0.25));
+function getCurrentQRange(manager) {
+    const qTimer = manager.me.buffManager.byName(qBuffName).startTime;
+    const ret = 735 + (102.14 * ((manager.game.time - qTimer) / 0.25));
     return Math.min(ret, 1450);
 }
+
 
 /**
  * @param {Entity[]} enemies 
@@ -56,39 +58,31 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
-
     if (manager.me.name != 'Xerath') return;
 
-    if (manager.game.isKeyPressed(0x20)) {
-        isChargingQ = false;
+    if (manager.game.isKeyPressed(0x4E)) {
+        manager.game.releaseKey(manager.spellSlot.Q); 
     }
 
     const active = manager.game.isKeyPressed(0x5);
     if (!active) return;
 
-    if (isChargingQ) return;
-
-    const currentQRange = getCurrentQRange(manager.game.time);
-
-    if (currentQRange >= 1450) {
-        const hero = manager.champions.enemies.find(e => e.address == qTarget);
-        castQ(hero, manager)
-        return;
-    }
+    const qBuff = manager.me.buffManager.byName(qBuffName);
 
     const me = manager.me;
     const Q = me.spells[0];
+    
 
     if (Q.ready && me.mana > qCost[Q.level]) {
         const target = getLowestHealthTargetWithinRange(manager.champions.enemies, 1450, manager); //1450 Max Q range
         if (target.hp == 9999) return; //DA CAMBIARE PER CONTINUARE RESTO ONTICK
+        pewpew = true;
         qTarget = target.e.address;
+        console.log('PRESSING Q')
         manager.game.pressKey(manager.spellSlot.Q);
-        qTimer = manager.game.time;
-        manager.setPlayerState("isCharging");
-        isChargingQ = true;
         return;
     }
+
 }
 
 /** 
@@ -99,6 +93,13 @@ function onDraw(ctx, manager) {
     // const range = manager.me.range;
     // const bb = manager.me.boundingBox;
     // ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
+
+    //
+
+    // const buffs = manager.me.buffManager.buffs;
+    // ctx.text(buffs.map(e => e.count + ' ' + e.name).join('\n'), 50, 50, 22, 255)
+    // ctx.text(buffs.length, 30, 30, 22, 255)
+
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
         ctx.circle(target.gamePos, (target.boundingBox / 2), 10, 0, 3);
@@ -114,7 +115,8 @@ function onDraw(ctx, manager) {
 function onMoveCreate(hero, manager) {
     if (manager.me.name != 'Xerath') return;
     if (hero.address != qTarget) return;
-    if (!isChargingQ) return;
+    const qBuff = manager.me.buffManager.byName(qBuffName);
+    if (qBuff && qBuff.count == 0) return;
     const active = manager.game.isKeyPressed(0x5);
     if (!active) return;
     castQ(hero, manager);
@@ -129,9 +131,8 @@ function castQ(hero, manager) {
         const dQ = hero.AiManager.endPath.sub(hero.gamePos.normalize());
         const dQ_travel = hero.movSpeed * 0.528; // Q cast time
         const qPredicted_pos = hero.gamePos.add(dQ.mult(dQ_travel));
-        if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager.game.time)) return;
+        if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
         const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
-        manager.setPlayerState('isCasting');
         const oldMousePos = getMousePos();
         blockInput(true);
         const castPos = manager.worldToScreen(hero.AiManager.endPath).getFlat();
@@ -139,14 +140,10 @@ function castQ(hero, manager) {
         sleep(3);
         releaseKey(manager.spellSlot.Q);
         sleep(10);
-        qTimer = 0;
         setMousePos(oldMousePos.x, oldMousePos.y);
         blockInput(false);
-        manager.setPlayerState('idle');
-        casting = false;
     } catch (ex) {
-        console.log(ex);
-        console.log({ hero })
+        console.error('ERROR', ex);
     }
 }
 
