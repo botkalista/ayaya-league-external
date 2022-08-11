@@ -9,6 +9,7 @@ import { Entity } from '../src/models/Entity';
 import { Vector2, Vector3 } from '../src/models/Vector';
 
 import * as SAT from 'sat';
+import { OFFSET } from '../src/consts/Offsets';
 
 export type PlayerState = "isCasting" | "isMoving" | "isAttacking" | "isEvading" | "isCharging" | "isChanneling" | "idle";
 
@@ -27,6 +28,9 @@ enum SpellSlot {
     D = 0x44,
     F = 0x46
 }
+
+
+const Reader = AyayaLeague.reader;
 
 export class UserScriptManager extends CachedClass {
 
@@ -51,6 +55,21 @@ export class UserScriptManager extends CachedClass {
         const screen = CachedClass.get<Vector2>('screen');
         const matrix = CachedClass.get<number[]>('matrix');
         return worldToScreen(pos, screen, matrix);
+    }
+
+    get underMouseObject() {
+        return this.use('underMouse', () => {
+            const address = Reader.readProcessMemory(OFFSET.oUnderMouse, "DWORD", true);
+            const c = this.champions.all.find(e => e.address == address);
+            if (c) return c;
+            const m = this.minions.all.find(e => e.address == address);
+            if (m) return m;
+            const n = this.monsters.find(e => e.address == address);
+            if (n) return n;
+            const t = this.turrets.all.find(e => e.address == address);
+            if (t) return t;
+            return undefined;
+        });
     }
 
     get game() {
