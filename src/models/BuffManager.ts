@@ -17,7 +17,7 @@ export class BuffManager extends CachedClass {
             const result: Buff[] = [];
             for (let i = 0; i < 100; i++) {
                 const buffAddress = Reader.readProcessMemory(buffsArray + (i * OFFSET.oBuffSize), "DWORD");
-                if (buffAddress >= buffsSize && i > 30) break;
+                if (buffAddress >= buffsSize && i > 50) break;
                 const buff = new Buff(buffAddress);
                 result.push(buff);
             }
@@ -25,7 +25,7 @@ export class BuffManager extends CachedClass {
         });
     }
 
-    byName(name: string) {
+    byName(name: string): Buff | undefined {
         return this.buffs.find(e => e.name == name);
     }
 

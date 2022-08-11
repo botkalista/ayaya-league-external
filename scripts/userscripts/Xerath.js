@@ -29,7 +29,6 @@ const qRanges = [
 ]
 
 let qTarget;
-let pewpew = false;
 
 const qBuffName = 'XerathArcanopulseChargeUp';
 
@@ -61,24 +60,23 @@ async function onTick(manager, ticks) {
     if (manager.me.name != 'Xerath') return;
 
     if (manager.game.isKeyPressed(0x4E)) {
-        manager.game.releaseKey(manager.spellSlot.Q); 
+        manager.game.releaseKey(manager.spellSlot.Q);
     }
 
     const active = manager.game.isKeyPressed(0x5);
     if (!active) return;
 
     const qBuff = manager.me.buffManager.byName(qBuffName);
+    if (qBuff) return;
+    if (qBuff.count > 0) return;
 
     const me = manager.me;
     const Q = me.spells[0];
-    
 
-    if (Q.ready && me.mana > qCost[Q.level]) {
+    if (Q.ready && me.mana > qCost[Q.level] && !qPressed) {
         const target = getLowestHealthTargetWithinRange(manager.champions.enemies, 1450, manager); //1450 Max Q range
         if (target.hp == 9999) return; //DA CAMBIARE PER CONTINUARE RESTO ONTICK
-        pewpew = true;
         qTarget = target.e.address;
-        console.log('PRESSING Q')
         manager.game.pressKey(manager.spellSlot.Q);
         return;
     }
@@ -92,9 +90,9 @@ async function onTick(manager, ticks) {
 function onDraw(ctx, manager) {
     // const range = manager.me.range;
     // const bb = manager.me.boundingBox;
+
     // ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
 
-    //
 
     // const buffs = manager.me.buffManager.buffs;
     // ctx.text(buffs.map(e => e.count + ' ' + e.name).join('\n'), 50, 50, 22, 255)
@@ -102,7 +100,7 @@ function onDraw(ctx, manager) {
 
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
-        ctx.circle(target.gamePos, (target.boundingBox / 2), 10, 0, 3);
+        ctx.circle(target.gamePos, (target.boundingBox / 2), 10, 0, 5);
     }
 
 }
@@ -116,9 +114,10 @@ function onMoveCreate(hero, manager) {
     if (manager.me.name != 'Xerath') return;
     if (hero.address != qTarget) return;
     const qBuff = manager.me.buffManager.byName(qBuffName);
-    if (qBuff && qBuff.count == 0) return;
-    const active = manager.game.isKeyPressed(0x5);
-    if (!active) return;
+    if (!qBuff) return;
+    if (qBuff.count < 1) return;
+    // const active = manager.game.isKeyPressed(0x5);
+    // if (!active) return;
     castQ(hero, manager);
 }
 
@@ -142,6 +141,7 @@ function castQ(hero, manager) {
         sleep(10);
         setMousePos(oldMousePos.x, oldMousePos.y);
         blockInput(false);
+        qTarget = undefined;
     } catch (ex) {
         console.error('ERROR', ex);
     }
