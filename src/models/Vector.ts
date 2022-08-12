@@ -73,12 +73,12 @@ export class Vector3 {
 
     constructor(public x: number, public y: number, public z: number) { }
 
-    @desc('Vector length')
+    // @desc('Vector length')
     get length() {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
-    @desc('Return the normalized copy of the vector')
+    // @desc('Return the normalized copy of the vector')
     normalize(): Vector3 {
         const l = this.length;
         return new Vector3(this.x / l, this.y / l, this.z / l);
