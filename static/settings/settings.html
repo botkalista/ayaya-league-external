@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyayaLeagueExternal - Settings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style/settings.css">
+    <link rel="stylesheet" href="style/ayaya-checkbox.css">
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="titlebar">
+            Settings
+            <div class="delete" @click="closeWindow()" style="-webkit-app-region: no-drag;"></div>
+        </div>
+
+        <div class="content" v-if="scripts">
+
+            <fieldset class="group">
+                <legend> AyayaLeague </legend>
+                <label class="ayaya-checkbox"> Overlay spells
+                    <input type="checkbox" v-model="base.overlaySpells" @change="updateBaseSettings()">
+                    <span class="ayaya-checkmark"></span>
+                </label>
+                <label class="ayaya-checkbox"> Debug - Performance
+                    <input type="checkbox" v-model="base.debugPerformance" @change="updateBaseSettings()">
+                    <span class="ayaya-checkmark"></span>
+                </label>
+            </fieldset>
+
+            <fieldset class="group" v-for="script of scripts">
+                <legend> {{script.name}} </legend>
+                <div v-for="setting of script.data" class="setting-content">
+                    <div v-if="setting.type=='check'">
+                        <label class="ayaya-checkbox"> {{setting.text}}
+                            <input type="checkbox" v-model="setting.value" @change="updateSettings()">
+                            <span class="ayaya-checkmark"></span>
+                        </label>
+                    </div>
+                    <div v-else-if="setting.type=='number'">
+                        <input @change="updateSettings()" class="input" type="number" style="width: 100px;"
+                            v-model="setting.value">
+                        <label> {{setting.text}} </label>
+                    </div>
+                    <div v-else-if=" setting.type=='string'">
+                        <input @change="updateSettings()" class="input" type="text" style="width: 150px;"
+                            v-model="setting.value">
+                        <label> {{setting.text}} </label>
+                    </div>
+                    <div v-else-if=" setting.type=='color'">
+                        <input @change="updateSettings()" type="color" style="margin:0; margin-left:2px; width: 16px; height:16px; padding:0;"
+                            v-model="setting.value">
+                        <label style="transform: translateX(-2px);"> {{setting.text}} </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div style="display: grid; grid-template-columns: 50% 50%; gap: 5px; ">
+                <button @click="reloadWindows" class="button is-info is-small"> Reload overlay </button>
+                <button @click="openOverlayDevTools" class="button is-info is-small"> Open devtools </button>
+
+                <button @click="reloadScripts" class="button is-small is-warning"> Reload scripts </button>
+                <button @click="reloadMe" class="button is-small is-primary"> Reload settings </button>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="settings.js"></script>
+</body>
+
+
+
+</html>

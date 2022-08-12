@@ -4,9 +4,11 @@ console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node
 
 import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents } from 'electron';
 import AyayaLeague from './LeagueReader';
+
+import AyayaActionController from './ActionControllerWrapper';
 import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
 import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } from './overlay/Settings'
-import { Settings } from './overlay/models/Settings';
+
 import { Vector2, Vector3 } from './models/Vector';
 import { Preparator } from './overlay/Preparator';
 import { matrixToArray } from './utils/Utils';
@@ -23,7 +25,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fetch from 'node-fetch';
 import { Missile } from './models/Missile';
-import { UserScript } from './events/types';
+import { ScriptSettingsFull, UserScript } from './events/types';
 
 if (process.argv[2] == 'nohook') {
     AyayaLeague.reader.setMode("DUMP");
@@ -59,11 +61,14 @@ function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => void) {
 }
 function registerHandlers() {
 
-    onMessage<Settings>('updateSettings', (e, data) => {
+    onMessage<any[]>('updateSettings', (e, data) => {
         setSettings(data);
         saveSettingsToFile();
-        sendMessageToWin(overlayWindow, 'dataSettings', data);
         sendMessageToWin(settingsWindow, 'dataSettings', data);
+    });
+
+    onMessage<any>('updateBaseSettings', (e, data) => {
+        sendMessageToWin(overlayWindow, 'dataBaseSettings', data);
     });
 
     onMessage<never>('requestSettings', (e, data) => {
@@ -99,6 +104,8 @@ function registerHandlers() {
 }
 
 async function loadUserScripts() {
+    loadSettingsFromFile();
+
     const basePath = path.join(__dirname, '../../scripts/userscripts');
     const userScriptsPaths = fs.readdirSync(basePath);
     for (const scriptPath of userScriptsPaths) {
@@ -109,19 +116,46 @@ async function loadUserScripts() {
             }
             const p = path.join(basePath, scriptPath);
             const imp = await require(p);
-            userScripts.push({ ...imp, _modulename: p });
+            userScripts.push({ ...imp, _modulename: p, _scriptname: scriptPath });
         } catch (ex) {
             console.error('Error loading', scriptPath, ex);
         }
     }
 
+    const scriptSettings: any[] = [];
+
+    const loadedSettings = getSettings();
+
     for (const script of userScripts) {
         try {
-            script.setup && await script.setup();
+            if (script.setup) {
+                const setupResult = await script.setup(script._modulename, script._scriptname);
+                if (!setupResult) continue;
+
+                const setting = loadedSettings.find(s => s.name == script._scriptname);
+
+                const data = setupResult.map(e => {
+                    if (setting) {
+                        const s = setting.data.find(k => k.text == e.text);
+                        if (s && s.value) {
+                            e.value = s.value;
+                            e.default = undefined;
+                            return e;
+                        }
+                    }
+                    e.value = e.default;
+                    e.default = undefined;
+                    return e;
+                });
+
+                scriptSettings.push({ name: script._scriptname, data });
+            }
         } catch (ex) {
             console.error('Error on script', script._modulename, 'function setup\n', ex);
         }
     }
+
+    setSettings(scriptSettings);
 
     console.log('Loaded', userScripts.length, 'user scripts.');
 }
@@ -140,7 +174,8 @@ async function main() {
     onMessage<never>('drawingContext', (e, data) => {
         drawContext.__clearCommands();
         for (const script of userScripts) {
-            script.onDraw && script.onDraw(drawContext, manager);
+            const setting = getSettings().find(e => e.name == script._scriptname);
+            script.onDraw && script.onDraw(drawContext, manager, (setting || { data: [] }).data);
         }
         e.returnValue = JSON.stringify(drawContext.__getCommands());
     });
@@ -154,8 +189,6 @@ async function main() {
 
     CachedClass.set('webapi_interval', webapi_interval);
 
-
-    loadSettingsFromFile();
     registerHandlers();
 
     overlayWindow = createOverlayWindow();
@@ -166,10 +199,19 @@ async function main() {
     overlayWindow.setSize(screen.x, screen.y);
 
     //* SHORTCUTS
-    globalShortcut.register('CommandOrControl+Space', () => {
-        settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
-    });
+    // globalShortcut.register('CommandOrControl+Space', () => {
+    //     settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
+    // });
 
+    let lastOpen = 0;
+    setInterval(() => {
+        const now = Date.now();
+        if (lastOpen + 350 > now) return;
+        if (AyayaActionController.isPressed(0x20) && AyayaActionController.isPressed(0x11)) {
+            settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
+            lastOpen = now;
+        }
+    }, 30);
 
     //* Load user scripts
     await loadUserScripts()
@@ -196,6 +238,8 @@ async function loop() {
 
     manager.dispose();
 
+    const settings = getSettings();
+
     //* Load required global variables
     const gameTime = AyayaLeague.getGameTime();
     const me = manager.me;
@@ -212,31 +256,26 @@ async function loop() {
 
     performance.spot('first_part');
 
-    publishOnMissileCreate(manager, persistentMissiles, publishToScript);
+    publishOnMissileCreate(manager, persistentMissiles, settings, publishToScript);
 
     performance.spot('missile_publish');
 
-    publishOnMoveCreate(manager, aiEndPositions, publishToScript);
+    publishOnMoveCreate(manager, aiEndPositions, settings, publishToScript);
 
     performance.spot('on_move_create_publish');
 
     const finalData = {
-        me: undefined,
         enemyChampions: undefined,
-        missiles: manager.missiles.map(preparator.prepareMissile),
         performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)), reads: performance.getReads() },
         screen,
         matrix,
     }
-
     performance.spot('drawer data');
-    finalData.me = preparator.prepareChampion(me, performance);
-    performance.spot('drawer - me');
     finalData.enemyChampions = manager.champions.enemies.map(e => preparator.prepareChampion(e));
     performance.spot('drawer - nmeChamps');
 
     // Publish onTick to scripts
-    publishOnTicks(manager, tickInfo, publishToScript);
+    publishOnTicks(manager, tickInfo, settings, publishToScript);
 
     performance.spot('on_tick_publish');
 
@@ -247,19 +286,20 @@ async function loop() {
 
     finalData.performance.time = result.time;
     sendMessageToWin(overlayWindow, 'gameData', finalData);
-    const settings = getSettings();
-    tickInfo.ticks;
-
+    tickInfo.ticks++;
     manager.dispose();
-    setTimeout(loop, Math.max(result.time + settings.root.readingTime, 5));
+    setTimeout(loop, 5);
 }
 
 //TODO: Add typings
-function publishToScript(fName: keyof UserScript, ...args: any) {
+function publishToScript(fName: keyof UserScript, settings: ScriptSettingsFull, ...args: any) {
     for (const userScript of userScripts) {
         try {
             setImmediate(() => {
-                userScript[fName] && (userScript[fName] as (...a) => any)(...args);
+                if (userScript[fName]) {
+                    const setting = settings.find(e => e.name == userScript._scriptname);
+                    (userScript[fName] as (...a) => any)(...args, (setting || { data: [] }).data);
+                }
             });
         } catch (ex) {
             console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');

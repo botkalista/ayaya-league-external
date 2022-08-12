@@ -15,6 +15,10 @@ export class DrawContext {
         this.commands.length = 0;
     }
 
+    raw(command: string, ...args: any) {
+        this.commands.push([command, ...args]);
+    }
+
     line(p1: Vector2, p2: Vector2, color: Color = 0, thickness: number = 1) {
         this.commands.push([`lineWeight`, thickness]);
         this.commands.push([`stroke`, color]);

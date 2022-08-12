@@ -1,8 +1,8 @@
 import { UserScriptManager } from "../../scripts/UserScriptManager";
 import { Missile } from "../models/Missile";
-import { fnPublish } from './types';
+import { fnPublish, ScriptSettingsFull } from './types';
 
-export function publishOnMissileCreate(manager: UserScriptManager, persistentMissiles: Missile[], publish: fnPublish) {
+export function publishOnMissileCreate(manager: UserScriptManager, persistentMissiles: Missile[], settings: ScriptSettingsFull, publish: fnPublish) {
 
     //* Check missiles for onMissileCreate function
     for (const missile of manager.missiles) {
@@ -11,7 +11,7 @@ export function publishOnMissileCreate(manager: UserScriptManager, persistentMis
         if (persistentMissiles.find(m => m.address == missile.address)) return;
 
         // Otherwise notify every script for the new missile
-        publish('onMissileCreate', missile, manager);
+        publish('onMissileCreate', settings, missile, manager);
 
         // Add it to persistent
         persistentMissiles.push(missile);

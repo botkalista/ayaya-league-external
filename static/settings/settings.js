@@ -2,19 +2,17 @@
 const { ipcRenderer } = require('electron');
 
 const state = Vue.reactive({
-    settings: {
-        me: { range: true },
-        nmeChamps: { range: true },
-        over: { nmeSpells: true, performance: true },
-        root: { readingTime: 3000 },
-        missiles: { show: true }
+    base: {
+        overlaySpells: false,
+        debugPerformance: false,
     },
+    scripts: []
 });
 
 // ----- Settings -----
 ipcRenderer.on('dataSettings', function (evt, message) {
     const data = JSON.parse(message);
-    state.settings = data;
+    state.scripts = data;
 });
 ipcRenderer.send('requestSettings');
 
@@ -22,8 +20,11 @@ ipcRenderer.send('requestSettings');
 const app = Vue.createApp({
     data() { return state; },
     methods: {
+        updateBaseSettings() {
+            ipcRenderer.send('updateBaseSettings', JSON.stringify(state.base));
+        },
         updateSettings() {
-            ipcRenderer.send('updateSettings', JSON.stringify(state.settings));
+            ipcRenderer.send('updateSettings', JSON.stringify(state.scripts));
         },
         closeWindow() {
             ipcRenderer.send('closeSettingsWindow');
@@ -36,6 +37,9 @@ const app = Vue.createApp({
         },
         reloadScripts() {
             ipcRenderer.send('reloadScripts');
+        },
+        reloadMe() {
+            location.reload();
         }
     }
 });

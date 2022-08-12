@@ -1,10 +1,10 @@
 import { UserScriptManager } from "../../scripts/UserScriptManager";
-import { fnPublish } from './types';
+import { fnPublish, ScriptSettingsFull } from './types';
 
 
-export function publishOnTicks(manager: UserScriptManager, tickInfo: { ticks: number, lastOnTickPublish: number }, publish: fnPublish) {
+export function publishOnTicks(manager: UserScriptManager, tickInfo: { ticks: number, lastOnTickPublish: number }, settings: ScriptSettingsFull, publish: fnPublish) {
     if (manager.game.time * 1000 < tickInfo.lastOnTickPublish + 30) return;
-    publish('onTick', manager, tickInfo.ticks);
+    publish('onTick', settings, manager, tickInfo.ticks);
     tickInfo.lastOnTickPublish = manager.game.time * 1000;
 
 }

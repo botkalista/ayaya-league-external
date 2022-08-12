@@ -1,14 +1,8 @@
 
-import { Settings } from './models/Settings';
 import * as fs from 'fs';
+import { ScriptSettingsFull } from '../events/types';
 
-let settings: Settings = {
-    me: { range: true },
-    nmeChamps: { range: true },
-    over: { nmeSpells: true, performance: true },
-    missiles: { show: true },
-    root: { readingTime: 3000 }
-}
+let settings: ScriptSettingsFull = []
 
 export function loadSettingsFromFile() {
     if (!fs.existsSync('settings.json')) return saveSettingsToFile();
@@ -23,6 +17,6 @@ export function getSettings() {
     return settings;
 }
 
-export function setSettings(data: Settings) {
+export function setSettings(data: any[]) {
     settings = data;
 }
