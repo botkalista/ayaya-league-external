@@ -26,7 +26,7 @@ export class Buff extends CachedClass {
         return this.use('endtime', () => Reader.readProcessMemory(this.address + OFFSET.oBuffEndTime, "FLOAT"));
     }
 
-    get count() {
+    get count(): number {
         return this.use('count', () => Reader.readProcessMemory(this.address + OFFSET.oBuffCount, "DWORD"));
     }
 

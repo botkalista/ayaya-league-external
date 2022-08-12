@@ -29,9 +29,6 @@ function setup() {
 
 
 async function onTick(manager, ticks) {
-
-    return;
-
     const active = manager.game.isKeyPressed(0x5); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
     if (!active) return;
 
@@ -46,15 +43,14 @@ async function onTick(manager, ticks) {
         return (dist < (pRange / 2) + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
     }, { d: 999, e: targets[0] });
 
-    if (closestInRange.d == 999) { canPlayerMove = true; console.log('NO TARGETS') }
+    if (closestInRange.d == 999) { canPlayerMove = true;  }
 
     if ((closestInRange.d != 999) && canAttack(manager.me.attackDelay, manager) && manager.playerState == "idle" || manager.playerState == undefined) {
-        console.log('ATTACKING')
         canPlayerMove = false;
         lastAaTick = getTime(manager);
         manager.game.issueOrder(closestInRange.e.screenPos, true);
     } else if (canMove(manager.me.windupTime, manager) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
-        console.log(canPlayerMove)
+    
         const pos = await manager.game.getMousePos();
         manager.game.issueOrder(pos, false);
     }
@@ -69,7 +65,6 @@ async function onTick(manager, ticks) {
  * 
  * */
 function onMissileCreate(missile, manager) {
-    return;
     if (missile.spellName.startsWith(manager.me.name + 'BasicAttack') ||
         missile.spellName.startsWith(manager.me.name + 'BioArcaneBarrageAttack')) {
         canPlayerMove = true;
