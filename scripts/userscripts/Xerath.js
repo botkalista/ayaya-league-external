@@ -32,8 +32,6 @@ let qTarget;
 
 const qBuffName = 'XerathArcanopulseChargeUp';
 
-const qRealEndBuffTimeOffset = 0.65;
-
 /**@param {Manager} manager */
 function getQBuff(manager) {
     return manager.me.buffManager.byName(qBuffName);
@@ -53,7 +51,7 @@ function getCurrentQRange(manager) {
     const qBuff = getQBuff(manager);
     if (!qBuff) return 0;
     const qTimer = qBuff.startTime;
-    const ret = 735 + (102.14 * ((manager.game.time - qTimer) / 0.25));
+    const ret = 735 + (102.14 * ((manager.game.time - qTimer + 0.2) / 0.25));
     return Math.min(ret, 1450);
 }
 
@@ -83,12 +81,15 @@ async function onTick(manager, ticks) {
     }
 
     const active = manager.game.isKeyPressed(0x5);
-    if (!active) return manager.game.releaseKey(manager.spellSlot.Q);;
+    if (!active) return;
 
 
     if (hasQBuff(manager)) {
         const qBuff = getQBuff(manager);
-        if (qBuff.endtime - qRealEndBuffTimeOffset - manager.game.time < (30 / 1000)) {
+        if (qBuff.endtime - manager.game.time <= 0) {
+            manager.game.releaseKey(manager.spellSlot.Q);
+            return;
+        } else if (qBuff.endtime - manager.game.time < 1) {
             const target = getLowestHealthTargetWithinRange(manager.champions.enemies, getCurrentQRange(manager), manager);
             if (target.hp == 9999) return;
             castQ(target.e, manager, false);
@@ -122,24 +123,39 @@ function onDraw(ctx, manager) {
     // ctx.text(buffs.map(e => e.count + ' ' + e.name).join('\n'), 50, 50, 22, 255)
     // ctx.text(buffs.length, 30, 30, 22, 255)
 
+    // ctx.circle(target.e.gamePos, 60, 10, [200, 0, 0], 8);
 
-    // if (!hasQBuff(manager)) return;
-    // ctx.circle(manager.me.gamePos, getCurrentQRange(manager), 50, [200, 0, 0], 10);
 
+    if (lastMove) {
+        const start = manager.worldToScreen(lastMove.startPath);
+        const end = manager.worldToScreen(lastMove.endPath);
+
+        ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
+    }
+
+
+    if (!hasQBuff(manager)) return;
+    const range = getCurrentQRange(manager);
+    ctx.circle(manager.me.gamePos, range, 50, [0, 170, 0], 2);
 
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
-        ctx.circle(target.gamePos, (target.boundingBox / 2), 10, 0, 5);
+        ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
     }
 
+    const qBuff = getQBuff(manager);
+    const data = qBuff.endtime - manager.game.time < 1;
+    ctx.text(data, 200, 200, 22, 255);
 }
 
+let lastMove;
 
 /** 
  * @param {Entity} hero
  * @param {Manager} manager
  */
 function onMoveCreate(hero, manager) {
+    lastMove = hero.AiManager;
     if (manager.me.name != 'Xerath') return;
     if (hero.address != qTarget) return;
     if (!hasQBuff(manager)) return;
@@ -191,7 +207,6 @@ function castQ(hero, manager, predict = true) {
  * 
  * */
 function onMissileCreate(missile, manager) {
-
 }
 
 module.exports = { setup, onTick, onMissileCreate, onMoveCreate, onDraw }

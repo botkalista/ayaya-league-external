@@ -17,6 +17,10 @@ function canMove(windupTime, manager) {
 
 function setup() {
     console.log('Orbwalker.js loaded.')
+
+    return [
+        { type: 'check', default: false, text: 'Enabled' }
+    ]
 }
 
 /** 
@@ -28,7 +32,8 @@ function setup() {
  * */
 
 
-async function onTick(manager, ticks) {
+async function onTick(manager, ticks, settings) {
+    if (!settings[0].value) return;
     const active = manager.game.isKeyPressed(0x5); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
     if (!active) return;
 
@@ -43,14 +48,14 @@ async function onTick(manager, ticks) {
         return (dist < (pRange / 2) + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
     }, { d: 999, e: targets[0] });
 
-    if (closestInRange.d == 999) { canPlayerMove = true;  }
+    if (closestInRange.d == 999) { canPlayerMove = true; }
 
     if ((closestInRange.d != 999) && canAttack(manager.me.attackDelay, manager) && manager.playerState == "idle" || manager.playerState == undefined) {
         canPlayerMove = false;
         lastAaTick = getTime(manager);
         manager.game.issueOrder(closestInRange.e.screenPos, true);
     } else if (canMove(manager.me.windupTime, manager) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
-    
+
         const pos = await manager.game.getMousePos();
         manager.game.issueOrder(pos, false);
     }
@@ -64,7 +69,8 @@ async function onTick(manager, ticks) {
  * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
  * 
  * */
-function onMissileCreate(missile, manager) {
+function onMissileCreate(missile, manager, settings) {
+    if (!settings[0].value) return;
     if (missile.spellName.startsWith(manager.me.name + 'BasicAttack') ||
         missile.spellName.startsWith(manager.me.name + 'BioArcaneBarrageAttack')) {
         canPlayerMove = true;
