@@ -30,6 +30,7 @@ const qRanges = [
 
 let qTarget;
 
+const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
 
 /**@param {Manager} manager */
@@ -74,11 +75,12 @@ function getLowestHealthTargetWithinRange(enemies, range, manager) {
  * @param {number} ticks
  */
 async function onTick(manager, ticks) {
-    if (manager.me.name != 'Xerath') return;
 
-    if (manager.game.isKeyPressed(0x4E)) {
-        manager.game.releaseKey(manager.spellSlot.Q);
-    }
+    //* If champ is not Xerath return
+    if (manager.me.name != scriptChampName) return;
+
+    if (manager.game.isKeyPressed(0x4E)) manager.game.releaseKey(manager.spellSlot.Q);
+
 
     const active = manager.game.isKeyPressed(0x5);
     if (!active) return;
@@ -88,13 +90,13 @@ async function onTick(manager, ticks) {
         const qBuff = getQBuff(manager);
         if (qBuff.endtime - manager.game.time <= 0) {
             manager.game.releaseKey(manager.spellSlot.Q);
-            return;
         } else if (qBuff.endtime - manager.game.time < 1) {
             const target = getLowestHealthTargetWithinRange(manager.champions.enemies, getCurrentQRange(manager), manager);
             if (target.hp == 9999) return;
             castQ(target.e, manager, false);
-            return;
         }
+
+        return;
     };
 
     const me = manager.me;
@@ -116,22 +118,23 @@ async function onTick(manager, ticks) {
  */
 function onDraw(ctx, manager) {
 
-    // const range = manager.me.range;
-    // const bb = manager.me.boundingBox;
-    // ctx.circle(manager.me.gamePos, (range + bb / 2), 50, 0, 1);
-    // const buffs = manager.me.buffManager.buffs;
-    // ctx.text(buffs.map(e => e.count + ' ' + e.name).join('\n'), 50, 50, 22, 255)
-    // ctx.text(buffs.length, 30, 30, 22, 255)
+    // ctx.text(manager.me.buffManager.buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 600, 40, 20, 255);
 
-    // ctx.circle(target.e.gamePos, 60, 10, [200, 0, 0], 8);
+    if (manager.me.name != scriptChampName) return;
 
+    const Q = manager.me.spells[0];
+    ctx.text('Q ready: ' + Q.ready, 400, 40, 20, 255);
+    ctx.text('Mana: ' + manager.me.mana.toFixed(), 400, 60, 20, 255);
+    ctx.text('Q cost: ' + qCost[Q.level], 400, 80, 20, 255);
+    ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level]), 400, 100, 20, 255);
+    ctx.text('Charging: ' + hasQBuff(manager), 400, 120, 20, 255);
 
-    if (lastMove) {
-        const start = manager.worldToScreen(lastMove.startPath);
-        const end = manager.worldToScreen(lastMove.endPath);
+    // const buffs = manager.me.buffManager.buffs
+    //     .filter(e => e.name == qBuffName)
+    //     .sort((a, b) => b.endtime - a.endtime)
+    //     .sort((a, b) => b.count - a.count);
 
-        ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
-    }
+    // ctx.text(buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 650, 120, 20, 255);
 
 
     if (!hasQBuff(manager)) return;
@@ -141,6 +144,11 @@ function onDraw(ctx, manager) {
     if (qTarget) {
         const target = manager.champions.enemies.find(e => e.address == qTarget);
         ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
+        if (lastMove) {
+            const start = manager.worldToScreen(lastMove.startPath);
+            const end = manager.worldToScreen(lastMove.endPath);
+            ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
+        }
     }
 
     const qBuff = getQBuff(manager);
@@ -156,7 +164,7 @@ let lastMove;
  */
 function onMoveCreate(hero, manager) {
     lastMove = hero.AiManager;
-    if (manager.me.name != 'Xerath') return;
+    if (manager.me.name != scriptChampName) return;
     if (hero.address != qTarget) return;
     if (!hasQBuff(manager)) return;
     // const active = manager.game.isKeyPressed(0x5);

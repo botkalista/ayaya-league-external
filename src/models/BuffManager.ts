@@ -15,10 +15,11 @@ export class BuffManager extends CachedClass {
             const buffsSize = Reader.readProcessMemory(this.address + OFFSET.oBuffArrayLength, "DWORD");
             const buffsArray = Reader.readProcessMemory(this.address + OFFSET.oBuffArray, "DWORD");
             const result: Buff[] = [];
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 150; i++) {
                 const buffAddress = Reader.readProcessMemory(buffsArray + (i * OFFSET.oBuffSize), "DWORD");
-                if (buffAddress > buffsSize) break;
+                // if (buffAddress > buffsSize) break;
                 const buff = new Buff(buffAddress);
+                if (buff.count > 500) break;
                 result.push(buff);
             }
             return result;
@@ -31,7 +32,7 @@ export class BuffManager extends CachedClass {
             .sort((a, b) => b.endtime - a.endtime)
             .sort((a, b) => b.count - a.count);
 
-        return (buffs.length > 1) ? buffs[0] : undefined;
+        return (buffs.length > 0) ? buffs[0] : undefined;
 
     }
 

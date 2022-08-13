@@ -17,7 +17,14 @@ function setup() {
     return core_settings;
 }
 
+
+/**
+ * @param {*} ctx 
+ * @param {Manager} manager 
+ * @param {*} settings 
+ */
 function onDraw(ctx, manager, settings) {
+
     if (settings[0].value == true) drawPlayerRange(ctx, manager, settings[1].value);
     if (settings[2].value == true) drawPlayerRange(ctx, manager);
     if (settings[3].value == true) drawMissiles(ctx, manager);
@@ -57,8 +64,6 @@ function createVector(base, x, y, z) {
  * @param {Manager} manager 
  */
 function drawMissiles(ctx, manager) {
-
-    ctx.text(manager.missiles.length, 50, 50, 22, 255);
 
     for (const missile of manager.missiles) {
         if (missile.spellName.startsWith('SRU')) continue;
