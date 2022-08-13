@@ -1,6 +1,17 @@
-# AyayaLeague [_ayaya-league-external_]
+<div align="center">
+<h1>AyayaLeague [_ayaya-league-external_]</h1>
+</div>
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/42075940/184498428-f34f09e9-21c5-4a6e-a284-7e9cccad15b5.jpg" alt="AyayaLeagueLogo" width="512">
 
 **EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
+
+![GitHub last commit](https://img.shields.io/github/last-commit/botkalista/ayaya-league-external)
+
+</div>
+
+
 
 ## WHY THE CIRCLES ARE LAGGING IN GAME ?
 
