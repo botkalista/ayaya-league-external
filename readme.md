@@ -7,7 +7,16 @@
 
 **EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
 
-![GitHub last commit](https://img.shields.io/github/last-commit/botkalista/ayaya-league-external)
+<div align="middle">
+  <img src="https://img.shields.io/github/directory-file-count/botkalista/ayaya-league-external/scripts/userscripts?color=informational&label=Builtin%20Scripts&logo=javascript&type=file" alt="UserScripts count">
+   &nbsp;
+   <img src="https://img.shields.io/github/last-commit/botkalista/ayaya-league-external" alt="GitHub last commit">
+   &nbsp;
+    <img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
+   &nbsp;
+  <img src="https://img.shields.io/github/downloads/botkalista/ayaya-league-external/total" alt="GitHub all releases">
+</p>
+</div>
 
 </div>
 
@@ -29,16 +38,18 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 - Show player attack range
 - Show enemy champions attack range
 - Show enemy champions summoner spells cooldown
-- Settings window [CTRL + SPACE] (shortcut sometimes doesn't word while League is focused)
+- Settings window [CTRL + SPACE]
 - Show enemy champions ultimate cooldown
-- Show missiles (fixed length for now)
+- Show missiles
 - Custom user scripts (Read more [here](#user-scripts))
 
 ## How to setup and run
 
 ### Prebuilt version
 
-1. Download prebuilt version of AyayaLeague [**HERE**](https://github.com/botkalista/ayaya-league-external/releases)
+<img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
+
+1. Download prebuilt version of AyayaLeague <a href="https://github.com/botkalista/ayaya-league-external/releases"><b>HERE</b></a>
 
 2. Extract the folder content
 
@@ -74,6 +85,8 @@ To use correctly the script you must adjust some settings inside League.
 
 # User Scripts
 
+   <img src="https://img.shields.io/github/directory-file-count/botkalista/ayaya-league-external/scripts/userscripts?color=informational&label=Builtin%20Scripts&logo=javascript&type=file" alt="UserScripts count">
+   
 Every user script is located into: `/scripts/userscripts/` (on prebuilt version `/resources/app/scripts/userscripts/`)
 
 AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwalker.js`.
