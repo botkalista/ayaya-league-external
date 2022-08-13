@@ -1,5 +1,5 @@
 <div align="center">
-<h1>AyayaLeague [_ayaya-league-external_]</h1>
+<h1>AyayaLeague</h1>
 </div>
 
 <div align="center">
