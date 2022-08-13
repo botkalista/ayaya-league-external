@@ -16,6 +16,7 @@ export class DrawContext {
     }
 
     raw(command: string, ...args: any) {
+        console.log(command, args);
         this.commands.push([command, ...args]);
     }
 
