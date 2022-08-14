@@ -125,7 +125,10 @@ async function onTick(_manager, ticks) {
     if (_manager.me.name != scriptChampName) return;
     manager = _manager;
     clearPrint();
-    if (manager.game.isKeyPressed(0x4E)) manager.game.releaseKey(manager.spellSlot.Q);
+    if (manager.game.isKeyPressed(0x4E)) {
+        manager.game.releaseKey(manager.spellSlot.Q);
+        internalStatus = 'idle';
+    }
     if (manager.game.isKeyPressed(0x4A)) return executeLogicR();
     if (manager.game.isKeyPressed(0x05)) return executeLogicQ();
 }
@@ -200,8 +203,8 @@ function onDraw(ctx, manager) {
 function onMoveCreate(hero, manager) {
     if (manager.me.name != scriptChampName) return;
     print('MOVE', hero.name);
-    if (manager.game.isKeyPressed(0x5) && hasQBuff() && qTarget.name == hero.name) return castQ(hero);
-    if (manager.game.isKeyPressed(0x4A) && rTarget.name == hero.name) return castR(hero);
+    if (manager.game.isKeyPressed(0x5) && hasQBuff() && qTarget && qTarget.name == hero.name) return castQ(hero);
+    if (manager.game.isKeyPressed(0x4A) && rTarget && rTarget.name == hero.name) return castR(hero);
 }
 
 /** @param {Entity} hero */
