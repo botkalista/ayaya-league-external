@@ -16,15 +16,19 @@ const qRanges = [
     { t: 1.5, r: 1347 },
     { t: 1.75, r: 1450 }
 ];
+
+const rRange = 5000;
+
 const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
+const rBuffName = 'XerathLocusOfPower2';
 
 /** @type {Manager} */
 let manager;
 /** @type {string} */
 let qTarget;
-
-let lastMove;
+/** @type {string} */
+let rTarget;
 
 
 function setup() {
@@ -32,19 +36,30 @@ function setup() {
 }
 
 
-/**@param {Manager} manager */
 function getQBuff() { return manager.me.buffManager.byName(qBuffName); }
-/**
- * @param {Manager} manager 
- * @returns {boolean}
- */
+function getRBuff() { return manager.me.buffManager.byName(rBuffName); }
 function hasQBuff() { const qBuff = getQBuff(manager); if (!qBuff) return false; return qBuff.count > 0; }
+function hasRBuff() { const rBuff = getRBuff(manager); if (!rBuff) return false; return rBuff.count > 0; }
+
 function getCurrentQRange() {
     const qBuff = getQBuff();
     if (!qBuff) return 0;
     const qTimer = qBuff.startTime;
     const ret = 735 + (102.14 * ((manager.game.time - qTimer + 0.2) / 0.25));
     return Math.min(ret, 1450);
+}
+
+
+function executeLogicR() {
+
+    if (!hasRBuff()) return;
+    const target = manager.utils.lowestHealthEnemyChampInRange(rRange);
+    if (!target) return;
+    rTarget = target.name;
+
+    const buff = getRBuff();
+    if (buff.endtime - manager.game.time < 3) return castR(target);
+
 }
 
 
@@ -56,24 +71,15 @@ async function onTick(_manager, ticks) {
     manager = _manager;
     if (manager.me.name != scriptChampName) return;
 
+    // N
     if (manager.game.isKeyPressed(0x4E)) manager.game.releaseKey(manager.spellSlot.Q);
 
+    // J
+    if (manager.game.isKeyPressed(0x4A)) return executeLogicR();
+
+
+    // MouseX2
     if (!manager.game.isKeyPressed(0x5)) return;
-
-
-    // if (hasQBuff(manager)) {
-
-    //     const qBuff = getQBuff(manager);
-    //     if (qBuff.endtime - manager.game.time <= 0) {
-    //         manager.game.releaseKey(manager.spellSlot.Q);
-    //     } else if (qBuff.endtime - manager.game.time < 1) {
-    //         const target = manager.utils.lowestHealthEnemyChampInRange(getCurrentQRange(manager));
-    //         if (!target) return;
-    //         castQ(target, manager);
-    //     }
-
-    //     return;
-    // };
 
     const target = manager.utils.lowestHealthEnemyChampInRange(1450); //1450 Max Q range
     if (!target) return;
@@ -130,11 +136,6 @@ function onDraw(ctx, manager) {
     ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
     ctx.text('Target: ' + qTarget, 50, 170, 20, 255);
 
-    if (lastMove) {
-        const start = manager.worldToScreen(lastMove.startPath);
-        const end = manager.worldToScreen(lastMove.endPath);
-        ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
-    }
 
 
     const predictedPos = predictPosition(target, manager);
@@ -148,15 +149,25 @@ function onDraw(ctx, manager) {
 }
 
 
-
 /** 
  * @param {Entity} hero
  * @param {Manager} manager
  */
 function onMoveCreate(hero, manager) {
+
+    // J
+    if (manager.game.isKeyPressed(0x4A)) {
+        if (rTarget != hero.name) return;
+        return castR(hero);
+    }
+    // MouseX2
     if (!manager.game.isKeyPressed(0x5)) return;
+
     if (manager.me.name != scriptChampName) return;
     if (!hasQBuff(manager)) return;
+
+    if (qTarget != hero.name) return;
+
     castQ(hero);
 }
 
@@ -186,12 +197,34 @@ function castQ(hero) {
 }
 
 /** @param {Entity} hero */
-function predictPosition(hero) {
+function castR(hero) {
+    try {
+        let castPos = predictPosition(hero, 0.627);
+        if (manager.me.gamePos.dist(castPos) > rRange) return;
+        castPos = manager.worldToScreen(castPos);
+        const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
+        const oldMousePos = getMousePos();
+        blockInput(true);
+        setMousePos(castPos.x, castPos.y);
+        manager.game.pressKey(manager.spellSlot.R);
+        sleep(20);
+        releaseKey(manager.spellSlot.R);
+        sleep(20);
+        setMousePos(oldMousePos.x, oldMousePos.y);
+        blockInput(false);
+        rTarget = undefined;
+    } catch (ex) {
+        console.error('ERROR', ex);
+    }
+}
+
+/** @param {Entity} hero */
+function predictPosition(hero, castTime = 0.528) {
     if (hero.AiManager.startPath.x == hero.AiManager.endPath.x && hero.AiManager.startPath.y == hero.AiManager.endPath.y) {
         return hero.gamePos;
     }
     const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();
-    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
+    const dQ_travel = hero.movSpeed * castTime; // Q cast time
     const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
     const qPredicted_pos = hero.gamePos.add(tmp);
     return qPredicted_pos;
