@@ -33,7 +33,7 @@ function onMissileCreate(missile, manager, settings) {
     const collision = manager.checkCollision(manager.me, missile);
     if (!collision.result) return;
     const evadeAt = collision.evadeAt;
-    manager.game.issueOrder(evadeAt.mult(1, 1).getFlat(), false);
+    manager.game.issueOrder(evadeAt.mul(new manager.typings.Vector2(1, 1)).flatten(), false);
     console.log('SimpleEvade::Evading', [evadeAt.x * 1, evadeAt.y * 1]);
 
 }

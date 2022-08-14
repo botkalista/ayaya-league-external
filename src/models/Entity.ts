@@ -47,6 +47,7 @@ export class Entity extends CachedClass {
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }
+    /** @deprecated Game crashes when you try to read it */
     get dead(): boolean {
         return this.use('dead', () => Reader.readProcessMemory(this.address + OFFSET.oObjDead, "BOOL"));
     }

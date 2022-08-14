@@ -13,6 +13,7 @@ export class Vector2 {
     mul(v: Vector2) { return new Vector2(this.x * v.x, this.y * v.y) }
     div(v: Vector2) { return new Vector2(this.x / v.x, this.y / v.y) }
     isEqual(v: Vector2) { return this.x == v.x && this.y == v.y }
+    dist(v: Vector2) { return Math.hypot(this.x - v.x, this.y - v.y) }
     flatten() {
         this.x = parseInt(this.x.toFixed());
         this.y = parseInt(this.y.toFixed());
@@ -33,6 +34,7 @@ export class Vector3 {
     mul(v: Vector3) { return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z) }
     div(v: Vector3) { return new Vector3(this.x / v.x, this.y / v.y, this.z / v.z) }
     isEqual(v: Vector3) { return this.x == v.x && this.y == v.y && this.z == v.z }
+    dist(v: Vector3) { return Math.hypot(this.x - v.x, this.y - v.y, this.z - v.z) }
     flatten() {
         this.x = parseInt(this.x.toFixed());
         this.y = parseInt(this.y.toFixed());
@@ -54,6 +56,7 @@ export class Vector4 {
     mul(v: Vector4) { return new Vector4(this.x * v.x, this.y * v.y, this.z * v.z, this.w * v.w) }
     div(v: Vector4) { return new Vector4(this.x / v.x, this.y / v.y, this.z / v.z, this.w / v.w) }
     isEqual(v: Vector4) { return this.x == v.x && this.y == v.y && this.z == v.z && this.w == v.w }
+    dist(v: Vector4) { return Math.hypot(this.x - v.x, this.y - v.y, this.z - v.z, this.w - v.w) }
     flatten() {
         this.x = parseInt(this.x.toFixed());
         this.y = parseInt(this.y.toFixed());

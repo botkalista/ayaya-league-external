@@ -25,7 +25,7 @@ export class Preparator {
 
         const name = data.name;
         if (performance) performance.spot('prepareChamp - name');
-        const pos = data.gamePos.getFlat();
+        const pos = data.gamePos.flatten();
         if (performance) performance.spot('prepareChamp - pos');
         const x = parseInt(data.screenPos.x.toFixed(0));
         if (performance) performance.spot('prepareChamp - x');

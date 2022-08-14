@@ -1,19 +1,8 @@
-
 /** 
  * @typedef {import("../../src/models/Entity").Entity} Entity
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager
  * @typedef {import("../../src/models/drawing/DrawContext").DrawContext} DrawContext
  */
-
-function setup() {
-    console.log('Xerath.js loaded.')
-}
-
-// if getplayerstate == ischaring {
-
-//     if player distance to me > getcurrentqrange return
-//     predict position from last timestap
-//     cast()
 
 const qCost = [80, 90, 100, 110, 120]
 
@@ -28,18 +17,21 @@ const qRanges = [
     { t: 1.75, r: 1450 }
 ]
 
-let qTarget;
-
-let h;
-
 const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
+
+let qTarget;
+let h;
+
+function setup() {
+    console.log('Xerath.js loaded.')
+}
+
 
 /**@param {Manager} manager */
 function getQBuff(manager) {
     return manager.me.buffManager.byName(qBuffName);
 }
-
 /**
  * @param {Manager} manager 
  * @returns {boolean}
@@ -58,19 +50,6 @@ function getCurrentQRange(manager) {
     return Math.min(ret, 1450);
 }
 
-
-/**
- * @param {Entity[]} enemies 
- * @param {number} range 
- */
-function getLowestHealthTargetWithinRange(enemies, range, manager) {
-    return enemies.reduce((p, e) => {
-        const dist = Math.hypot(e.screenPos.x - manager.me.screenPos.x, e.screenPos.y - manager.me.screenPos.y);
-        const eBoundingBox = e.boundingBox;
-        const mBoundingBox = manager.me.boundingBox;
-        return (dist < (range + eBoundingBox + mBoundingBox) / 2 && e.hp < p.hp) ? { hp: e.hp, e } : p;
-    }, { hp: 9999, e: enemies[0] });
-}
 
 /** 
  * @param {Manager} manager
@@ -93,7 +72,7 @@ async function onTick(manager, ticks) {
         if (qBuff.endtime - manager.game.time <= 0) {
             manager.game.releaseKey(manager.spellSlot.Q);
         } else if (qBuff.endtime - manager.game.time < 1) {
-            const target = getLowestHealthTargetWithinRange(manager.champions.enemies, getCurrentQRange(manager), manager);
+            const target = manager.utils.lowestHealthEnemyChampInRange(getCurrentQRange(manager));
             if (target.hp == 9999) return;
             castQ(target.e, manager, false);
         }
@@ -105,7 +84,7 @@ async function onTick(manager, ticks) {
     const Q = me.spells[0];
 
     if (Q.ready && me.mana > qCost[Q.level]) {
-        const target = getLowestHealthTargetWithinRange(manager.champions.enemies, 1450, manager); //1450 Max Q range
+        const target = manager.utils.lowestHealthEnemyChampInRange(1450); //1450 Max Q range
         if (target.hp == 9999) return;
         qTarget = target.e.name;
         manager.game.pressKey(manager.spellSlot.Q);
@@ -114,11 +93,13 @@ async function onTick(manager, ticks) {
 
 }
 
+
 /** 
  * @param {DrawContext} ctx
  * @param {Manager} manager
  */
 function onDraw(ctx, manager) {
+
 
     // ctx.text(manager.me.buffManager.buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 600, 40, 20, 255);
 
@@ -131,23 +112,21 @@ function onDraw(ctx, manager) {
     // ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level]), 400, 100, 20, 255);
     // ctx.text('Charging: ' + hasQBuff(manager), 400, 120, 20, 255);
 
-    // const buffs = manager.me.buffManager.buffs
-    //     .filter(e => e.name == qBuffName)
-    //     .sort((a, b) => b.endtime - a.endtime)
-    //     .sort((a, b) => b.count - a.count);
 
-    // ctx.text(buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 650, 120, 20, 255);
+    ctx.text("ACTIVE", 40, 70, 22, 255);
 
-    const _tmp1 = hero.gamePos.normalize();
-    const dQ = hero.AiManager.endPath.sub(_tmp1.x, _tmp1.y, _tmp1.z);
+    const hero = manager.me;
+
+    const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();
+
+    ctx.circle(dQ, 25, 20, [0, 200, 0], 3);
+
     const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-    const _tmp2 = dQ.mult(dQ_travel, dQ_travel, dQ_travel)
-    const qPredicted_pos = hero.gamePos.add(_tmp2.x, _tmp2.y, _tmp2.z);
+    const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
+    const qPredicted_pos = hero.gamePos.add(tmp);
     if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
-    castPos = manager.worldToScreen(qPredicted_pos).getFlat();
+    ctx.circle(qPredicted_pos, 25, 20, [0, 200, 0], 3);
 
-
-    
 
     if (!hasQBuff(manager)) return;
     const range = getCurrentQRange(manager);
@@ -163,9 +142,6 @@ function onDraw(ctx, manager) {
         }
     }
 
-    // const qBuff = getQBuff(manager);
-    // const data = qBuff.endtime - manager.game.time < 1;
-    // ctx.text(data, 200, 200, 22, 255);
 }
 
 let lastMove;
@@ -195,15 +171,14 @@ function castQ(hero, manager, predict = true) {
 
         if (predict) {
             h = hero;
-            const _tmp1 = hero.gamePos.normalize();
-            const dQ = hero.AiManager.endPath.sub(_tmp1.x, _tmp1.y, _tmp1.z);
+            const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();        
             const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-            const _tmp2 = dQ.mult(dQ_travel, dQ_travel, dQ_travel)
-            const qPredicted_pos = hero.gamePos.add(_tmp2.x, _tmp2.y, _tmp2.z);
+            const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
+            const qPredicted_pos = hero.gamePos.add(tmp);
             if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
-            castPos = manager.worldToScreen(qPredicted_pos).getFlat();
+            castPos = manager.worldToScreen(qPredicted_pos).flatten();
         } else {
-            castPos = manager.worldToScreen(hero.gamePos).getFlat();
+            castPos = manager.worldToScreen(hero.gamePos).flatten();
         }
 
         const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
@@ -222,14 +197,4 @@ function castQ(hero, manager, predict = true) {
     }
 }
 
-/** 
- * @param {import("../../src/models/Missile").Missile} missile Missile
- * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
- * 
- * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
- * 
- * */
-function onMissileCreate(missile, manager) {
-}
-
-module.exports = { setup, onTick, onMissileCreate, onMoveCreate, onDraw }
+module.exports = { setup, onTick, onMoveCreate, onDraw }

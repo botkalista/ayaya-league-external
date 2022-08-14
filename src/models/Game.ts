@@ -34,7 +34,7 @@ export class Game extends CachedClass {
         }
 
         if (pos1) {
-            const p1 = pos1.getFlat();
+            const p1 = pos1.flatten();
             ActionControllerWrapper.move(p1.x, p1.y);
         }
 
@@ -43,7 +43,7 @@ export class Game extends CachedClass {
         this.sleep(10);
 
         if (pos2) {
-            const p2 = pos2.getFlat();
+            const p2 = pos2.flatten();
             ActionControllerWrapper.move(p2.x, p2.y);
         }
 
@@ -89,7 +89,7 @@ export class Game extends CachedClass {
 
     issueOrder(pos: Vector2, isAttack: boolean) {
         const startMousePos = this.getMousePos();
-        const position = pos.getFlat();
+        const position = pos.flatten();
         if (isAttack) {
             CachedClass.set<PlayerState>('playerState', "isAttacking");
             ActionControllerWrapper.blockInput(true);
