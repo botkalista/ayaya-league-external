@@ -1,19 +1,17 @@
 let lastAaTick = 0;
 let canPlayerMove = true;
+let lastWasMove = false;
 
-function getTime(manager) {
+/** @type {import("../UserScriptManager").UserScriptManager} */
+let manager;
+
+function getTime() {
     return manager.game.time * 1000
 }
 
-function canAttack(attackDelay, manager) {
-    const canAttack = lastAaTick + attackDelay < getTime(manager);
-    return canAttack;
-}
+function canAttack(attackDelay, manager) { return lastAaTick + attackDelay < getTime() }
 
-function canMove(windupTime, manager) {
-    const canMove = lastAaTick + windupTime < getTime(manager);
-    return canPlayerMove || canMove;
-}
+function canMove(windupTime, manager) { return (lastAaTick + windupTime < getTime() || canPlayerMove) }
 
 function setup() {
     console.log('Orbwalker.js loaded.')
@@ -24,39 +22,29 @@ function setup() {
 }
 
 /** 
- * @param {import("../UserScriptManager").UserScriptManager} manager ScriptManager
- * @param {number} ticks Ticks counter
- * 
- * This JSDOC is optional, it's only purpose is to add intellisense while you write the script
- * 
+ * @param {import("../UserScriptManager").UserScriptManager} manager
+ * @param {number} ticks
  * */
-
-
-async function onTick(manager, ticks, settings) {
+async function onTick(_manager, ticks, settings) {
     if (!settings[0].value) return;
-    const active = manager.game.isKeyPressed(0x5); // 0x4E = N | 0x5 = MouseButtonX | 0x20 = SPACE
-    if (!active) return;
+    manager = _manager;
+    if (!manager.game.isKeyPressed(0x5)) return;
 
     if (manager.playerState == 'isAttacking') return;
 
-    const targets = manager.champions.enemies;
-    if (targets.length == 0) return;
-    const closestInRange = manager.champions.enemies.reduce((p, e) => {
-        const dist = Math.hypot(e.screenPos.x - manager.me.screenPos.x, e.screenPos.y - manager.me.screenPos.y);
-        const pRange = manager.me.range;
-        const eBoundingBox = manager.me.boundingBox;
-        return (dist < (pRange / 2) + eBoundingBox * 2 && dist < p.d) ? { d: dist, e } : p;
-    }, { d: 999, e: targets[0] });
 
-    if (closestInRange.d == 999) { canPlayerMove = true; }
+    const target = manager.utils.lowestHealthEnemyChampInRange(manager.me.range);
+    if (!target) canPlayerMove = true;
 
-    if ((closestInRange.d != 999) && canAttack(manager.me.attackDelay, manager) && manager.playerState == "idle" || manager.playerState == undefined) {
+
+    if (target && canAttack(manager.me.attackDelay) && (manager.playerState == "idle" || manager.playerState == undefined)) {
         canPlayerMove = false;
-        lastAaTick = getTime(manager);
-        manager.game.issueOrder(closestInRange.e.screenPos, true);
-    } else if (canMove(manager.me.windupTime, manager) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
-
+        lastAaTick = getTime();
+        manager.game.issueOrder(target.screenPos, true);
+    } else if (canMove(manager.me.windupTime) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
+        if (lastWasMove) return lastWasMove = false;
         const pos = await manager.game.getMousePos();
+        lastWasMove = true;
         manager.game.issueOrder(pos, false);
     }
 

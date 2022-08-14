@@ -1,5 +1,5 @@
 
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 
 export function createOverlayWindow() {
     const win = new BrowserWindow({
@@ -27,7 +27,7 @@ export function createSettingsWindow() {
     const win = new BrowserWindow({
         width: 250,
         height: 380,
-        x: 250,
+        x: screen.getPrimaryDisplay().workAreaSize.width / 100 * 80,
         y: 250,
         webPreferences: {
             nodeIntegration: true,
