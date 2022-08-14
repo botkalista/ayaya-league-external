@@ -20,15 +20,6 @@
 
 </div>
 
-
-
-## WHY THE CIRCLES ARE LAGGING IN GAME ?
-
-You should set the readTime from the settings window to a lower value and click update
-(_That's the number of ms to wait for each tick_)
-
-![read_time](https://user-images.githubusercontent.com/42075940/183614940-c5f882d6-93a6-4f81-97ed-2c28f1e84dd2.png)
-
 ## What's AyayaLeague ?
 
 AyayaLeague is an external script platform written in nodejs that supports custom user scripts.
