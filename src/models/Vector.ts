@@ -1,195 +1,65 @@
-import { classDocs, desc, arg, res } from '../models/Decorators';
 
-@classDocs()
 export class Vector2 {
-
     constructor(public x: number, public y: number) { }
-
-    get length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
+    static get zero() { return new Vector2(0, 0) }
+    static fromAxis(axis: number[]) { return new Vector2(axis[0], axis[1]) }
+    static fromData(data: { x: number, y: number }) { return new Vector2(data.x, data.y) }
+    get length() { return Math.sqrt(this.getAxis().reduce((p, v) => p + (v * v), 0)) }
+    getAxis() { return [this.x, this.y] }
+    copy() { return new Vector2(this.x, this.y) }
+    normalize() { const l = this.length; this.x /= l; this.y /= l; return this; }
+    add(v: Vector2) { return new Vector2(this.x + v.x, this.y + v.y) }
+    sub(v: Vector2) { return new Vector2(this.x - v.x, this.y - v.y) }
+    mul(v: Vector2) { return new Vector2(this.x * v.x, this.y * v.y) }
+    div(v: Vector2) { return new Vector2(this.x / v.x, this.y / v.y) }
+    isEqual(v: Vector2) { return this.x == v.x && this.y == v.y }
+    flatten() {
+        this.x = parseInt(this.x.toFixed());
+        this.y = parseInt(this.y.toFixed());
+        return this;
     }
-
-    get normalize() {
-        const l = this.length;
-        return new Vector2(this.x / l, this.y / l);
-    }
-
-    @desc('Returns a vector with x=0 y=0')
-    @res(Vector2)
-    static zero() {
-        const instance = new Vector2(0, 0);
-        return instance;
-    }
-
-    @desc('Returns a copy of the vector `v`')
-    @arg('v', Vector2)
-    @res(Vector2)
-    static fromVector(vector: Vector2) {
-        const instance = vector.copy();
-        return instance;
-    }
-
-    @desc('Returns a copy of the vector with his x, y multiplied by `x`, `y`')
-    @arg('x', 0)
-    @arg('y', 0)
-    @res(Vector2)
-    mult(x: number, y: number) {
-        const cp = this.copy();
-        cp.x *= x;
-        cp.y *= y;
-        return cp;
-    }
-
-    @desc('Returns true if vectors have the same `x`, `y`')
-    @arg('vec', Vector2)
-    @res(true)
-    isEqual(vector: Vector2): boolean {
-        return this.x == vector.x && this.y == vector.y;
-    }
-
-
-    get flat() { return this.getFlat(); }
-
-    @desc('Returns a copy of the vector with x, y as `integer` (instead of `float`)')
-    @res(Vector2)
-    getFlat() {
-        const cp = this.copy();
-        cp.x = parseInt(cp.x.toFixed(0));
-        cp.y = parseInt(cp.y.toFixed(0));
-        return cp;
-    }
-
-    @desc('Returns a copy of the vector')
-    @res(Vector2)
-    copy() {
-        const instance = new Vector2(this.x, this.y);
-        return instance;
-    }
-
 }
-
-@classDocs()
 export class Vector3 {
-
     constructor(public x: number, public y: number, public z: number) { }
-
-
-    // @desc('Vector length')
-    get length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    static get zero() { return new Vector3(0, 0, 0) }
+    static fromAxis(axis: number[]) { return new Vector3(axis[0], axis[1], axis[2]) }
+    static fromData(data: { x: number, y: number, z: number }) { return new Vector3(data.x, data.y, data.z) }
+    get length() { return Math.sqrt(this.getAxis().reduce((p, v) => p + (v * v), 0)) }
+    getAxis() { return [this.x, this.y, this.z] }
+    copy() { return new Vector3(this.x, this.y, this.z) }
+    normalize() { const l = this.length; this.x /= l; this.y /= l; this.z /= l; return this; }
+    add(v: Vector3) { return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z) }
+    sub(v: Vector3) { return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z) }
+    mul(v: Vector3) { return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z) }
+    div(v: Vector3) { return new Vector3(this.x / v.x, this.y / v.y, this.z / v.z) }
+    isEqual(v: Vector3) { return this.x == v.x && this.y == v.y && this.z == v.z }
+    flatten() {
+        this.x = parseInt(this.x.toFixed());
+        this.y = parseInt(this.y.toFixed());
+        this.z = parseInt(this.z.toFixed());
+        return this;
     }
-
-    // @desc('Return the normalized copy of the vector')
-    normalize(): Vector3 {
-        const l = this.length;
-        return new Vector3(this.x / l, this.y / l, this.z / l);
-    }
-
-    static fromData(data: { x: number, y: number, z: number }) {
-        const instance = new Vector3(data.x, data.y, data.z);
-        return instance;
-    }
-
-    @desc('Returns a vector with x=0 y=0 z=0')
-    @res(Vector3)
-    static zero() {
-        const instance = new Vector3(0, 0, 0);
-        return instance;
-    }
-
-    @desc('Returns a copy of the vector `v`')
-    @arg('v', Vector3)
-    @res(Vector3)
-    static fromVector(vector: Vector3) {
-        const instance = vector.copy();
-        return instance;
-    }
-
-    @desc('Returns a copy of the vector with his x, y multiplied by `x`, `y`')
-    @arg('x', 0)
-    @arg('y', 0)
-    @res(Vector3)
-    mult(x: number, y: number, z: number): Vector3 {
-        const cp = this.copy();
-        cp.x *= x;
-        cp.y *= y;
-        cp.z *= z;
-        return cp;
-    }
-
-    add(x: number, y: number, z: number): Vector3 {
-        const cp = this.copy();
-        cp.x += x;
-        cp.y += y;
-        cp.z += z;
-        return cp;
-    }
-
-    sub(x: number, y: number, z: number): Vector3 {
-        const cp = this.copy();
-        cp.x -= x;
-        cp.y -= y;
-        cp.z -= z;
-        return cp;
-    }
-
-    dist(v: Vector3): number {
-        return Math.hypot(v.x - this.x, v.y - this.y, v.z - this.z);
-    }
-
-
-    @desc('Returns true if vectors have the same `x`, `y`, `z`')
-    @arg('vec', Vector3)
-    @res(Vector3)
-    isEqual(vector: Vector3): boolean {
-        return this.x == vector.x && this.y == vector.y && this.z == vector.z;
-    }
-
-
-    get flat() { return this.getFlat(); }
-
-
-    @desc('Returns a copy of the vector with x, y, z as `integer` (instead of `float`)')
-    @res(Vector3)
-    getFlat() {
-        const cp = this.copy();
-        cp.x = parseInt(cp.x.toFixed(0));
-        cp.y = parseInt(cp.y.toFixed(0));
-        cp.z = parseInt(cp.z.toFixed(0));
-        return cp;
-    }
-
-    @desc('Returns a copy of the vector')
-    @res(Vector3)
-    copy() {
-        const instance = new Vector3(this.x, this.y, this.z);
-        return instance;
-    }
-
-
-    toString() {
-        return `${this.x} ${this.y} ${this.z}`;
-    }
-
 }
-
 export class Vector4 {
-
     constructor(public x: number, public y: number, public z: number, public w: number) { }
-
-    static zero() {
-        const instance = new Vector4(0, 0, 0, 0);
-        return instance;
+    static get zero() { return new Vector4(0, 0, 0, 0) }
+    static fromAxis(axis: number[]) { return new Vector4(axis[0], axis[1], axis[2], axis[3]) }
+    static fromData(data: { x: number, y: number, z: number, w: number }) { return new Vector4(data.x, data.y, data.z, data.w) }
+    get length() { return Math.sqrt(this.getAxis().reduce((p, v) => p + (v * v), 0)) }
+    getAxis() { return [this.x, this.y, this.z, this.w] }
+    copy() { return new Vector4(this.x, this.y, this.z, this.w) }
+    normalize() { const l = this.length; this.x /= l; this.y /= l; this.z /= l; this.w /= l; return this; }
+    add(v: Vector4) { return new Vector4(this.x + v.x, this.y + v.y, this.z + v.z, this.w + v.w) }
+    sub(v: Vector4) { return new Vector4(this.x - v.x, this.y - v.y, this.z - v.z, this.w - v.w) }
+    mul(v: Vector4) { return new Vector4(this.x * v.x, this.y * v.y, this.z * v.z, this.w * v.w) }
+    div(v: Vector4) { return new Vector4(this.x / v.x, this.y / v.y, this.z / v.z, this.w / v.w) }
+    isEqual(v: Vector4) { return this.x == v.x && this.y == v.y && this.z == v.z && this.w == v.w }
+    flatten() {
+        this.x = parseInt(this.x.toFixed());
+        this.y = parseInt(this.y.toFixed());
+        this.z = parseInt(this.z.toFixed());
+        this.w = parseInt(this.w.toFixed());
+        return this;
     }
-
-    static fromVector(vector: Vector4) {
-        const instance = vector.copy();
-        return instance;
-    }
-
-    copy() {
-        const instance = new Vector4(this.x, this.y, this.z, this.w);
-        return instance;
-    }
-
 }
+

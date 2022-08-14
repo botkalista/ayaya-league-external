@@ -30,6 +30,8 @@ const qRanges = [
 
 let qTarget;
 
+let h;
+
 const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
 
@@ -105,7 +107,7 @@ async function onTick(manager, ticks) {
     if (Q.ready && me.mana > qCost[Q.level]) {
         const target = getLowestHealthTargetWithinRange(manager.champions.enemies, 1450, manager); //1450 Max Q range
         if (target.hp == 9999) return;
-        qTarget = target.e.address;
+        qTarget = target.e.name;
         manager.game.pressKey(manager.spellSlot.Q);
         return;
     }
@@ -122,12 +124,12 @@ function onDraw(ctx, manager) {
 
     if (manager.me.name != scriptChampName) return;
 
-    const Q = manager.me.spells[0];
-    ctx.text('Q ready: ' + Q.ready, 400, 40, 20, 255);
-    ctx.text('Mana: ' + manager.me.mana.toFixed(), 400, 60, 20, 255);
-    ctx.text('Q cost: ' + qCost[Q.level], 400, 80, 20, 255);
-    ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level]), 400, 100, 20, 255);
-    ctx.text('Charging: ' + hasQBuff(manager), 400, 120, 20, 255);
+    // const Q = manager.me.spells[0];
+    // ctx.text('Q ready: ' + Q.ready, 400, 40, 20, 255);
+    // ctx.text('Mana: ' + manager.me.mana.toFixed(), 400, 60, 20, 255);
+    // ctx.text('Q cost: ' + qCost[Q.level], 400, 80, 20, 255);
+    // ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level]), 400, 100, 20, 255);
+    // ctx.text('Charging: ' + hasQBuff(manager), 400, 120, 20, 255);
 
     // const buffs = manager.me.buffManager.buffs
     //     .filter(e => e.name == qBuffName)
@@ -136,13 +138,23 @@ function onDraw(ctx, manager) {
 
     // ctx.text(buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 650, 120, 20, 255);
 
+    const _tmp1 = hero.gamePos.normalize();
+    const dQ = hero.AiManager.endPath.sub(_tmp1.x, _tmp1.y, _tmp1.z);
+    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
+    const _tmp2 = dQ.mult(dQ_travel, dQ_travel, dQ_travel)
+    const qPredicted_pos = hero.gamePos.add(_tmp2.x, _tmp2.y, _tmp2.z);
+    if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
+    castPos = manager.worldToScreen(qPredicted_pos).getFlat();
+
+
+    
 
     if (!hasQBuff(manager)) return;
     const range = getCurrentQRange(manager);
     ctx.circle(manager.me.gamePos, range, 50, [0, 170, 0], 2);
 
     if (qTarget) {
-        const target = manager.champions.enemies.find(e => e.address == qTarget);
+        const target = manager.champions.enemies.find(e => e.name == qTarget);
         ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
         if (lastMove) {
             const start = manager.worldToScreen(lastMove.startPath);
@@ -151,9 +163,9 @@ function onDraw(ctx, manager) {
         }
     }
 
-    const qBuff = getQBuff(manager);
-    const data = qBuff.endtime - manager.game.time < 1;
-    ctx.text(data, 200, 200, 22, 255);
+    // const qBuff = getQBuff(manager);
+    // const data = qBuff.endtime - manager.game.time < 1;
+    // ctx.text(data, 200, 200, 22, 255);
 }
 
 let lastMove;
@@ -165,7 +177,7 @@ let lastMove;
 function onMoveCreate(hero, manager) {
     lastMove = hero.AiManager;
     if (manager.me.name != scriptChampName) return;
-    if (hero.address != qTarget) return;
+    if (hero.name != qTarget) return;
     if (!hasQBuff(manager)) return;
     // const active = manager.game.isKeyPressed(0x5);
     // if (!active) return;
@@ -182,9 +194,12 @@ function castQ(hero, manager, predict = true) {
         let castPos;
 
         if (predict) {
-            const dQ = hero.AiManager.endPath.sub(hero.gamePos.normalize());
+            h = hero;
+            const _tmp1 = hero.gamePos.normalize();
+            const dQ = hero.AiManager.endPath.sub(_tmp1.x, _tmp1.y, _tmp1.z);
             const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-            const qPredicted_pos = hero.gamePos.add(dQ.mult(dQ_travel));
+            const _tmp2 = dQ.mult(dQ_travel, dQ_travel, dQ_travel)
+            const qPredicted_pos = hero.gamePos.add(_tmp2.x, _tmp2.y, _tmp2.z);
             if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
             castPos = manager.worldToScreen(qPredicted_pos).getFlat();
         } else {
