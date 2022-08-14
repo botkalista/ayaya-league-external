@@ -144,7 +144,7 @@ export class UserScriptManager extends CachedClass {
 
         const functions = {
             enemyChampsInRange(range: number) {
-                return thiz.champions.enemies.filter(e => e.hp > 0 && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox)));
+                return thiz.champions.enemies.filter(e => e.hp > 0 && e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox)));
             },
             lowestHealthEnemyChampInRange(range: number) {
                 return functions.enemyChampsInRange(range).sort((a, b) => a.hp - b.hp)[0];

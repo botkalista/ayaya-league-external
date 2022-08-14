@@ -21,7 +21,8 @@ const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
 
 let qTarget;
-let h;
+let lastMove;
+
 
 function setup() {
     console.log('Xerath.js loaded.')
@@ -68,13 +69,14 @@ async function onTick(manager, ticks) {
 
 
     if (hasQBuff(manager)) {
+
         const qBuff = getQBuff(manager);
         if (qBuff.endtime - manager.game.time <= 0) {
             manager.game.releaseKey(manager.spellSlot.Q);
         } else if (qBuff.endtime - manager.game.time < 1) {
             const target = manager.utils.lowestHealthEnemyChampInRange(getCurrentQRange(manager));
-            if (target.hp == 9999) return;
-            castQ(target.e, manager, false);
+            if (!target) return;
+            castQ(target, manager);
         }
 
         return;
@@ -83,10 +85,10 @@ async function onTick(manager, ticks) {
     const me = manager.me;
     const Q = me.spells[0];
 
-    if (Q.ready && me.mana > qCost[Q.level]) {
+    if (Q.ready && me.mana > qCost[Q.level - 1]) {
         const target = manager.utils.lowestHealthEnemyChampInRange(1450); //1450 Max Q range
-        if (target.hp == 9999) return;
-        qTarget = target.e.name;
+        if (!target) return;
+        qTarget = target.name;
         manager.game.pressKey(manager.spellSlot.Q);
         return;
     }
@@ -105,46 +107,47 @@ function onDraw(ctx, manager) {
 
     if (manager.me.name != scriptChampName) return;
 
-    // const Q = manager.me.spells[0];
-    // ctx.text('Q ready: ' + Q.ready, 400, 40, 20, 255);
-    // ctx.text('Mana: ' + manager.me.mana.toFixed(), 400, 60, 20, 255);
-    // ctx.text('Q cost: ' + qCost[Q.level], 400, 80, 20, 255);
-    // ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level]), 400, 100, 20, 255);
-    // ctx.text('Charging: ' + hasQBuff(manager), 400, 120, 20, 255);
-
-
-    ctx.text("ACTIVE", 40, 70, 22, 255);
-
-    const hero = manager.me;
-
-    const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();
-
-    ctx.circle(dQ, 25, 20, [0, 200, 0], 3);
-
-    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-    const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
-    const qPredicted_pos = hero.gamePos.add(tmp);
-    if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
-    ctx.circle(qPredicted_pos, 25, 20, [0, 200, 0], 3);
+    const Q = manager.me.spells[0];
+    ctx.text('Q ready: ' + Q.ready, 50, 40, 20, 255);
+    ctx.text('Mana: ' + manager.me.mana.toFixed(), 50, 60, 20, 255);
+    ctx.text('Q cost: ' + (qCost[Q.level - 1]), 50, 80, 20, 255);
+    ctx.text('Has mana: ' + (manager.me.mana > qCost[Q.level - 1]), 50, 100, 20, 255);
+    ctx.text('Charging: ' + hasQBuff(manager), 50, 120, 20, 255);
 
 
     if (!hasQBuff(manager)) return;
+
     const range = getCurrentQRange(manager);
     ctx.circle(manager.me.gamePos, range, 50, [0, 170, 0], 2);
+    ctx.text('Range: ' + range, 50, 150, 20, 255);
 
-    if (qTarget) {
-        const target = manager.champions.enemies.find(e => e.name == qTarget);
-        ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
-        if (lastMove) {
-            const start = manager.worldToScreen(lastMove.startPath);
-            const end = manager.worldToScreen(lastMove.endPath);
-            ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
-        }
+
+    if (!qTarget) return;
+
+    const target = manager.champions.enemies.find(e => e.name == qTarget);
+    if (!target) return;
+
+    ctx.circle(target.gamePos, 60, 20, [200, 0, 0], 3);
+    ctx.text('Target: ' + qTarget, 50, 170, 20, 255);
+
+    if (lastMove) {
+        const start = manager.worldToScreen(lastMove.startPath);
+        const end = manager.worldToScreen(lastMove.endPath);
+        ctx.linePoints(start.x, start.y, end.x, end.y, 255, 2);
     }
+
+
+    const predictedPos = predictPosition(target, manager);
+    if (!predictedPos || predictedPos.x == NaN) return;
+    ctx.circle(manager.me.gamePos, predictedPos.dist(manager.me.gamePos), 100, [0, 200, 0], 8);
+    ctx.text('PDist: ' + predictedPos.dist(manager.me.gamePos), 50, 200, 20, 255);
+    if (predictedPos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
+    ctx.text('INRANGE', 50, 230, 20, 255);
+
 
 }
 
-let lastMove;
+
 
 /** 
  * @param {Entity} hero
@@ -164,19 +167,17 @@ function onMoveCreate(hero, manager) {
  * @param {Entity} hero
  * @param {Manager} manager
  */
-function castQ(hero, manager, predict = true) {
+function castQ(hero, manager) {
     try {
 
         let castPos;
 
-        if (predict) {
-            h = hero;
-            const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();        
-            const dQ_travel = hero.movSpeed * 0.528; // Q cast time
-            const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
-            const qPredicted_pos = hero.gamePos.add(tmp);
-            if (qPredicted_pos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
-            castPos = manager.worldToScreen(qPredicted_pos).flatten();
+        if (hero.AiManager.startPath && hero.AiManager.endPath) {
+            castPos = predictPosition(hero, manager);
+            if (!castPos) return;
+            if (castPos.x == NaN || castPos.x == null) return;
+            if (castPos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
+            castPos = manager.worldToScreen(castPos);
         } else {
             castPos = manager.worldToScreen(hero.gamePos).flatten();
         }
@@ -187,7 +188,7 @@ function castQ(hero, manager, predict = true) {
         setMousePos(castPos.x, castPos.y);
         sleep(3);
         releaseKey(manager.spellSlot.Q);
-        sleep(10);
+        sleep(20);
         setMousePos(oldMousePos.x, oldMousePos.y);
         blockInput(false);
         qTarget = undefined;
@@ -195,6 +196,18 @@ function castQ(hero, manager, predict = true) {
     } catch (ex) {
         console.error('ERROR', ex);
     }
+}
+
+/** 
+ * @param {Entity} hero
+ * @param {Manager} manager
+ */
+function predictPosition(hero, manager) {
+    const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();
+    const dQ_travel = hero.movSpeed * 0.528; // Q cast time
+    const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
+    const qPredicted_pos = hero.gamePos.add(tmp);
+    return qPredicted_pos;
 }
 
 module.exports = { setup, onTick, onMoveCreate, onDraw }
