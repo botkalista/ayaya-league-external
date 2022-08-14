@@ -226,7 +226,7 @@ const performance = new Performance();
 
 
 const persistentMissiles: Missile[] = [];
-const aiEndPositions = new Map<number, Vector3>();
+const aiManagerCache = new Map<string, [Vector3, Vector3]>();
 
 const tickInfo = {
     lastOnTickPublish: 0,
@@ -260,7 +260,7 @@ async function loop() {
 
     performance.spot('missile_publish');
 
-    publishOnMoveCreate(manager, aiEndPositions, settings, publishToScript);
+    publishOnMoveCreate(manager, aiManagerCache, settings, publishToScript);
 
     performance.spot('on_move_create_publish');
 

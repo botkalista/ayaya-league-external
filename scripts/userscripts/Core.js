@@ -26,7 +26,7 @@ function setup() {
 function onDraw(ctx, manager, settings) {
 
     if (settings[0].value == true) drawPlayerRange(ctx, manager, settings[1].value);
-    if (settings[2].value == true) drawPlayerRange(ctx, manager);
+    if (settings[2].value == true) drawEnemiesRange(ctx, manager);
     if (settings[3].value == true) drawMissiles(ctx, manager);
 }
 

@@ -29,7 +29,6 @@ export class BuffManager extends CachedClass {
     byName(name: string): Buff | undefined {
         const buffs = this.buffs
             .filter(e => e.name == name)
-            .sort((a, b) => b.endtime - a.endtime)
             .sort((a, b) => b.count - a.count);
 
         return (buffs.length > 0) ? buffs[0] : undefined;

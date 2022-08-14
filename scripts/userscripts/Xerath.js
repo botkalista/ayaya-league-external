@@ -102,11 +102,23 @@ async function onTick(_manager, ticks) {
 }
 
 
+
+
 /** 
  * @param {DrawContext} ctx
  * @param {Manager} manager
  */
 function onDraw(ctx, manager) {
+
+    // manager.champions.enemies.forEach(e => {
+    //     const a = manager.worldToScreen(e.AiManager.startPath);
+    //     const b = manager.worldToScreen(e.AiManager.endPath);
+    //     ctx.line(a, b, [200, 0, 0], 2);
+    // });
+
+
+    const qtarg = manager.champions.enemies.find(e => e.name == qTarget);
+    if (qtarg) ctx.circle(qtarg.gamePos, 50, 30, [200, 0, 0], 4);
 
     return;
     // ctx.text(manager.me.buffManager.buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 600, 40, 20, 255);
@@ -148,12 +160,12 @@ function onDraw(ctx, manager) {
 
 }
 
-
 /** 
  * @param {Entity} hero
  * @param {Manager} manager
  */
 function onMoveCreate(hero, manager) {
+    if (manager.me.name != scriptChampName) return;
 
     // J
     if (manager.game.isKeyPressed(0x4A)) {
@@ -163,10 +175,8 @@ function onMoveCreate(hero, manager) {
     // MouseX2
     if (!manager.game.isKeyPressed(0x5)) return;
 
-    if (manager.me.name != scriptChampName) return;
-    if (!hasQBuff(manager)) return;
 
-    if (qTarget != hero.name) return;
+    if (!hasQBuff(manager)) return;
 
     castQ(hero);
 }
