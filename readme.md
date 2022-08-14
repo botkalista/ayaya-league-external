@@ -220,6 +220,8 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - *circle*(c: [`Vector3`](#vector3), r: `number`, points?: `number`, color?: `number`, thickness?: `number`) - Draw a circle at `c` of `r` radius with color `color` and thickness `thickness`. It automatically transform the circle from game coordinates to screen coordinates using `points` points to rappresent it
 
+- *text*(str: `string`, x: `number`, y: `number`, size: `number`, color?: `number`) - Draw `str` at `x`,`y` with sizee `size` and color `color`
+
 # Models
 
 ## Entity
@@ -347,19 +349,25 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _y_ `number` - y
 
+- `static` _zero_ [`Vector2`](#vector2) - Returns a vector with x=0 y=0
+
 **methods**
 
 - _copy_(): [`Vector2`](#vector2) - Returns a copy of the vector
 
-- _getFlat_(): [`Vector2`](#vector2) - Returns a copy of the vector with x, y as `integer` (instead of `float`)
+- _flatten_(): [`Vector2`](#vector2) - Returns a copy of the vector with x, y as `integer` (instead of `float`)
 
 - _isEqual_(vec: [`Vector2`](#vector2)): [`Vector2`](#vector2) - Returns true if vectors have the same `x`, `y`
 
-- _mult_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
+- _add_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
 
-- `static` _zero_(): [`Vector2`](#vector2) - Returns a vector with x=0 y=0
+- _sub_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y subtracted by `x`, `y`
 
-- `static` _fromVector_(v: [`Vector2`](#vector2)): [`Vector2`](#vector2) - Returns a copy of the vector `v`
+- _mul_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
+
+- _div_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y divided by `x`, `y`
+
+- _dist_(v: [`Vector2`](#vector2)): `number` - Returns the distance between this and `v`
 
 - `static` _fromData_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a vector with x=`x` y=`y`
 
@@ -373,19 +381,25 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _z_ `number` - z
 
+- `static` _zero_ [`Vector2`](#vector2) - Returns a vector with x=`x` y=`y` z=`z`
+
 **methods**
 
 - _copy_(): [`Vector3`](#vector3) - Returns a copy of the vector
 
-- _getFlat_(): [`Vector3`](#vector3) - Returns a copy of the vector with x, y, z as `integer` (instead of `float`)
+- _flatten_(): [`Vector3`](#vector3) - Returns a copy of the vector with x, y, z as `integer` (instead of `float`)
 
 - _isEqual_:(vec: [`Vector3`](#vector3)): [`Vector3`](#vector3) - Returns true if vectors have the same `x`, `y`, `z`
 
-- _mult_(x: `number`, y:`number`, z:`number`): [`Vector3`](#vector3) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
+- _add_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
-- `static` _zero_(): [`Vector3`](#vector3) - returns a vector with x=0 y=0 z=0
+- _sub_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z subtracted by `x`, `y`, `z`
 
-- `static` _fromVector_(v: [`Vector3`](#vector3)): [`Vector3`](#vector3) - Returns a copy of the vector `v`
+- _mul_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
+
+- _div_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z divided by `x`, `y`, `z`
+
+- _dist_(v: [`Vector3`](#vector3)): `number` - Returns the distance between this and `v`
 
 - `static` _fromData_(x: `number`, y: `number`, z: `number`): [`Vector3`](#vector3) - Returns a vector with x=`x` y=`y` z=`z`
 
