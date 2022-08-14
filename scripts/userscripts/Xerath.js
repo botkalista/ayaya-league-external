@@ -4,7 +4,7 @@
  * @typedef {import("../../src/models/drawing/DrawContext").DrawContext} DrawContext
  */
 
-const qCost = [80, 90, 100, 110, 120]
+const qCost = [80, 90, 100, 110, 120];
 
 const qRanges = [
     { t: 0, r: 736 },
@@ -15,12 +15,15 @@ const qRanges = [
     { t: 1.25, r: 1245 },
     { t: 1.5, r: 1347 },
     { t: 1.75, r: 1450 }
-]
-
+];
 const scriptChampName = 'Xerath';
 const qBuffName = 'XerathArcanopulseChargeUp';
 
+/** @type {Manager} */
+let manager;
+/** @type {string} */
 let qTarget;
+
 let lastMove;
 
 
@@ -30,21 +33,14 @@ function setup() {
 
 
 /**@param {Manager} manager */
-function getQBuff(manager) {
-    return manager.me.buffManager.byName(qBuffName);
-}
+function getQBuff() { return manager.me.buffManager.byName(qBuffName); }
 /**
  * @param {Manager} manager 
  * @returns {boolean}
  */
-function hasQBuff(manager) {
-    const qBuff = getQBuff(manager);
-    if (!qBuff) return false;
-    return qBuff.count > 0;
-}
-
-function getCurrentQRange(manager) {
-    const qBuff = getQBuff(manager);
+function hasQBuff() { const qBuff = getQBuff(manager); if (!qBuff) return false; return qBuff.count > 0; }
+function getCurrentQRange() {
+    const qBuff = getQBuff();
     if (!qBuff) return 0;
     const qTimer = qBuff.startTime;
     const ret = 735 + (102.14 * ((manager.game.time - qTimer + 0.2) / 0.25));
@@ -56,42 +52,46 @@ function getCurrentQRange(manager) {
  * @param {Manager} manager
  * @param {number} ticks
  */
-async function onTick(manager, ticks) {
-
-    //* If champ is not Xerath return
+async function onTick(_manager, ticks) {
+    manager = _manager;
     if (manager.me.name != scriptChampName) return;
 
     if (manager.game.isKeyPressed(0x4E)) manager.game.releaseKey(manager.spellSlot.Q);
 
-
-    const active = manager.game.isKeyPressed(0x5);
-    if (!active) return;
+    if (!manager.game.isKeyPressed(0x5)) return;
 
 
-    if (hasQBuff(manager)) {
+    // if (hasQBuff(manager)) {
 
-        const qBuff = getQBuff(manager);
-        if (qBuff.endtime - manager.game.time <= 0) {
+    //     const qBuff = getQBuff(manager);
+    //     if (qBuff.endtime - manager.game.time <= 0) {
+    //         manager.game.releaseKey(manager.spellSlot.Q);
+    //     } else if (qBuff.endtime - manager.game.time < 1) {
+    //         const target = manager.utils.lowestHealthEnemyChampInRange(getCurrentQRange(manager));
+    //         if (!target) return;
+    //         castQ(target, manager);
+    //     }
+
+    //     return;
+    // };
+
+    const target = manager.utils.lowestHealthEnemyChampInRange(1450); //1450 Max Q range
+    if (!target) return;
+    qTarget = target.name;
+
+    if (hasQBuff()) {
+        const buff = getQBuff();
+        if (buff.endtime - manager.game.time <= 0) {
             manager.game.releaseKey(manager.spellSlot.Q);
-        } else if (qBuff.endtime - manager.game.time < 1) {
-            const target = manager.utils.lowestHealthEnemyChampInRange(getCurrentQRange(manager));
-            if (!target) return;
-            castQ(target, manager);
+        } else if (buff.endtime - manager.game.time < 1) {
+            castQ(target);
         }
-
-        return;
-    };
+    }
 
     const me = manager.me;
     const Q = me.spells[0];
 
-    if (Q.ready && me.mana > qCost[Q.level - 1]) {
-        const target = manager.utils.lowestHealthEnemyChampInRange(1450); //1450 Max Q range
-        if (!target) return;
-        qTarget = target.name;
-        manager.game.pressKey(manager.spellSlot.Q);
-        return;
-    }
+    if (Q.ready && me.mana > qCost[Q.level - 1]) manager.game.pressKey(manager.spellSlot.Q);
 
 }
 
@@ -102,7 +102,7 @@ async function onTick(manager, ticks) {
  */
 function onDraw(ctx, manager) {
 
-
+    return;
     // ctx.text(manager.me.buffManager.buffs.map(e => `${e.count} | ${e.name}`).join('\n'), 600, 40, 20, 255);
 
     if (manager.me.name != scriptChampName) return;
@@ -154,33 +154,19 @@ function onDraw(ctx, manager) {
  * @param {Manager} manager
  */
 function onMoveCreate(hero, manager) {
-    lastMove = hero.AiManager;
+    if (!manager.game.isKeyPressed(0x5)) return;
     if (manager.me.name != scriptChampName) return;
-    if (hero.name != qTarget) return;
     if (!hasQBuff(manager)) return;
-    // const active = manager.game.isKeyPressed(0x5);
-    // if (!active) return;
-    castQ(hero, manager);
+    castQ(hero);
 }
 
-/** 
- * @param {Entity} hero
- * @param {Manager} manager
- */
-function castQ(hero, manager) {
+/** @param {Entity} hero */
+function castQ(hero) {
     try {
+        let castPos = predictPosition(hero);
+        if (manager.me.gamePos.dist(castPos) > getCurrentQRange()) return;
 
-        let castPos;
-
-        if (hero.AiManager.startPath && hero.AiManager.endPath) {
-            castPos = predictPosition(hero, manager);
-            if (!castPos) return;
-            if (castPos.x == NaN || castPos.x == null) return;
-            if (castPos.dist(manager.me.gamePos) > getCurrentQRange(manager)) return;
-            castPos = manager.worldToScreen(castPos);
-        } else {
-            castPos = manager.worldToScreen(hero.gamePos).flatten();
-        }
+        castPos = manager.worldToScreen(castPos);
 
         const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
         const oldMousePos = getMousePos();
@@ -191,6 +177,7 @@ function castQ(hero, manager) {
         sleep(20);
         setMousePos(oldMousePos.x, oldMousePos.y);
         blockInput(false);
+
         qTarget = undefined;
 
     } catch (ex) {
@@ -198,11 +185,11 @@ function castQ(hero, manager) {
     }
 }
 
-/** 
- * @param {Entity} hero
- * @param {Manager} manager
- */
-function predictPosition(hero, manager) {
+/** @param {Entity} hero */
+function predictPosition(hero) {
+    if (hero.AiManager.startPath.x == hero.AiManager.endPath.x && hero.AiManager.startPath.y == hero.AiManager.endPath.y) {
+        return hero.gamePos;
+    }
     const dQ = hero.AiManager.endPath.sub(hero.gamePos).normalize();
     const dQ_travel = hero.movSpeed * 0.528; // Q cast time
     const tmp = dQ.mul(new manager.typings.Vector3(dQ_travel, dQ_travel, dQ_travel));
