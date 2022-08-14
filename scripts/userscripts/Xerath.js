@@ -235,15 +235,13 @@ function castR(hero) {
         let castPos = predictPosition(hero, 0.627);
         if (manager.me.gamePos.dist(castPos) > rRange) return;
         castPos = manager.worldToScreen(castPos);
-        const { setMousePos, sleep, releaseKey, blockInput, getMousePos } = manager.game;
-        const oldMousePos = getMousePos();
+        const { setMousePos, sleep, releaseKey, blockInput } = manager.game;
         blockInput(true);
         setMousePos(castPos.x, castPos.y);
         manager.game.pressKey(manager.spellSlot.R);
         sleep(20);
         releaseKey(manager.spellSlot.R);
         sleep(20);
-        setMousePos(oldMousePos.x, oldMousePos.y);
         blockInput(false);
         rTarget = undefined;
     } catch (ex) {
