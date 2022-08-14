@@ -32,7 +32,7 @@ async function onTick(_manager, ticks) {
     if (!manager.game.isKeyPressed(0x5)) return draw.targets = [];
 
 
-    const targets = manager.utils.enemyChampsInRange(700 - 50).filter(e => {
+    const targets = manager.utils.enemyChampsInRange(700 - 75).filter(e => {
         const qPoison = e.buffManager.byName(poisons[0]);
         const wPoison = e.buffManager.byName(poisons[1]);
         return ((qPoison?.count > 0) || (wPoison?.count > 0));
