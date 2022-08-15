@@ -4,7 +4,7 @@ import { fnPublish, ScriptSettingsFull } from '../events/types';
 
 export function publishOnMoveCreate(manager: UserScriptManager, aiManagerCache: Map<string, [Vector3, Vector3]>, settings: ScriptSettingsFull, publish: fnPublish) {
     for (const champ of manager.champions.enemies) {
-        const target = aiManagerCache.get(champ.name);
+        const target = aiManagerCache.get(champ.address.toString());
         if (target) {
             const oStart = target[0];
             const oEnd = target[1];
@@ -12,6 +12,6 @@ export function publishOnMoveCreate(manager: UserScriptManager, aiManagerCache: 
                 publish('onMoveCreate', settings, champ, manager);
             }
         }
-        aiManagerCache.set(champ.name, [champ.AiManager.startPath.copy(), champ.AiManager.endPath.copy()]);
+        aiManagerCache.set(champ.address.toString(), [champ.AiManager.startPath.copy(), champ.AiManager.endPath.copy()]);
     }
 }
