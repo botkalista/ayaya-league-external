@@ -13,7 +13,6 @@ function print(...data) {
 
 function clearPrint() {
     if (prints.length > 30) prints.splice(0, prints.length - 30);
-
 }
 
 

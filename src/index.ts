@@ -295,12 +295,10 @@ async function loop() {
 function publishToScript(fName: keyof UserScript, settings: ScriptSettingsFull, ...args: any) {
     for (const userScript of userScripts) {
         try {
-            setImmediate(() => {
-                if (userScript[fName]) {
-                    const setting = settings.find(e => e.name == userScript._scriptname);
-                    (userScript[fName] as (...a) => any)(...args, (setting || { data: [] }).data);
-                }
-            });
+            if (userScript[fName]) {
+                const setting = settings.find(e => e.name == userScript._scriptname);
+                (userScript[fName] as (...a) => any)(...args, (setting || { data: [] }).data);
+            }
         } catch (ex) {
             console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');
         }

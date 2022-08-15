@@ -174,6 +174,8 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _me_ [`Entity`](#entity) - Get local player
 
+- _utils_ [`ScriptUtils`](#scriptutils) - Get utility functions
+
 - _missiles_ [`Missile`](#missile) - Get all missiles
 
 - _monsters_ [`Entity[]`](#entity) - Get all monsters
@@ -318,19 +320,33 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _castSpell_(slot:`number`, pos1?:[`Vector2`](#vector2), pos2?: [`Vector2`](#vector2), selfCast?:`boolean`): `void` - Cast the spell `slot` at `pos1` if provided to `pos2` if provided.<br>Self cast the spell if `selfCast` is true.<br>Use `pos2` for spells like Viktor Q or Viego W.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager) for `slot`
 
-- _isKeyPressed_(key:`number`): `boolean` - Return true if the key is pressed.<br>You can get the key numbers [**here**](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
+- _isKeyPressed_(key: `number`): `boolean` - Return true if the key is pressed.<br>You can get the key numbers [**here**](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 
-- _pressKey_(key:`number`): `void`- Press the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
+- _pressKey_(key: `number`): `void`- Press the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
 
-- _release_(key:`number`): `void`- Release the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
+- _release_(key: `number`): `void`- Release the key `key`.<br>You can use `spellSlot` of [UserScriptManager](#userscriptmanager).<br>(Ex: `manager.spellSlot.Q`)
 
 - _getMousePos_(): [`Vector2`](#vector2) - Return the mouse position
 
-- _setMousePos_(x:`number`, y:`number`): `void` - Set the mouse position to `x`, `y`
+- _setMousePos_(x:`number`, y: `number`): `void` - Set the mouse position to `x`, `y`
 
 - _blockInput_(value:`boolean`) - If true blocks user input (keyboard+mouse), if false unlocks it.
 
 - _sleep_(ms:`number`) - Wait `ms` milliseconds synchronously
+
+## ScriptUtils
+
+**methods**
+
+- _enemyChampsInRange_(range: `number`): [`Entity[]`](#entity) - Returns all the enemy champions inside `range`
+
+- _genericInRange_(list: [`Entity[]`](#entity), range: `number`): [`Entity[]`](#entity) - Returns all the entities of `list` inside `range`
+
+- _lowestHealthEnemyChampInRange_(range: `number`): [`Entity`](#entity) - Return the lowest health enemy champion inside `range`
+
+- _lowestHealthGenericInRange_(list:[`Entity[]`](#entity), range: `number`) - Return the lowest health entity of `list` inside `range`
+
+- _predictPosition_(target: [`Entity`](#entity), castTime: `number`) - Returns the position of `target` after `castTime` ms if he keeps moving in the same direction
 
 ## Vector2
 
@@ -350,13 +366,13 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _isEqual_(vec: [`Vector2`](#vector2)): [`Vector2`](#vector2) - Returns true if vectors have the same `x`, `y`
 
-- _add_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
+- _add_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
 
-- _sub_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y subtracted by `x`, `y`
+- _sub_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y subtracted by `x`, `y`
 
-- _mul_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
+- _mul_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y multiplied by `x`, `y`
 
-- _div_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y divided by `x`, `y`
+- _div_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y divided by `x`, `y`
 
 - _dist_(v: [`Vector2`](#vector2)): `number` - Returns the distance between this and `v`
 
@@ -382,13 +398,13 @@ _The manager reads the game data only if a script use that specific piece of dat
 
 - _isEqual_:(vec: [`Vector3`](#vector3)): [`Vector3`](#vector3) - Returns true if vectors have the same `x`, `y`, `z`
 
-- _add_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
+- _add_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
-- _sub_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z subtracted by `x`, `y`, `z`
+- _sub_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z subtracted by `x`, `y`, `z`
 
-- _mul_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
+- _mul_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z multiplied by `x`, `y`, `z`
 
-- _div_(x: `number`, y:`number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z divided by `x`, `y`, `z`
+- _div_(x: `number`, y: `number`): [`Vector2`](#vector2) - Returns a copy of the vector with his x, y, z divided by `x`, `y`, `z`
 
 - _dist_(v: [`Vector3`](#vector3)): `number` - Returns the distance between this and `v`
 

@@ -7,6 +7,7 @@ import { TeamDistinct } from '../src/models/TeamDistinct';
 import { CachedClass } from '../src/models/CachedClass';
 import { Entity } from '../src/models/Entity';
 import { Vector2, Vector3, Vector4 } from '../src/models/Vector';
+import { UserScriptUtils } from './UserScriptUtils'
 
 import * as SAT from 'sat';
 import { OFFSET } from '../src/consts/Offsets';
@@ -139,19 +140,7 @@ export class UserScriptManager extends CachedClass {
     }
 
     get utils() {
-        const thiz = this;
-        const me = thiz.me;
-
-        const functions = {
-            enemyChampsInRange(range: number) {
-                return thiz.champions.enemies.filter(e => e.hp > 0 && e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox)));
-            },
-            lowestHealthEnemyChampInRange(range: number) {
-                return functions.enemyChampsInRange(range).sort((a, b) => a.hp - b.hp)[0];
-            }
-        }
-
-        return functions;
+        return this.use('utils', () => new UserScriptUtils(this));
     }
 
 
