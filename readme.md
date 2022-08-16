@@ -107,12 +107,38 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
      if (missile.isTurretShot) console.log("Turret shot missile created");
    }
    ```
-5. Optionally you can add the JSDoc before the functions to get intellisense inside visual studio code
+
+5. Write a [`onMoveCreate`](#onmovecreate) function to execute actions every time an enemy changes direction
+   ```js
+   function onMoveCreate(player, manager) {
+      const x = player.AiManager.endPath.x;
+      const z = player.AiManager.endPath.z;
+      console.log(player.name + ' heading to' + x + ' ' + z);
+   }
+   ```
+  
+6. Write a [`onDraw`](#ondraw) function to draw something every frame
+   ```js
+   function onDraw(ctx, manager) {
+      ctx.circle(manager.me.gamePos, manager.me.range, 50, 255, 1);
+   }
+   ```
+
+7. Optionally you can add the JSDoc before the functions to get intellisense inside visual studio code
 
    ```js
+
+    /**
+    * @typedef {import('../../src/models/drawing/DrawContext').DrawContext} DrawContext
+    * @typedef {import('../UserScriptManager').UserScriptManager} Manager
+    * @typedef {import('../../src/models/Missile').Missile} Missile
+    * @typedef {import('../../src/models/Entity').Entity} Entity
+    */
+
+
    /**
-    * @param {import("../UserScriptManager").UserScriptManager} manager
-    * @param {number} ticks Ticks counter
+    * @param {Manager} manager
+    * @param {number} ticks
     **/
    function onTick(manager, ticks) {
      if (manager.me.spells[3].ready == true) {
@@ -121,21 +147,69 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
    }
 
    /**
-    * @param {import("../../src/models/Missile").Missile} missile
-    * @param {import("../UserScriptManager").UserScriptManager} manager
+    * @param {Missile} missile
+    * @param {Manager} manager
     **/
    function onMissileCreate(missile, manager) {
      if (missile.isAutoAttack) console.log("Auto attack missile created");
      if (missile.isTurretShot) console.log("Turret shot missile created");
    }
+
+   /**
+    * @param {Entity} player
+    * @param {Manager} manager
+    **/
+    function onMoveCreate(player, manager) {
+      const x = player.AiManager.endPath.x;
+      const z = player.AiManager.endPath.z;
+      console.log(player.name + ' heading to' + x + ' ' + z);
+   }
+
+   /**
+    * @param {DrawContext} ctx
+    * @param {Manager} manager
+    **/
+   function onDraw(ctx, manager) {
+      ctx.circle(manager.me.gamePos, manager.me.range, 50, 255, 1);
+   }
+
    ```
 
-6. Export the functions we just created
+8. Export the functions we just created
    ```js
-   module.exports = { setup, onTick, onMissileCreate };
+   module.exports = { setup, onTick, onMissileCreate, onMoveCreate, onDraw };
    ```
-7. Start AyayaLeague (`npm run start`) and enjoy your script :3
+9. Start AyayaLeague (`npm run start`) and enjoy your script :3
 
+## How to add settings to your script
+
+1. From `setup` function return the settings for your script
+
+    ```js
+    function setup() {
+      console.log('SettingTest is loaded');
+
+      const settings = [
+        {type: 'check', text: 'Test checkbox', defalut: false },
+        {type: 'string', text: 'Test string', defalut: "" },
+        {type: 'number', text: 'Test number', defalut: 0 },
+      ]
+
+      return settings;
+    }
+    ```
+
+2. Use them in other functions
+
+    ```js
+    function onTick(manager, ticks, settings) {
+      console.log('SettingTest is loaded');
+      if (settings[0].value == true) console.log('Test checkbox is enabled');
+      console.log('Test string has value of', settings[1].value);
+      console.log('Test number has value of', settings[2].value);
+    }
+    ```
+    
 ## Script functions
 
 ### onTick
