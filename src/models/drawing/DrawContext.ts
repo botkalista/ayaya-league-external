@@ -19,6 +19,27 @@ export class DrawContext {
         this.commands.push([command, ...args]);
     }
 
+    rect(p: Vector2, w: number, h: number, color: Color = 0, fill?: Color, thickness?: number) {
+        this.commands.push([`noStroke`]);
+        this.commands.push([`noFill`]);
+        if (thickness) this.commands.push([`strokeWeight`, thickness]);
+        if (color) this.commands.push([`stroke`, color]);
+        if (fill) this.commands.push([`fill`, fill]);
+        this.commands.push(['rect', p.x, p.y, w, h]);
+    }
+
+    line3D(p1: Vector3, p2: Vector3, color: Color = 0, thickness: number = 1) {
+        this.commands.push(['__saveData', ['__internalLineP1', '__internal_worldToScreen', p1, CachedClass.get('screen'), CachedClass.get('matrix')]]);
+        this.commands.push(['__saveData', ['__internalLineP2', '__internal_worldToScreen', p2, CachedClass.get('screen'), CachedClass.get('matrix')]]);
+        this.commands.push([`stroke`, color]);
+        this.commands.push([`strokeWeight`, thickness]);
+        this.commands.push(['__drawLine3DFromSavedData', '__internalLineP1', '__internalLineP2']);
+    }
+
+    image(p: Vector2, path: string, key: string, w: number, h: number) {
+        this.commands.push([`__image`, p, path, key, w, h]);
+    }
+
     line(p1: Vector2, p2: Vector2, color: Color = 0, thickness: number = 1) {
         this.commands.push([`strokeWeight`, thickness]);
         this.commands.push([`stroke`, color]);

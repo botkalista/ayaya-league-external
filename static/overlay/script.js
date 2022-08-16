@@ -21,11 +21,28 @@ function __getData(key) {
     return __savedData.get(key);
 }
 
+function __image(pos, path, key, w, h) {
+    try {
+        const img = getRemoteImage(path, key);
+        if (!img) throw Error('noimage')
+        image(img, pos.x, pos.y, w, h);
+    } catch (ex) {
+        noFill();
+        stroke(0);
+        rect(pos.x, pos.y, w, h);
+    }
+}
+
 function __drawCircle3dFromSavedData(key) {
     const data = __getData(key);
     for (let i = 0; i < data.length; i++) {
         line(data[i][0].x, data[i][0].y, data[i][1].x, data[i][1].y);
     }
+}
+function __drawLine3DFromSavedData(key1, key2) {
+    const p1 = __getData(key1);
+    const p2 = __getData(key2);
+    line(p1.x, p1.y, p2.x, p2.y);
 }
 
 function drawOverlayEnemySpells() {

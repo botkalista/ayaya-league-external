@@ -39,6 +39,14 @@ export class UserScriptManager extends CachedClass {
 
     public spellSlot = SpellSlot;
 
+    get _offsets() {
+        return OFFSET;
+    }
+
+    get _reader() {
+        return Reader;
+    }
+
     get typings() {
         return { Vector2, Vector3, Vector4 }
     }

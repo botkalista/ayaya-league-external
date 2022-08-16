@@ -17,6 +17,10 @@ export class Game extends CachedClass {
     }
 
 
+    get screenSize(): Vector2 {
+        return CachedClass.get('screen');
+    }
+
     castSpell(slot: number, pos1?: Vector2, pos2?: Vector2, selfCast?: boolean) {
 
         CachedClass.set<PlayerState>('playerState', "isCasting");

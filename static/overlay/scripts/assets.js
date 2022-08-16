@@ -13,3 +13,10 @@ function getSpellImage(name) {
     img.hide();
     assets[name] = img;
 }
+
+function getRemoteImage(path, key) {
+    if (assets[`remote_${key}`]) return assets[`remote_${key}`];
+    const img = createImg(path, key);
+    img.hide();
+    assets[`remote_${key}`] = img;
+}

@@ -231,6 +231,7 @@ function castQ(hero) {
 /** @param {Entity} hero */
 function castR(hero) {
     try {
+        if (hero.AiManager.isDashing) return;
         let castPos = predictPosition(hero, 0.627);
         if (manager.me.gamePos.dist(castPos) > rRange) return;
         castPos = manager.worldToScreen(castPos);

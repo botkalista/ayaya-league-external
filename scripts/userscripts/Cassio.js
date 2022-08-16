@@ -59,7 +59,7 @@ async function onTick(_manager, ticks) {
  * @param {Manager} manager
  */
 function onDraw(ctx, manager) {
-
+    if (manager.me.name != scriptChampName) return;
     draw.targets.forEach(e => {
         ctx.circle(e.gamePos, e.boundingBox, 30, [200, 0, 0], 3);
     });

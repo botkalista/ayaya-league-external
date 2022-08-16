@@ -47,9 +47,11 @@ export class Entity extends CachedClass {
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
     }
-    /** @deprecated Game crashes when you try to read it */
-    get dead(): boolean {
-        return this.use('dead', () => Reader.readProcessMemory(this.address + OFFSET.oObjDead, "BOOL"));
+    get invulnerable(): boolean {
+        return this.use('invulnerable', () => !Reader.readProcessMemory(this.address + OFFSET.oObjVulnerable, "BOOL"));
+    }
+    get targetable(): boolean {
+        return this.use('targetable', () => Reader.readProcessMemory(this.address + OFFSET.oObjTargetable, "BOOL"));
     }
     get range(): number {
         return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjAttackRange, "FLOAT"));

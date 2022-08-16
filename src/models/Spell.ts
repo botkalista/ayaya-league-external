@@ -26,6 +26,10 @@ export class Spell extends CachedClass {
         });
     }
 
+    get infoName() {
+        return this.use('infoName', () => Reader.readProcessMemory(this.info + OFFSET.oSpellInfoName, "STR"))
+    }
+
     get readyAt(): number {
         return this.use('readyAt', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellReadyAt, "FLOAT"));
     }
