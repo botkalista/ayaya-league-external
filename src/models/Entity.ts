@@ -29,6 +29,9 @@ export class Entity extends CachedClass {
     get screenPos(): Vector2 {
         return worldToScreen(this.gamePos, CachedClass.get('screen'), CachedClass.get('matrix'));
     }
+    get level(): number {
+        return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oObjLevel, "DWORD"));
+    }
     get hp(): number {
         return this.use('hp', () => Reader.readProcessMemory(this.address + OFFSET.oObjHealth, "FLOAT"));
     }
@@ -103,10 +106,24 @@ export class Entity extends CachedClass {
         return (1 / totalAttackSpeed * 1000) * result / 20;
     }
 
+    get baseDrawingOffset() {
+        return this.use('baseDrawingPos', () => {
+            const v4 = Reader.readProcessMemory(this.address + 0x2ED1, "BYTE");
+            const vTmp = Reader.readProcessMemory((this.address + 0x2ED8), "BYTE");
+            let v5 = Reader.readProcessMemory(this.address + (0x4 * vTmp) + 0x2EDC, "DWORD");
+            const vTmp2 = Reader.readProcessMemory(this.address + 0x2ED4, "DWORD");
+            v5 ^= ~vTmp2;
+            const o1 = Reader.readProcessMemory(v5 + 0x10, "DWORD");
+            const o2 = Reader.readProcessMemory(o1 + 0x4, "DWORD");
+            const o3 = Reader.readProcessMemory(o2 + 0x1C, "DWORD");
+            const height = Reader.readProcessMemory(o3 + 0x88, "FLOAT");
+            return height;
+        });
+    }
+
     get boundingBox() {
         return this.use('boundingBox', () => getChampionRadius(this.name));
     }
-
 
     get satHitbox() {
         return this.use('satHitbox', () => new SAT.Circle(new SAT.Vector(this.screenPos.x, this.screenPos.y), 60));
