@@ -63,7 +63,7 @@ export class DrawContext {
     text(str: string, x: number, y: number, size: number, color: Color = 0) {
         this.commands.push([`fill`, color]);
         this.commands.push([`noStroke`]);
-        this.commands.push([`fontSize`, size]);
+        this.commands.push([`textSize`, size]);
         this.commands.push(['text', str, x, y]);
     }
 }
