@@ -43,7 +43,7 @@ export function matrixToArray(matrix: math.Matrix): number[] {
 
 export function worldToScreen(pos: Vector3, screenSize: Vector2, viewProjMatrix: number[]) {
     const out = Vector2.zero;
-    const screen = new Vector2(screenSize.x, screenSize.y);
+    const screen = screenSize.copy();
     const clipCoords = Vector4.zero;
     clipCoords.x = pos.x * viewProjMatrix[0] + pos.y * viewProjMatrix[4] + pos.z * viewProjMatrix[8] + viewProjMatrix[12];
     clipCoords.y = pos.x * viewProjMatrix[1] + pos.y * viewProjMatrix[5] + pos.z * viewProjMatrix[9] + viewProjMatrix[13];
