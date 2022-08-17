@@ -18,7 +18,7 @@ export class Entity extends CachedClass {
 
 
     get netId(): number {
-        return this.use('netId', () => Reader.readProcessMemory(this.address + OFFSET.oObjNetId, "VEC3"));
+        return this.use('netId', () => Reader.readProcessMemory(this.address + OFFSET.oObjNetId, "DWORD"));
     }
     get name(): string {
         return this.use('name', () => readName(this.address + OFFSET.oObjName))
@@ -61,6 +61,21 @@ export class Entity extends CachedClass {
     }
     get team(): number {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));
+    }
+    get ad(): number {
+        return this.use('ad', () => Reader.readProcessMemory(this.address + OFFSET.oObjAD, "FLOAT") + Reader.readProcessMemory(this.address + OFFSET.oObjBonusAD, "FLOAT"));
+    }
+    get ap(): number {
+        return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjAbilityPower, "FLOAT"));
+    }
+    get lethality(): number {
+        return this.use('lethality', () => Reader.readProcessMemory(this.address + OFFSET.oObjLethality, "FLOAT"));
+    }
+    get armor(): number{
+        return this.use('armor', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmor, "FLOAT") + Reader.readProcessMemory(this.address + OFFSET.oObjBonusArmor, "FLOAT"));
+    }
+    get magicRes(): number {
+        return this.use('magicRes', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicRes, "FLOAT") + Reader.readProcessMemory(this.address + OFFSET.oObjBonusMagicRes, "FLOAT"));
     }
 
     get spells(): Spell[] {
