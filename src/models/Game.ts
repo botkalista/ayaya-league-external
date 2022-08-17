@@ -3,6 +3,7 @@ import AyayaLeague from '../LeagueReader';
 import { Vector2 } from "./Vector";
 import ActionControllerWrapper from '../../src/ActionControllerWrapper';
 import { PlayerState } from "../../scripts/UserScriptManager";
+import { OFFSET } from "../consts/Offsets";
 
 
 const ALT = 0x12;
@@ -16,6 +17,14 @@ export class Game extends CachedClass {
         return this.use('time', AyayaLeague.getGameTime);
     }
 
+    get currentZoom() {
+        return this.use('currentZoom', () => {
+            const hudInstance = AyayaLeague.reader.readProcessMemory(OFFSET.oHud, "DWORD", true);
+            const zoomInstance = AyayaLeague.reader.readProcessMemory(hudInstance + 0xC, "DWORD");
+            const currentZoom = AyayaLeague.reader.readProcessMemory(zoomInstance + 0x268, "FLOAT");
+            return currentZoom;
+        })
+    }
 
     get screenSize(): Vector2 {
         return CachedClass.get('screen');
