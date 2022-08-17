@@ -23,6 +23,10 @@ export const OFFSET = {
     oMinimapHudPos: 0x44,
     oMinimapHudSize: 0x4C,
 
+    oHud: 0x187AFBC,
+    oZoom: 0x31104FC,
+    oMaxZoom: 0x20,
+
     oObjIndex: 0x0008,
     oObjTeam: 0x0034,
 
