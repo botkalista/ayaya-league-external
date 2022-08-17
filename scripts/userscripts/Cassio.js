@@ -31,7 +31,6 @@ async function onTick(_manager, ticks) {
     manager = _manager;
     if (!manager.game.isKeyPressed(0x5)) return draw.targets = [];
 
-
     const targets = manager.utils.enemyChampsInRange(700 - 75).filter(e => {
         const qPoison = e.buffManager.byName(poisons[0]);
         const wPoison = e.buffManager.byName(poisons[1]);
@@ -44,13 +43,22 @@ async function onTick(_manager, ticks) {
 
     const eSpell = manager.me.spells[2];
     if (!eSpell.ready || manager.me.mana < eCost[eSpell.level - 1]) return;
-
-    const closest = targets.reduce((p, e) => e.hp < p.hp ? e : p, targets[0]);
-
-    manager.game.castSpell(manager.spellSlot.E, closest.screenPos);
+    const lowest = targets.reduce((p, e) => e.hp < p.hp ? e : p, targets[0]);
+    manager.game.castSpell(manager.spellSlot.E, lowest.screenPos);
 
 }
 
+
+function castQ() {
+    const qSpell = manager.me.spells[0];
+    if (!qSpell.ready || manager.me.mana < qCost[qSpell.level - 1]) return;
+
+    const target = manager.utils.lowestHealthEnemyChampInRange(850 - 50);
+    if (!target) return;
+    const prediction = manager.utils.predictPosition(target, 0.4);
+    const prediction2d = manager.worldToScreen(prediction);
+    manager.game.castSpell(manager.spellSlot.Q, prediction2d);
+}
 
 
 

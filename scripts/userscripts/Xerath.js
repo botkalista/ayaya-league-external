@@ -43,6 +43,7 @@ let rTarget;
 
 let internalStatus = 'idle';
 
+let baseDrawingOffset;
 
 function setup() {
     console.log('Xerath.js loaded.')
@@ -122,6 +123,7 @@ function executeLogicQWithBuff() {
  */
 async function onTick(_manager, ticks) {
     if (_manager.me.name != scriptChampName) return;
+    baseDrawingOffset = baseDrawingOffset || _manager.me.baseDrawingOffset;
     manager = _manager;
     clearPrint();
     if (manager.game.isKeyPressed(0x4E)) {
@@ -140,6 +142,16 @@ async function onTick(_manager, ticks) {
  * @param {Manager} manager
  */
 function onDraw(ctx, manager) {
+
+    // if (!baseDrawingOffset) return;
+    // const gamePos = manager.me.gamePos.copy();
+    // gamePos.y += baseDrawingOffset;
+    // const pos = manager.worldToScreen(gamePos);
+    // pos.y -= 141;
+    // pos.x -= 45;
+
+    // pos.y += 25;
+    // ctx.rect(pos, 100, 10, undefined, [100, 0, 0, 100], 1);
 
 
     // for (let i = 0; i < prints.length; i++) {

@@ -12,6 +12,8 @@ function setup() {
         { type: 'color', default: 0, text: 'Player range color' },
         { type: 'check', default: false, text: 'Enemies range' },
         { type: 'check', default: false, text: 'Show missiles' },
+        { type: 'check', default: false, text: 'Show wards' },
+        { type: 'check', default: false, text: 'Debug' },
     ];
 
     return core_settings;
@@ -28,6 +30,66 @@ function onDraw(ctx, manager, settings) {
     if (settings[0].value == true) drawPlayerRange(ctx, manager, settings[1].value);
     if (settings[2].value == true) drawEnemiesRange(ctx, manager);
     if (settings[3].value == true) drawMissiles(ctx, manager);
+    if (settings[4].value == true) drawWards(ctx, manager);
+
+    if (settings[5].value == true) {
+        console.log(manager.monsters.map(e => e.name));
+        settings[5].value = false;
+    }
+}
+
+
+/**
+ * @param {DrawContext} ctx 
+ * @param {Manager} manager 
+ */
+function drawWards(ctx, manager, color) {
+
+    const wards = manager.wards.enemies.filter(e => e.hp > 0);
+
+    for (const ward of wards) {
+
+        ctx.circle(ward.gamePos, 20, 10, [0, 220, 0], 2);
+
+        if (ward.name == 'YellowTrinket') {
+            const duration = ward.buffManager.byName('relicyellowward').endtime - manager.game.time;
+            const pos = ward.screenPos.copy();
+            pos.x -= 30;
+            pos.y += 15;
+            const total = 90;
+            const percent = 100 / total * duration;
+            ctx.rect(pos, 60, 5, undefined, 110);
+            ctx.rect(pos, 60 / 100 * percent, 5, undefined, 255);
+        } else {
+            const hp = ward.hp;
+            const pos = ward.screenPos.copy();
+            pos.x -= 10;
+            pos.y += 25;
+            const total = ward.maxHp;
+            ctx.text(`${hp}/${total}`, pos.x, pos.y, 15, 255);
+
+        }
+
+    }
+
+    // let wards = manager.monsters.filter(e => {
+    //     return !e.name.startsWith('SRU') &&
+    //         (
+    //             e.name == 'BlueTrinket' ||
+    //             e.name == 'JammerDevice' ||
+    //             e.name == 'YellowTrinket'
+    //         )
+    // });
+
+    // ctx.text(wards.map(e => `${e.hp} | ${e.name}`).join('\n'), 50, 50, 22, 225);
+    // const buffs = wards[1].buffManager.buffs.map(e => `${manager.game.time - e.endtime} | ${e.name}`);
+    // ctx.text(buffs.join('\n'), 50, 170, 22, 225);
+
+
+    // // wards = wards.filter(e => e.team != manager.me.team);
+    // for (const ward of wards) {
+    //     ctx.circle(ward.gamePos, 20, 10, [0, 220, 0], 2);
+    // }
 }
 
 /**
