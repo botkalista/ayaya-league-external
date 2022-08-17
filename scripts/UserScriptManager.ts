@@ -117,10 +117,17 @@ export class UserScriptManager extends CachedClass {
             const minionsMonsters = AyayaLeague.getMinionsMonsters();
             const entitiesWithShits = factoryFromArray(Entity, minionsMonsters);
             const entities = entitiesWithShits.filter(e => !e.name.startsWith('PreSeason'));
-            const minions = entities.filter(e => e.name.includes('Minion'));
-            const monsters = entities.filter(e => !minions.includes(e));
+            const wards = entities.filter(e =>
+                e.name == 'BlueTrinket' ||
+                e.name == 'JammerDevice' ||
+                e.name == 'YellowTrinket'
+            );
+            const minions = entities.filter(e => !wards.includes(e) && e.name.includes('Minion'));
+            const monsters = entities.filter(e => !wards.includes(e) && !minions.includes(e));
             const teamDistinctMinions = new TeamDistinct(minions);
+            const teamDistinctWards = new TeamDistinct(wards);
             this.set('monsters', monsters);
+            this.set('wards', teamDistinctWards);
             return teamDistinctMinions;
         });
     }
@@ -130,11 +137,38 @@ export class UserScriptManager extends CachedClass {
             const minionsMonsters = AyayaLeague.getMinionsMonsters();
             const entitiesWithShits = factoryFromArray(Entity, minionsMonsters);
             const entities = entitiesWithShits.filter(e => !e.name.startsWith('PreSeason'));
-            const minions = entities.filter(e => e.name.includes('Minion'));
-            const monsters = entities.filter(e => !minions.includes(e));
+            const wards = entities.filter(e =>
+                e.name == 'BlueTrinket' ||
+                e.name == 'JammerDevice' ||
+                e.name == 'YellowTrinket'
+            );
+            const minions = entities.filter(e => !wards.includes(e) && e.name.includes('Minion'));
+            const monsters = entities.filter(e => !wards.includes(e) && !minions.includes(e));
             const teamDistinctMinions = new TeamDistinct(minions);
+            const teamDistinctWards = new TeamDistinct(wards);
             this.set('minions', teamDistinctMinions);
+            this.set('wards', teamDistinctWards);
             return monsters;
+        });
+    }
+
+    get wards() {
+        return this.use('wards', () => {
+            const minionsMonsters = AyayaLeague.getMinionsMonsters();
+            const entitiesWithShits = factoryFromArray(Entity, minionsMonsters);
+            const entities = entitiesWithShits.filter(e => !e.name.startsWith('PreSeason'));
+            const wards = entities.filter(e =>
+                e.name == 'BlueTrinket' ||
+                e.name == 'JammerDevice' ||
+                e.name == 'YellowTrinket'
+            );
+            const minions = entities.filter(e => !wards.includes(e) && e.name.includes('Minion'));
+            const monsters = entities.filter(e => !wards.includes(e) && !minions.includes(e));
+            const teamDistinctMinions = new TeamDistinct(minions);
+            const teamDistinctWards = new TeamDistinct(wards);
+            this.set('minions', teamDistinctMinions);
+            this.set('monsters', monsters);
+            return teamDistinctWards;
         });
     }
 
