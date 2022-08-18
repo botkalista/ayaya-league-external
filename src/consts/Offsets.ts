@@ -32,6 +32,8 @@ export const OFFSET = {
 
     oObjNetId: 0xB4,
 
+
+    oObjRecallState: 0xD90,
     oObjPlayerName: 0x54,
     oObjName: 0x2BA4,
     oObjLevel: 0x3384,
@@ -127,6 +129,10 @@ export const OFFSET = {
     oSpellInfoDataMissileName: 0x78,
     oSpellInfoDataName: 0x6C,
     oSpellInfoDataCooldownTime: 0x0288,
+
+    oChat: 0x31114A8,
+    oChatIsOpen: 0x75C,
+
 
     oMapCount: 44,
     oMapRoot: 40,
