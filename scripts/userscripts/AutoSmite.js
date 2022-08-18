@@ -23,7 +23,7 @@ const smites = {
 }
 
 function getSmite(manager) {
-    const smite = manager.spells.find(e => e.name.includes('SummonerSmite'));
+    const smite = manager.me.spells.find(e => e.name.includes('SummonerSmite'));
     return smite;
 }
 
@@ -31,7 +31,7 @@ function setup() {
     console.log("AutoSmite.js loaded.");
 
     const settings = [
-        { type: 'check', defalue: false, text: 'Active' }
+        { type: 'check', default: false, text: 'Active' }
     ]
 
     return settings;
@@ -54,22 +54,12 @@ async function onTick(manager, ticks, settings) {
     const targets = manager.monsters.filter(e => neutralsTargets.includes(e.name));
     if (targets.length == 0) return;
 
-    const closestInRange = targets2.reduce((p, e) => {
-        const dist = Math.hypot(
-            e.screenPos.x - manager.me.screenPos.x,
-            e.screenPos.y - manager.me.screenPos.y
-        );
-        const pRange = manager.me.range;
-        const eBoundingBox = manager.me.boundingBox;
-        return dist < pRange / 2 + eBoundingBox * 2 && dist < p.d ? { d: dist, e } : p;
-    }, { d: 999, e: targets[0] });
+    const lowest = manager.utils.lowestHealthGenericInRange(targets, 800);
+    if (!lowest) return;
 
-    if (closestInRange.d == 999) return;
-    if (closestInRange.e.hp <= 0) return;
-
-    if (closestInRange.e.hp <= smites[smite]) {
+    if (lowest.hp <= smites[smite.name]) {
         const oldMousePos = manager.game.getMousePos();
-        manager.game.setMousePos(closestInRange.e.screenPos.x, closestInRange.e.screenPos.y);
+        manager.game.setMousePos(lowest.screenPos.x, lowest.screenPos.y);
         manager.game.pressKey(manager.spellSlot.D);
         manager.game.sleep(35);
         manager.game.releaseKey(manager.spellSlot.D);
