@@ -20,6 +20,19 @@
 
 </div>
 
+<hr>
+
+<h2 align="center"> 
+Join the new Discord Server of AyayaLeague:
+<br>
+<a href="https://discord.gg/qYy8Qz4Cr5">https://discord.gg/qYy8Qz4Cr5</a>
+<br>
+<h2>
+
+<div align="center">
+<img src="https://img.shields.io/discord/1010156796691894393" alt="Discord Server">
+</div>
+
 ## What's AyayaLeague ?
 
 AyayaLeague is an external script platform written in nodejs that supports custom user scripts.
