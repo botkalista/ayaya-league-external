@@ -32,6 +32,21 @@ export class Entity extends CachedClass {
     get level(): number {
         return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oObjLevel, "DWORD"));
     }
+    get ap(): number {
+        return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjAbilityPower, "FLOAT"));
+    }
+    get magicPenFlat(): number {
+        return this.use('magicPenFlat', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicPen, "FLOAT"));
+    }
+    get magicPenPercent(): number {
+        return this.use('magicPenPercent', () => (1 - Reader.readProcessMemory(this.address + OFFSET.oObjMagicPenMulti, "FLOAT")) * 100);
+    }
+    get magicResistTotal(): number {
+        return this.use('magicResistTotal', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicRes, "FLOAT"));
+    }
+    get magicResistBonus(): number {
+        return this.use('magicResistBonus', () => Reader.readProcessMemory(this.address + OFFSET.oObjBonusMagicRes, "FLOAT"));
+    }
     get hp(): number {
         return this.use('hp', () => Reader.readProcessMemory(this.address + OFFSET.oObjHealth, "FLOAT"));
     }

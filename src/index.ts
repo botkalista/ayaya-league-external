@@ -137,7 +137,8 @@ async function loadUserScripts() {
                 const data = setupResult.map(e => {
                     if (setting) {
                         const s = setting.data.find(k => k.text == e.text);
-                        if (s && s.value) {
+
+                        if (s && s.value != undefined) {
                             e.value = s.value;
                             e.default = undefined;
                             return e;
