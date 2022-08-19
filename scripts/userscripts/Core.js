@@ -13,7 +13,7 @@ function setup() {
         { type: 'check', default: false, text: 'Enemies range' },
         { type: 'check', default: false, text: 'Show missiles' },
         { type: 'check', default: false, text: 'Show wards' },
-        { type: 'check', default: false, text: 'Debug' },
+        { type: 'check', default: true, text: 'Show Discord' },
     ];
 
     return core_settings;
@@ -33,8 +33,7 @@ function onDraw(ctx, manager, settings) {
     if (settings[4].value == true) drawWards(ctx, manager);
 
     if (settings[5].value == true) {
-        console.log(manager.monsters.map(e => e.name));
-        settings[5].value = false;
+        ctx.text('Join the AyayaLeague discord: https://discord.gg/qYy8Qz4Cr5', 50, 50, 22, 255);
     }
 }
 

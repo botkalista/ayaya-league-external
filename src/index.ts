@@ -98,7 +98,7 @@ function registerHandlers() {
     });
 
     onMessage<never>('openOverlayDevTools', (e, data) => {
-        overlayWindow.webContents.openDevTools();
+        overlayWindow.webContents.openDevTools({ mode: 'detach' });
     });
 
 }

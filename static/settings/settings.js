@@ -12,7 +12,11 @@ const state = Vue.reactive({
 // ----- Settings -----
 ipcRenderer.on('dataSettings', function (evt, message) {
     const data = JSON.parse(message);
-    state.scripts = data;
+    state.scripts = data.sort((a, b) => {
+        if (a.name == 'Core.js') return -1;
+        if (b.name == 'Core.js') return 1;
+        return 0;
+    })
 });
 ipcRenderer.send('requestSettings');
 
