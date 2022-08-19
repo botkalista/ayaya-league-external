@@ -59,7 +59,7 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 
 3. Install windows build tools if you don't have them `npm install --g --production windows-build-tools`
 
-4. Run `npm run check-dependencies` to check that everything is ok and automatically build packages
+4. Run `npm i` and `npm run check-dependencies` to check that everything is ok and automatically build packages
 
 5. Enter into a league game (must be `windowed` or `no borders`)
 
