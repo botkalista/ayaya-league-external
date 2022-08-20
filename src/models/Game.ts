@@ -51,9 +51,9 @@ export class Game extends CachedClass {
             ActionControllerWrapper.move(p1.x, p1.y);
         }
 
-        this.sleep(5);
+        this.sleep(15);
         ActionControllerWrapper.press(slot);
-        this.sleep(10);
+        this.sleep(9);
 
         if (pos2) {
             const p2 = pos2.flatten();
@@ -61,7 +61,7 @@ export class Game extends CachedClass {
         }
 
         ActionControllerWrapper.release(slot);
-
+        this.sleep(5);
         ActionControllerWrapper.move(startMousePos.x, startMousePos.y);
 
         ActionControllerWrapper.blockInput(false);
