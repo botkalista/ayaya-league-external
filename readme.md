@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-<img src="https://user-images.githubusercontent.com/42075940/184498428-f34f09e9-21c5-4a6e-a284-7e9cccad15b5.jpg" alt="AyayaLeagueLogo" width="512">
+<img src="https://github.com/botkalista/ayaya-league-external/blob/master/media/entry_window.png?raw=true" alt="AyayaLeagueLogo" width="512">
 
 **EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
 
