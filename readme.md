@@ -180,6 +180,7 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
         {type: 'check', text: 'Test checkbox', defalut: false },
         {type: 'string', text: 'Test string', defalut: "" },
         {type: 'number', text: 'Test number', defalut: 0 },
+        {type: 'key', text: 'Test key', defalut: "Space" },
       ]
 
       return settings;
@@ -194,6 +195,7 @@ AyayaLeague comes with 2 default UserScripts called `SimpleEvade.js` and `Orbwal
       if (settings[0].value == true) console.log('Test checkbox is enabled');
       console.log('Test string has value of', settings[1].value);
       console.log('Test number has value of', settings[2].value);
+      console.log('Test key has value of', settings[3].value);
     }
     ```
     
