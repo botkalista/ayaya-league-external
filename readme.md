@@ -12,8 +12,6 @@
    &nbsp;
     <img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
     &nbsp;
-    <img src="https://img.shields.io/github/downloads/botkalista/ayaya-league-external/total" alt="GitHub all releases">
-    &nbsp;
    <img src="https://img.shields.io/github/last-commit/botkalista/ayaya-league-external" alt="GitHub last commit">
 </p>
 </div>
