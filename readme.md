@@ -12,8 +12,6 @@
    &nbsp;
    <img src="https://img.shields.io/github/last-commit/botkalista/ayaya-league-external" alt="GitHub last commit">
    &nbsp;
-    <img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
-   &nbsp;
   <img src="https://img.shields.io/github/downloads/botkalista/ayaya-league-external/total" alt="GitHub all releases">
 </p>
 </div>
@@ -36,16 +34,6 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 - Custom user scripts (Read more [here](#user-scripts))
 
 ## How to setup and run
-
-### Prebuilt version
-
-<img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
-
-1. Download prebuilt version of AyayaLeague <a href="https://github.com/botkalista/ayaya-league-external/releases"><b>HERE</b></a>
-
-2. Extract the folder content
-
-3. Run `AyayaLeague.exe` as Administrator (_run it from a terminal if you want to read console.log outputs_)
 
 ### From source code
 
