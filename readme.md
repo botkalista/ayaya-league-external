@@ -10,6 +10,10 @@
 <div align="middle">
   <img src="https://img.shields.io/github/directory-file-count/botkalista/ayaya-league-external/scripts/userscripts?color=informational&label=Builtin%20Scripts&logo=javascript&type=file" alt="UserScripts count">
    &nbsp;
+    <img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
+    &nbsp;
+    <img src="https://img.shields.io/github/downloads/botkalista/ayaya-league-external/total" alt="GitHub all releases">
+    &nbsp;
    <img src="https://img.shields.io/github/last-commit/botkalista/ayaya-league-external" alt="GitHub last commit">
 </p>
 </div>
@@ -32,6 +36,18 @@ AyayaLeague is an external script platform written in nodejs that supports custo
 - Custom user scripts (Read more [here](#user-scripts))
 
 ## How to setup and run
+
+### Prebuilt version
+
+*For UnknownCheats moderators: as i already discussed with a moderator the prebuilt version is just the code minified and compressed (since javascript is an interpreted language and you can't build it). The term PREBUILT, BUILD, etc.. are only for newbie users understanding*
+
+<img align="top" src="https://img.shields.io/github/release-date/botkalista/ayaya-league-external" alt="Release Date"></img>
+
+1. Download prebuilt version of AyayaLeague <a href="https://github.com/botkalista/ayaya-league-external/releases"><b>HERE</b></a>
+
+2. Extract the folder content
+
+3. Run `AyayaLeague` as Administrator (_run it from a terminal if you want to read console.log outputs_)
 
 ### From source code
 
