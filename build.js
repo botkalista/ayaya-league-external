@@ -26,6 +26,10 @@ p.on('exit', () => {
     console.log('[build.js] Preparing build\n')
     prepareBuild();
     console.log('[build.js] Build finished\n')
+    if (fs.existsSync('AyayaLeague-win32-ia32.zip')) fs.removeSync('AyayaLeague-win32-ia32.zip');
+    console.log('[build.js] Zipping file\n')
+    child.execSync('"C:\\Program Files\\7-Zip\\7z.exe" a -tzip AyayaLeague-win32-ia32.zip AyayaLeague-win32-ia32');
+    console.log('[build.js] Finished\n')
 });
 
 function prepareBuild() {

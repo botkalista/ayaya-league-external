@@ -1,3 +1,6 @@
+// #Author: Emily
+// #Description: Xerath Q/R predict
+
 /** 
  * @typedef {import("../../src/models/Entity").Entity} Entity
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager

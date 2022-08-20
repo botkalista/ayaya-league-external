@@ -1,3 +1,6 @@
+// #Author: Emily
+// #Description: Complex cassio E logic
+
 /** 
  * @typedef {import("../../src/models/Entity").Entity} Entity
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager

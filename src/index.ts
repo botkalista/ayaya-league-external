@@ -2,11 +2,11 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
 console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node, 'ARCH', process.arch)
 
-import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents } from 'electron';
+import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents, dialog } from 'electron';
 import AyayaLeague from './LeagueReader';
 
 import AyayaActionController from './ActionControllerWrapper';
-import { createOverlayWindow, createSettingsWindow } from './overlay/Windows'
+import { createEntryWindow, createOverlayWindow, createSettingsWindow } from './overlay/Windows'
 import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } from './overlay/Settings'
 
 import { Vector2, Vector3 } from './models/Vector';
@@ -27,17 +27,12 @@ import * as fetch from 'node-fetch';
 import { Missile } from './models/Missile';
 import { ScriptSettingsFull, UserScript } from './events/types';
 
-if (process.argv[2] == 'nohook') {
-    AyayaLeague.reader.setMode("DUMP");
-    AyayaLeague.reader.loadDump();
-} else {
-    AyayaLeague.reader.hookLeagueProcess();
-}
 
-const preparator = new Preparator(AyayaLeague);
+let preparator;
 
 let overlayWindow: BrowserWindow;
 let settingsWindow: BrowserWindow;
+let entryWindow: BrowserWindow;
 
 let highestReadTime = 0;
 
@@ -60,6 +55,15 @@ function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => void) {
     });
 }
 function registerHandlers() {
+
+    onMessage<never>('startAyayaLeague', (e, data) => {
+        try {
+            main();
+            entryWindow.hide();
+        } catch (ex) {
+
+        }
+    });
 
     onMessage<any[]>('updateSettings', (e, data) => {
         setSettings(data);
@@ -139,6 +143,10 @@ async function loadUserScripts() {
                     if (setting) {
                         const s = setting.data.find(k => k.text == e.text);
 
+                        if (s && s.type === 'key' && s.strValue) {
+                            e.strValue = s.strValue;
+                        }
+
                         if (s && s.value != undefined) {
                             e.value = s.value;
                             e.default = undefined;
@@ -172,6 +180,21 @@ async function unloadUserScripts() {
 
 async function main() {
 
+    if (process.argv[2] == 'nohook') {
+        AyayaLeague.reader.setMode("DUMP");
+        AyayaLeague.reader.loadDump();
+    } else {
+        try {
+            AyayaLeague.reader.hookLeagueProcess();
+        } catch (ex) {
+            if (entryWindow) entryWindow.hide();
+            dialog.showMessageBoxSync({ title: 'Error', message: ex.message, type: 'error' });
+            app.exit();
+        }
+    }
+
+    preparator = new Preparator(AyayaLeague);
+
     //* On Draw Manager
     onMessage<never>('drawingContext', (e, data) => {
         drawContext.__clearCommands();
@@ -184,17 +207,29 @@ async function main() {
 
     //* Read webapi data
     const webapi_interval = setInterval(async () => {
-        const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
-        const data = await res.json();
-        CachedClass.set('webapi_me', data);
+        try {
+            const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
+            const data = await res.json();
+            CachedClass.set('webapi_me', data);
+        } catch (ex) {
+            app.exit();
+        }
     }, 250);
 
     CachedClass.set('webapi_interval', webapi_interval);
 
-    registerHandlers();
-
     overlayWindow = createOverlayWindow();
     settingsWindow = createSettingsWindow();
+
+    setInterval(() => {
+        const processes = AyayaLeague.reader.memInstance.getProcesses();
+        const league = processes.find(e => e.szExeFile == 'League of Legends.exe');
+        if (!league) {
+            overlayWindow.close();
+            entryWindow.close();
+            app.exit();
+        }
+    }, 30000);
 
     renderer = AyayaLeague.getRenderBase();
     screen = AyayaLeague.getScreenSize(renderer);
@@ -225,7 +260,10 @@ async function main() {
 
 const performance = new Performance();
 
-
+async function entry() {
+    entryWindow = createEntryWindow();
+    registerHandlers();
+}
 
 const persistentMissiles: Missile[] = [];
 const aiManagerCache = new Map<string, [Vector3, Vector3]>();
@@ -307,9 +345,10 @@ function publishToScript(fName: keyof UserScript, settings: ScriptSettingsFull, 
     }
 }
 
-app.whenReady().then(main);
+app.whenReady().then(entry);
 
 
 app.on('will-quit', () => {
     globalShortcut.unregisterAll();
 });
+

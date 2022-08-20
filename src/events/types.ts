@@ -8,8 +8,9 @@ export type Setting = { text: string }
 export type SettingString = Setting & { type: "string", value: string }
 export type SettingNumber = Setting & { type: "number", value: number }
 export type SettingCheck = Setting & { type: "check", value: boolean }
+export type SettingKey = Setting & { type: "key", value: number, strValue: string }
 
-export type SettingCombined = SettingString | SettingNumber | SettingCheck;
+export type SettingCombined = SettingString | SettingNumber | SettingCheck | SettingKey;
 
 export type ScriptSettings = SettingCombined[];
 export type ScriptSettingsFull = { name: string, data: ScriptSettings }[];

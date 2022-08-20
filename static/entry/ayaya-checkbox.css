@@ -1,0 +1,41 @@
+.ayaya-checkbox {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ayaya-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.ayaya-checkmark {
+    position: absolute;
+    top: 3.5px;
+    left: 2px;
+    height: 16px;
+    width: 16px;
+    border-radius: 100px;
+    background-color: #eee;
+}
+
+.ayaya-checkbox:hover input~.ayaya-checkmark {
+    background-color: #ccc;
+}
+
+.ayaya-checkbox input:checked~.ayaya-checkmark {
+    background-color: #2196F3;
+}
+
+.ayaya-checkmark:after {
+    position: absolute;
+    display: none;
+}

@@ -1,3 +1,5 @@
+// #Author: Builtin
+// #Description: Provide basic functionalities
 
 /**
  * @typedef {import('../../src/models/drawing/DrawContext').DrawContext} DrawContext

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyayaLeagueMain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@cityssm/bulma-sticky-table@1.4.0/bulma-with-sticky-table.min.css">
+    <link rel="stylesheet" href="ayaya-checkbox.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="titlebar"></div>
+
+        <div class="main-view" v-if="view==1">
+
+            <div class="delete" @click="closeMe()"></div>
+
+            <div class="logo">
+                <img src="ayaya_poster.jpg" alt="Logo" width="400">
+                <div class="title">AyayaLeague</div>
+            </div>
+            <div class="menu">
+                <button class="button is-large is-primary start-button" @click="startAyayaLeague()"> Start </button>
+            </div>
+            <div class="submenu">
+                <div class="left">
+                    <span class="icon" @click="openDiscord()">
+                        <i class="fa-brands fa-discord"></i>
+                    </span>
+                    <span class="icon" @click="openGithub()">
+                        <i class="fa-brands fa-github"></i>
+                    </span>
+                </div>
+                <div class="right">
+                    <button class="button is-info" @click="changeView(2)"> Manage scripts </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="scripts-view" v-if="view==2">
+
+            <div class="table-wrapper">
+                <table class="table is-fullwidth has-sticky-header is-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px; text-align: center;"> Load </th>
+                            <th style="width: 100px; text-align: center;"> Name </th>
+                            <th style="width: 100px; text-align: center;"> Author </th>
+                            <th style="width: 85px; text-align: center;"> Size </th>
+                            <th style="text-align: center;"> Description </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="script of scripts">
+                            <td>
+                                <label class="ayaya-checkbox" style="transform: translateX(8px);">
+                                    <input type="checkbox" v-model="script.load">
+                                    <span class="ayaya-checkmark"></span>
+                                </label>
+                            </td>
+                            <th style="text-align: center;"> {{script.name}} </th>
+                            <td style="text-align: center;"> {{script.author}} </td>
+                            <td style="text-align: center;"> {{script.size}} kb </td>
+                            <td style="text-align: center;"> {{script.desc}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="buttons">
+                <button class="button is-warning" @click="changeView(1)"> Back </button>
+                <button class="button is-info" @click="reloadScripts()"> Reload </button>
+                <button class="button is-primary" @click="saveScripts()"> Save </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

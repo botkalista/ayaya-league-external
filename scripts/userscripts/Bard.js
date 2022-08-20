@@ -1,3 +1,6 @@
+// #Author: Emily
+// #Description: Meeps radar
+
 /** 
  * @typedef {import("../../src/models/Entity").Entity} Entity
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager

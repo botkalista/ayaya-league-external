@@ -46,3 +46,22 @@ export function createSettingsWindow() {
     //win.hide();
     return win;
 }
+
+export function createEntryWindow() {
+
+    const win = new BrowserWindow({
+        width: 600,
+        height: 450,
+        frame: false,
+        resizable: false,
+        transparent: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        },
+    });
+    win.setAlwaysOnTop(true, 'screen-saver');
+    win.loadFile('../../static/entry/index.html');
+
+    return win;
+}

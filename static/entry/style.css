@@ -1,0 +1,167 @@
+html, body, #app {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Roboto';
+}
+
+html, body {
+    background-color: transparent;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+:root {
+    --background-color: rgb(217, 203, 202);
+}
+
+#app {
+    background-color: var(--background-color);
+}
+
+.title {
+    margin-bottom: 15px;
+}
+
+.titlebar {
+    -webkit-app-region: drag;
+    width: 100%;
+    height: 20px;
+    background-color: gray;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.logo img {
+    margin-bottom: 5px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.menu .button {
+    border-radius: 20px;
+}
+
+.submenu {
+    display: flex;
+    justify-content: stretch;
+}
+
+.submenu .left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    margin-bottom: 6px;
+    gap: 16px;
+    margin-left: 20px;
+    flex: 1;
+}
+
+.submenu .right {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+    flex: 1;
+}
+
+.icon {
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.icon:hover {
+    color: rgb(84, 84, 236);
+}
+
+.start-button {
+    padding: 5px 45px;
+}
+
+.delete {
+    position: absolute;
+    top: 35px;
+    right: 20px;
+    transform: scale(2);
+    background-color: transparent;
+}
+
+.delete:hover {
+    background-color: rgb(180, 180, 180);
+}
+
+.delete::before, .delete::after {
+    background-color: rgb(248, 109, 109);
+}
+
+
+/* ----- SCRIPTS ----- */
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 30px;
+}
+
+.buttons button {
+    padding: 10px 25px;
+}
+
+
+/* ----- TABLE ----- */
+
+.scripts-view {
+    height: 100vh;
+}
+
+.table-wrapper {
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.table {
+    background-color: transparent;
+}
+
+.table thead tr th {
+    background-color: rgb(156, 155, 155) !important;
+}
+
+.table tbody {
+    background-color: rgba(151, 151, 151, 0.3);
+    border: none;
+    outline: none;
+}
+
+
+
+/* ----- SCROLL ----- */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(145, 145, 145);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #82a8be;
+}

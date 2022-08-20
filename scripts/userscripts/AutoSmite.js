@@ -1,3 +1,7 @@
+
+// #Author: Emily
+// #Description: Basic autosmite
+
 /**
  * @typedef {import("../UserScriptManager").UserScriptManager} Manager
  * @typedef {import("../../src/events/types").ScriptSettings} Settings

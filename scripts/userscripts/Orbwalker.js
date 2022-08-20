@@ -1,3 +1,6 @@
+// #Author: Emily
+// #Description: Basic orbwalker
+
 let lastAaTick = 0;
 let canPlayerMove = true;
 let lastWasMove = false;

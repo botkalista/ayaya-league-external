@@ -1,3 +1,5 @@
+// #Author: Emily
+// #Description: Dodge skillshots
 
 /** 
  * @typedef {import("../../src/models/Entity").Entity} Entity
