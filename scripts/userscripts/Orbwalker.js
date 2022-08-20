@@ -17,7 +17,8 @@ function setup() {
     console.log('Orbwalker.js loaded.')
 
     return [
-        { type: 'check', default: false, text: 'Enabled' }
+        { type: 'check', default: false, text: 'Enabled' },
+        { type: 'key', default: 0x20, strValue: 'Space', text: 'Key' }
     ]
 }
 
@@ -28,7 +29,7 @@ function setup() {
 async function onTick(_manager, ticks, settings) {
     if (!settings[0].value) return;
     manager = _manager;
-    if (!manager.game.isKeyPressed(0x5)) return;
+    if (!manager.game.isKeyPressed(settings[1].value)) return;
 
     if (manager.playerState == 'isAttacking') return;
 

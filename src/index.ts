@@ -98,6 +98,7 @@ function registerHandlers() {
     });
 
     onMessage<never>('openOverlayDevTools', (e, data) => {
+        if (AyayaActionController.isPressed(0x11)) return settingsWindow.webContents.openDevTools({ mode: 'detach' });
         overlayWindow.webContents.openDevTools({ mode: 'detach' });
     });
 
