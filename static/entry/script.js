@@ -3,8 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
 
-const basePathEnabled = path.join(__dirname, '../../scripts/userscripts');
-const basePathDisabled = path.join(__dirname, '../../scripts/userscripts_disabled');
+const isPrebuilt = !fs.existsSync(path.join(__dirname, '../../scripts/userscripts'));
+
+const basePathEnabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts') : path.join(__dirname, '../../scripts/userscripts');
+const basePathDisabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts_disabled') : path.join(__dirname, '../../scripts/userscripts_disabled');
 
 const state = Vue.reactive({
     view: 1,
