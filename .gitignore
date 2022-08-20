@@ -4,7 +4,6 @@ dist
 dump
 settings.json
 cache
-**/cpp/build
 tmp-build
 AyayaLeague-win32-ia32
 AyayaLeague-win32-ia32.zip
