@@ -52,13 +52,19 @@
                             v-model="setting.value">
                         <label> {{setting.text}} </label>
                     </div>
+                    <div v-else-if="setting.type=='key'">
+                        <input @mousedown="setMouse(setting, $event)" @keydown="setKey(setting, $event)" @select="unselect" :value="parseKey(setting)"
+                            class="input" type="text" readonly style="width: 100px; user-select: none;">
+                        <label> {{setting.text}} </label>
+                    </div>
                     <div v-else-if=" setting.type=='string'">
                         <input @change="updateSettings()" class="input" type="text" style="width: 150px;"
                             v-model="setting.value">
                         <label> {{setting.text}} </label>
                     </div>
                     <div v-else-if=" setting.type=='color'">
-                        <input @change="updateSettings()" type="color" style="margin:0; margin-left:2px; width: 16px; height:16px; padding:0;"
+                        <input @change="updateSettings()" type="color"
+                            style="margin:0; margin-left:2px; width: 16px; height:16px; padding:0;"
                             v-model="setting.value">
                         <label style="transform: translateX(-2px);"> {{setting.text}} </label>
                     </div>
@@ -71,6 +77,10 @@
 
                 <button @click="reloadScripts" class="button is-small is-warning"> Reload scripts </button>
                 <button @click="reloadMe" class="button is-small is-primary"> Reload settings </button>
+            </div>
+
+            <div class="logs">
+
             </div>
 
         </div>
