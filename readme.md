@@ -11,8 +11,6 @@
   <img src="https://img.shields.io/github/directory-file-count/botkalista/ayaya-league-external/scripts/userscripts?color=informational&label=Builtin%20Scripts&logo=javascript&type=file" alt="UserScripts count">
    &nbsp;
    <img src="https://img.shields.io/github/last-commit/botkalista/ayaya-league-external" alt="GitHub last commit">
-   &nbsp;
-  <img src="https://img.shields.io/github/downloads/botkalista/ayaya-league-external/total" alt="GitHub all releases">
 </p>
 </div>
 
