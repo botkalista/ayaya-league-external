@@ -32,6 +32,9 @@ export class Entity extends CachedClass {
     get level(): number {
         return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oObjLevel, "DWORD"));
     }
+    get ad(): number {
+        return this.use('ad', () => Reader.readProcessMemory(this.address + OFFSET.oObjAD, "FLOAT"));
+    }
     get ap(): number {
         return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjAbilityPower, "FLOAT"));
     }
