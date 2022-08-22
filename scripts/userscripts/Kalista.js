@@ -88,16 +88,19 @@ async function onTick(_manager, ticks) {
  */
 function getDamageE(target) {
   const level = manager.me.spells[2].level;
-  const ad = manager.me.attackDamage;
+  const ad = manager.me.ad;
   const baseDamage = eFirstDamage[level - 1] + (ad / 100) * eFirstScaling;
-  let armor = target.armor + target.bonusArmor;
+  const armorPenPerc = manager.me.armorPenPerc;
+  const lethality = manager.me.lethality;
+  const armorPenFlat = lethality * (0.6 + (0.4 * manager.me.level) / 18);
+  let armor = (target.armor - armorPenFlat) * armorPenPerc;
+  let stacksE = target.buffManager.byName(stacks).count;
 
-  if (target.buffManager.byName(stacks).count == 1)
-    return baseDamage * (100 / (100 + armor));
+  if (stacksE.count == 1) return baseDamage * (100 / (100 + armor));
   const bonusDamage =
     (ePerDamage[manager.me.spells[2].level - 1] +
       (ad / 100) * ePerScaling[manager.me.spells[2].level - 1]) *
-      target.buffManager.byName(stacks).count -
+      stacksE -
     1;
   return (baseDamage + bonusDamage) * (100 / (100 + armor));
 }
@@ -108,7 +111,7 @@ function castE() {
   manager.game.pressKey(manager.spellSlot.E);
   manager.game.sleep(35);
   manager.game.releaseKey(manager.spellSlot.E);
-  manager.game.sleep(300);
+  manager.game.sleep(50);
 }
 
 /**
