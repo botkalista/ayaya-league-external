@@ -81,6 +81,23 @@ export class Entity extends CachedClass {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));
     }
 
+    get dead() {
+        return this.use('dead', () => {
+
+            // const t = Reader.readProcessMemory(this.address + 0x20C, "DWORD");
+            // const x1 = Reader.readProcessMemory(t + 0x20C, "DWORD");
+            // const x2 = t + 0x1D8;
+            // let x4 = Reader.readProcessMemory(x1 + x2 + 2, "DWORD");
+            // const x5 = Reader.readProcessMemory(x2 + 5, "DWORD");
+            // x4 ^= ~(x5 ^ xorKey);
+            // x4 ^= x5 ^ 0xA0;
+            // return x4;
+
+            return this.hp <= 0 || this.mana <= 0;
+
+        });
+    }
+
     get spells(): Spell[] {
         return this.use('spells', () => {
             if (this.team != 100 && this.team != 200) return [];

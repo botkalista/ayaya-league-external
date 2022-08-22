@@ -24,7 +24,7 @@ export class UserScriptUtils extends CachedClass {
 
     genericInRange(list: Entity[], range: number) {
         const me = this.manager.me;
-        return list.filter(e => e.hp > 0 && e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox)));
+        return list.filter(e => !e.dead && e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox)));
     }
 
     lowestHealthEnemyChampInRange(range: number) {
