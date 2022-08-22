@@ -30,10 +30,26 @@
 
             <div class="logo">
                 <img src="ayaya_poster.jpg" alt="Logo" width="400">
-                <div class="title">AyayaLeague</div>
+                <div class="title"> AyayaLeague </div>
             </div>
             <div class="menu">
                 <button class="button is-large is-primary start-button" @click="startAyayaLeague()"> Start </button>
+
+                <label style="position: absolute;transform: translate(-20px, 50px);
+                line-height: 15px; font-size: 13px;">
+
+                    <div class="version" style="display: flex; gap: 5px;"
+                        :class="{'ok':version.current == version.last, 'ko': version.current != version.last}">
+                        <div style="width: 120px; text-align: right;">Current version:</div>
+                        <div>{{version.current}}</div>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <div style="width: 120px; text-align: right;">Last version:</div>
+                        <div>{{version.last}}</div>
+                    </div>
+
+                </label>
+
             </div>
             <div class="submenu">
                 <div class="left">

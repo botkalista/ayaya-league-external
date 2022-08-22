@@ -10,7 +10,11 @@ const basePathDisabled = isPrebuilt ? path.join(__dirname, '../../resources/app/
 
 const state = Vue.reactive({
     view: 1,
-    scripts: []
+    scripts: [],
+    version: {
+        current: '?',
+        last: '?'
+    }
 });
 
 const app = Vue.createApp({
@@ -86,6 +90,16 @@ function saveScripts() {
     reloadScripts();
 
 }
+
+
+
+fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/version')
+    .then(res => res.text()).then(e => {
+        const lastVersion = e;
+        state.version.last = lastVersion;
+        const version = fs.readFileSync('version', 'utf-8');
+        state.version.current = version;
+    });
 
 reloadScripts();
 

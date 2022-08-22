@@ -165,3 +165,12 @@ html, body {
 ::-webkit-scrollbar-thumb {
     background: #82a8be;
 }
+
+
+.version.ok {
+    color: green;
+}
+
+.version.ko {
+    color: red;
+}
