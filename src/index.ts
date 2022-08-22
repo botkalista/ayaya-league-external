@@ -2,11 +2,14 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
 console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node, 'ARCH', process.arch)
 
+import WindowsManager from './overlay/Windows';
+import { registerHandlers } from './main/Handlers';
+
 import { BrowserWindow, app, ipcMain, globalShortcut, IpcMainEvent, WebContents, dialog } from 'electron';
 import AyayaLeague from './LeagueReader';
 
 import AyayaActionController from './ActionControllerWrapper';
-import { createEntryWindow, createOverlayWindow, createSettingsWindow } from './overlay/Windows'
+
 import { loadSettingsFromFile, setSettings, saveSettingsToFile, getSettings } from './overlay/Settings'
 
 import { Vector2, Vector3 } from './models/Vector';
@@ -28,322 +31,308 @@ import { Missile } from './models/Missile';
 import { ScriptSettingsFull, UserScript } from './events/types';
 
 
-let preparator;
+// let preparator;
 
-let overlayWindow: BrowserWindow;
-let settingsWindow: BrowserWindow;
-let entryWindow: BrowserWindow;
+// let overlayWindow: BrowserWindow;
+// let settingsWindow: BrowserWindow;
+// let entryWindow: BrowserWindow;
 
-let highestReadTime = 0;
+// let highestReadTime = 0;
 
-let renderer: number;
-let screen: Vector2;
-
-
-const userScripts: UserScript[] = [];
-const manager = new UserScriptManager();
-const drawContext = new DrawContext();
-
-function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
-    if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
-    return (win as WebContents).send(name, JSON.stringify(data));
-}
-function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => void) {
-    ipcMain.on(name, (e, message) => {
-        if (message == undefined || message == 'undefined') return cb(e, undefined);
-        cb(e, JSON.parse(message));
-    });
-}
-function registerHandlers() {
-
-    onMessage<never>('startAyayaLeague', (e, data) => {
-        try {
-            main();
-            entryWindow.hide();
-        } catch (ex) {
-
-        }
-    });
-
-    onMessage<any[]>('updateSettings', (e, data) => {
-        setSettings(data);
-        saveSettingsToFile();
-        sendMessageToWin(settingsWindow, 'dataSettings', data);
-    });
-
-    onMessage<any>('updateBaseSettings', (e, data) => {
-        sendMessageToWin(overlayWindow, 'dataBaseSettings', data);
-    });
-
-    onMessage<never>('requestSettings', (e, data) => {
-        const settings = getSettings();
-        sendMessageToWin(e.sender, 'dataSettings', settings);
-    });
-
-    onMessage<never>('requestScreenSize', (e, data) => {
-        renderer = renderer || AyayaLeague.getRenderBase();
-        screen = screen || AyayaLeague.getScreenSize(renderer);
-        sendMessageToWin(e.sender, 'dataScreenSize', screen);
-    });
-
-    onMessage<never>('closeSettingsWindow', (e, data) => {
-        settingsWindow.hide();
-    });
+// let renderer: number;
+// let screen: Vector2;
 
 
-    onMessage<never>('reloadScripts', async (e, data) => {
-        await unloadUserScripts();
-        await loadUserScripts();
-    });
+// const userScripts: UserScript[] = [];
+// const manager = new UserScriptManager();
+// const drawContext = new DrawContext();
 
-    onMessage<never>('reloadWindows', (e, data) => {
-        overlayWindow.reload();
-        settingsWindow.reload();
-    });
+// function sendMessageToWin(win: BrowserWindow | WebContents, name: string, data: any) {
+//     if (win['webContents']) return (win as BrowserWindow).webContents.send(name, JSON.stringify(data));
+//     return (win as WebContents).send(name, JSON.stringify(data));
+// }
+// function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => void) {
+//     ipcMain.on(name, (e, message) => {
+//         if (message == undefined || message == 'undefined') return cb(e, undefined);
+//         cb(e, JSON.parse(message));
+//     });
+// }
+// function registerHandlers() {
 
-    onMessage<never>('openOverlayDevTools', (e, data) => {
-        if (AyayaActionController.isPressed(0x11)) return settingsWindow.webContents.openDevTools({ mode: 'detach' });
-        overlayWindow.webContents.openDevTools({ mode: 'detach' });
-    });
+//     onMessage<never>('startAyayaLeague', (e, data) => {
+//         try {
+//             main();
+//             entryWindow.hide();
+//         } catch (ex) {
 
-}
+//         }
+//     });
 
-async function loadUserScripts() {
-    loadSettingsFromFile();
+//     onMessage<any[]>('updateSettings', (e, data) => {
+//         setSettings(data);
+//         saveSettingsToFile();
+//         sendMessageToWin(settingsWindow, 'dataSettings', data);
+//     });
 
-    const basePath = path.join(__dirname, '../../scripts/userscripts');
-    const userScriptsPaths = fs.readdirSync(basePath);
-    for (const scriptPath of userScriptsPaths) {
-        try {
-            if (scriptPath.endsWith('.ts')) {
-                console.log('Skipped', scriptPath, ' - You need to compile it to js');
-                continue;
-            }
-            const p = path.join(basePath, scriptPath);
-            const imp = await require(p);
-            userScripts.push({ ...imp, _modulename: p, _scriptname: scriptPath });
-        } catch (ex) {
-            console.error('Error loading', scriptPath, ex);
-        }
-    }
+//     onMessage<any>('updateBaseSettings', (e, data) => {
+//         sendMessageToWin(overlayWindow, 'dataBaseSettings', data);
+//     });
 
-    const scriptSettings: any[] = [];
+//     onMessage<never>('requestSettings', (e, data) => {
+//         const settings = getSettings();
+//         sendMessageToWin(e.sender, 'dataSettings', settings);
+//     });
 
-    const loadedSettings = getSettings();
+//     onMessage<never>('requestScreenSize', (e, data) => {
+//         renderer = renderer || AyayaLeague.getRenderBase();
+//         screen = screen || AyayaLeague.getScreenSize(renderer);
+//         sendMessageToWin(e.sender, 'dataScreenSize', screen);
+//     });
 
-    for (const script of userScripts) {
-        try {
-            if (script.setup) {
-                const setupResult = await script.setup(script._modulename, script._scriptname);
-                if (!setupResult) continue;
+//     onMessage<never>('closeSettingsWindow', (e, data) => {
+//         settingsWindow.hide();
+//     });
 
-                const setting = loadedSettings.find(s => s.name == script._scriptname);
 
-                const data = setupResult.map(e => {
-                    if (setting) {
-                        const s = setting.data.find(k => k.text == e.text);
+//     onMessage<never>('reloadScripts', async (e, data) => {
+//         await unloadUserScripts();
+//         await loadUserScripts();
+//     });
 
-                        if (s && s.type === 'key' && s.strValue) {
-                            e.strValue = s.strValue;
-                        }
+//     onMessage<never>('reloadWindows', (e, data) => {
+//         overlayWindow.reload();
+//         settingsWindow.reload();
+//     });
 
-                        if (s && s.value != undefined) {
-                            e.value = s.value;
-                            e.default = undefined;
-                            return e;
-                        }
-                    }
-                    e.value = e.default;
-                    e.default = undefined;
-                    return e;
-                });
+//     onMessage<never>('openOverlayDevTools', (e, data) => {
+//         if (AyayaActionController.isPressed(0x11)) return settingsWindow.webContents.openDevTools({ mode: 'detach' });
+//         overlayWindow.webContents.openDevTools({ mode: 'detach' });
+//     });
 
-                scriptSettings.push({ name: script._scriptname, data });
-            }
-        } catch (ex) {
-            console.error('Error on script', script._modulename, 'function setup\n', ex);
-        }
-    }
+// }
 
-    setSettings(scriptSettings);
+// async function loadUserScripts() {
+//     loadSettingsFromFile();
 
-    console.log('Loaded', userScripts.length, 'user scripts.');
-}
+//     const basePath = path.join(__dirname, '../../scripts/userscripts');
+//     const userScriptsPaths = fs.readdirSync(basePath);
+//     for (const scriptPath of userScriptsPaths) {
+//         try {
+//             if (scriptPath.endsWith('.ts')) {
+//                 console.log('Skipped', scriptPath, ' - You need to compile it to js');
+//                 continue;
+//             }
+//             const p = path.join(basePath, scriptPath);
+//             const imp = await require(p);
+//             userScripts.push({ ...imp, _modulename: p, _scriptname: scriptPath });
+//         } catch (ex) {
+//             console.error('Error loading', scriptPath, ex);
+//         }
+//     }
 
-async function unloadUserScripts() {
-    for (const script of userScripts) {
-        delete require.cache[script._modulename];
-    }
+//     const scriptSettings: any[] = [];
 
-    userScripts.length = 0;
-}
+//     const loadedSettings = getSettings();
 
-async function main() {
+//     for (const script of userScripts) {
+//         try {
+//             if (script.setup) {
+//                 const setupResult = await script.setup(script._modulename, script._scriptname);
+//                 if (!setupResult) continue;
 
-    if (process.argv[2] == 'nohook') {
-        AyayaLeague.reader.setMode("DUMP");
-        AyayaLeague.reader.loadDump();
-    } else {
-        try {
-            AyayaLeague.reader.hookLeagueProcess();
-        } catch (ex) {
-            if (entryWindow) entryWindow.hide();
-            dialog.showMessageBoxSync({ title: 'Error', message: ex.message, type: 'error' });
-            app.exit();
-        }
-    }
+//                 const setting = loadedSettings.find(s => s.name == script._scriptname);
 
-    preparator = new Preparator(AyayaLeague);
+//                 const data = setupResult.map(e => {
+//                     if (setting) {
+//                         const s = setting.data.find(k => k.text == e.text);
 
-    //* On Draw Manager
-    onMessage<never>('drawingContext', (e, data) => {
-        drawContext.__clearCommands();
-        for (const script of userScripts) {
-            const setting = getSettings().find(e => e.name == script._scriptname);
-            script.onDraw && script.onDraw(drawContext, manager, (setting || { data: [] }).data);
-        }
-        e.returnValue = JSON.stringify(drawContext.__getCommands());
-    });
+//                         if (s && s.type === 'key' && s.strValue) {
+//                             e.strValue = s.strValue;
+//                         }
 
-    //* Read webapi data
-    const webapi_interval = setInterval(async () => {
-        try {
-            const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
-            const data = await res.json();
-            CachedClass.set('webapi_me', data);
-        } catch (ex) {
-            app.exit();
-        }
-    }, 250);
+//                         if (s && s.value != undefined) {
+//                             e.value = s.value;
+//                             e.default = undefined;
+//                             return e;
+//                         }
+//                     }
+//                     e.value = e.default;
+//                     e.default = undefined;
+//                     return e;
+//                 });
 
-    CachedClass.set('webapi_interval', webapi_interval);
+//                 scriptSettings.push({ name: script._scriptname, data });
+//             }
+//         } catch (ex) {
+//             console.error('Error on script', script._modulename, 'function setup\n', ex);
+//         }
+//     }
 
-    overlayWindow = createOverlayWindow();
-    settingsWindow = createSettingsWindow();
+//     setSettings(scriptSettings);
 
-    setInterval(() => {
-        const processes = AyayaLeague.reader.memInstance.getProcesses();
-        const league = processes.find(e => e.szExeFile == 'League of Legends.exe');
-        if (!league) {
-            overlayWindow.close();
-            entryWindow.close();
-            app.exit();
-        }
-    }, 30000);
+//     console.log('Loaded', userScripts.length, 'user scripts.');
+// }
 
-    renderer = AyayaLeague.getRenderBase();
-    screen = AyayaLeague.getScreenSize(renderer);
-    overlayWindow.setSize(screen.x, screen.y);
+// async function unloadUserScripts() {
+//     for (const script of userScripts) {
+//         delete require.cache[script._modulename];
+//     }
 
-    //* SHORTCUTS
-    // globalShortcut.register('CommandOrControl+Space', () => {
-    //     settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
-    // });
+//     userScripts.length = 0;
+// }
 
-    let lastOpen = 0;
-    setInterval(() => {
-        const now = Date.now();
-        if (lastOpen + 350 > now) return;
-        if (AyayaActionController.isPressed(0x20) && AyayaActionController.isPressed(0x11)) {
-            settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
-            lastOpen = now;
-        }
-    }, 30);
+// async function main() {
 
-    //* Load user scripts
-    await loadUserScripts()
+//     if (process.argv[2] == 'nohook') {
+//         AyayaLeague.reader.setMode("DUMP");
+//         AyayaLeague.reader.loadDump();
+//     } else {
+//         try {
+//             AyayaLeague.reader.hookLeagueProcess();
+//         } catch (ex) {
+//             if (entryWindow) entryWindow.hide();
+//             dialog.showMessageBoxSync({ title: 'Error', message: ex.message, type: 'error' });
+//             app.exit();
+//         }
+//     }
 
-    //* Start loop
-    loop();
+//     preparator = new Preparator(AyayaLeague);
 
-}
+//     //* On Draw Manager
+//     onMessage<never>('drawingContext', (e, data) => {
+//         drawContext.__clearCommands();
+//         for (const script of userScripts) {
+//             const setting = getSettings().find(e => e.name == script._scriptname);
+//             script.onDraw && script.onDraw(drawContext, manager, (setting || { data: [] }).data);
+//         }
+//         e.returnValue = JSON.stringify(drawContext.__getCommands());
+//     });
 
-const performance = new Performance();
+//     //* Read webapi data
+//     const webapi_interval = setInterval(async () => {
+//         try {
+//             const res = await fetch(`https://127.0.0.1:2999/liveclientdata/activeplayer`);
+//             const data = await res.json();
+//             CachedClass.set('webapi_me', data);
+//         } catch (ex) {
+//             console.log(ex);
+//             app.exit();
+//         }
+//     }, 250);
+
+//     CachedClass.set('webapi_interval', webapi_interval);
+
+//     overlayWindow = createOverlayWindow();
+//     settingsWindow = createSettingsWindow();
+
+//     renderer = AyayaLeague.getRenderBase();
+//     screen = AyayaLeague.getScreenSize(renderer);
+//     overlayWindow.setSize(screen.x, screen.y);
+
+//     let lastOpen = 0;
+//     setInterval(() => {
+//         const now = Date.now();
+//         if (lastOpen + 350 > now) return;
+//         if (AyayaActionController.isPressed(0x20) && AyayaActionController.isPressed(0x11)) {
+//             settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show();
+//             lastOpen = now;
+//         }
+//     }, 30);
+
+//     //* Load user scripts
+//     await loadUserScripts()
+
+//     //* Start loop
+//     loop();
+
+// }
+
+// const performance = new Performance();
 
 async function entry() {
-    entryWindow = createEntryWindow();
+    WindowsManager.createEntryWindow();
     registerHandlers();
 }
 
-const persistentMissiles: Missile[] = [];
-const aiManagerCache = new Map<string, [Vector3, Vector3]>();
+// const persistentMissiles: Missile[] = [];
+// const aiManagerCache = new Map<string, [Vector3, Vector3]>();
 
-const tickInfo = {
-    lastOnTickPublish: 0,
-    ticks: 1
-}
+// const tickInfo = {
+//     lastOnTickPublish: 0,
+//     ticks: 1
+// }
 
-async function loop() {
-    performance.start();
+// async function loop() {
+//     performance.start();
 
-    manager.dispose();
+//     manager.dispose();
 
-    const settings = getSettings();
+//     const settings = getSettings();
 
-    //* Load required global variables
-    const gameTime = AyayaLeague.getGameTime();
-    const me = manager.me;
-    const myTeam = me.team;
-    const nmeTeam = myTeam == 100 ? 200 : 100;
-    const matrix = matrixToArray(AyayaLeague.getViewProjectionMatrix());
+//     //* Load required global variables
+//     const gameTime = AyayaLeague.getGameTime();
+//     const me = manager.me;
+//     const myTeam = me.team;
+//     const nmeTeam = myTeam == 100 ? 200 : 100;
+//     const matrix = matrixToArray(AyayaLeague.getViewProjectionMatrix());
 
-    //* Put global variables into global cache
-    CachedClass.set('screen', screen);
-    CachedClass.set('matrix', matrix);
-    CachedClass.set('gameTime', gameTime);
-    CachedClass.set('myTeam', myTeam);
-    CachedClass.set('nmeTeam', nmeTeam);
+//     //* Put global variables into global cache
+//     CachedClass.set('screen', screen);
+//     CachedClass.set('matrix', matrix);
+//     CachedClass.set('gameTime', gameTime);
+//     CachedClass.set('myTeam', myTeam);
+//     CachedClass.set('nmeTeam', nmeTeam);
 
-    performance.spot('first_part');
+//     performance.spot('first_part');
 
-    publishOnMissileCreate(manager, persistentMissiles, settings, publishToScript);
+//     publishOnMissileCreate(manager, persistentMissiles, settings, publishToScript);
 
-    performance.spot('missile_publish');
+//     performance.spot('missile_publish');
 
-    publishOnMoveCreate(manager, aiManagerCache, settings, publishToScript);
+//     publishOnMoveCreate(manager, aiManagerCache, settings, publishToScript);
 
-    performance.spot('on_move_create_publish');
+//     performance.spot('on_move_create_publish');
 
-    const finalData = {
-        enemyChampions: undefined,
-        performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)), reads: performance.getReads() },
-        screen,
-        matrix,
-    }
-    performance.spot('drawer data');
-    finalData.enemyChampions = manager.champions.enemies.map(e => preparator.prepareChampion(e));
-    performance.spot('drawer - nmeChamps');
+//     const finalData = {
+//         enemyChampions: undefined,
+//         performance: { time: 0, max: parseFloat(highestReadTime.toFixed(1)), reads: performance.getReads() },
+//         screen,
+//         matrix,
+//     }
+//     performance.spot('drawer data');
+//     finalData.enemyChampions = manager.champions.enemies.map(e => preparator.prepareChampion(e));
+//     performance.spot('drawer - nmeChamps');
 
-    // Publish onTick to scripts
-    publishOnTicks(manager, tickInfo, settings, publishToScript);
+//     // Publish onTick to scripts
+//     publishOnTicks(manager, tickInfo, settings, publishToScript);
 
-    performance.spot('on_tick_publish');
+//     performance.spot('on_tick_publish');
 
-    // --- performance ---
-    const result = performance.end();
-    if (result.time > highestReadTime) highestReadTime = result.time;
-    // --- performance ---
+//     // --- performance ---
+//     const result = performance.end();
+//     if (result.time > highestReadTime) highestReadTime = result.time;
+//     // --- performance ---
 
-    finalData.performance.time = result.time;
-    sendMessageToWin(overlayWindow, 'gameData', finalData);
-    tickInfo.ticks++;
-    manager.dispose();
-    setTimeout(loop, 5);
-}
+//     finalData.performance.time = result.time;
+//     sendMessageToWin(overlayWindow, 'gameData', finalData);
+//     tickInfo.ticks++;
+//     manager.dispose();
+//     setTimeout(loop, 5);
+// }
 
-//TODO: Add typings
-function publishToScript(fName: keyof UserScript, settings: ScriptSettingsFull, ...args: any) {
-    for (const userScript of userScripts) {
-        try {
-            if (userScript[fName]) {
-                const setting = settings.find(e => e.name == userScript._scriptname);
-                (userScript[fName] as (...a) => any)(...args, (setting || { data: [] }).data);
-            }
-        } catch (ex) {
-            console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');
-        }
-    }
-}
+// //TODO: Add typings
+// function publishToScript(fName: keyof UserScript, settings: ScriptSettingsFull, ...args: any) {
+//     for (const userScript of userScripts) {
+//         try {
+//             if (userScript[fName]) {
+//                 const setting = settings.find(e => e.name == userScript._scriptname);
+//                 (userScript[fName] as (...a) => any)(...args, (setting || { data: [] }).data);
+//             }
+//         } catch (ex) {
+//             console.error(`Error on script ${userScript._modulename} function ${fName}\n`, ex, '\n');
+//         }
+//     }
+// }
 
 app.whenReady().then(entry);
 

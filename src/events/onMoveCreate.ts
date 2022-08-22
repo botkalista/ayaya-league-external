@@ -1,6 +1,6 @@
-import { UserScriptManager } from "../../scripts/UserScriptManager";
-import { Vector3 } from "../models/Vector";
-import { fnPublish, ScriptSettingsFull } from '../events/types';
+import type { UserScriptManager } from "../../scripts/UserScriptManager";
+import type { Vector3 } from "../models/Vector";
+import type { fnPublish, ScriptSettingsFull } from '../events/types';
 
 export function publishOnMoveCreate(manager: UserScriptManager, aiManagerCache: Map<string, [Vector3, Vector3]>, settings: ScriptSettingsFull, publish: fnPublish) {
     for (const champ of manager.champions.enemies) {

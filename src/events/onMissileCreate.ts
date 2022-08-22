@@ -1,6 +1,6 @@
-import { UserScriptManager } from "../../scripts/UserScriptManager";
-import { Missile } from "../models/Missile";
-import { fnPublish, ScriptSettingsFull } from './types';
+import type { UserScriptManager } from "../../scripts/UserScriptManager";
+import type { Missile } from "../models/Missile";
+import type { fnPublish, ScriptSettingsFull } from './types';
 
 export function publishOnMissileCreate(manager: UserScriptManager, persistentMissiles: Missile[], settings: ScriptSettingsFull, publish: fnPublish) {
 

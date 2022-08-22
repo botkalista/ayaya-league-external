@@ -58,6 +58,9 @@ export abstract class CachedClass {
     static use<T>(key: string, fn: () => T): T {
         return this._use(key, fn, CachedClass.globalCache);
     }
+    static clear() {
+        return this._clear(CachedClass.globalCache);
+    }
 
 
 }
