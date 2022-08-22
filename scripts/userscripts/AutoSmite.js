@@ -1,5 +1,5 @@
 
-// #Author: Emily
+// #Author: UwUai
 // #Description: Basic autosmite
 
 /**
