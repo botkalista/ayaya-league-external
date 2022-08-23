@@ -38,7 +38,7 @@ export class UserScriptUtils extends CachedClass {
 
         if (def < 0) return damage * (2 - (100 / (100 - def)));
 
-        return damage * (100 / (100 - def));
+        return damage * (100 / (100 + def));
     }
 
     calculateMagicDamage(source: Entity, target: Entity, damage: number) {
@@ -52,7 +52,7 @@ export class UserScriptUtils extends CachedClass {
 
         if (def < 0) return damage * (2 - (100 / (100 - def)));
 
-        return damage * (100 / (100 - def));
+        return damage * (100 / (100 + def));
     }
 
 

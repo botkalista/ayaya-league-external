@@ -8,7 +8,7 @@ const Reader = AyayaLeague.reader;
 export class Buff extends CachedClass {
 
 
-    constructor(private address: number) { super(); }
+    constructor(public address: number) { super(); }
 
     private get entry() {
         return this.use('entry', () => Reader.readProcessMemory(this.address + 0x8, "DWORD"))
@@ -29,6 +29,8 @@ export class Buff extends CachedClass {
     get count(): number {
         return this.use('count', () => Reader.readProcessMemory(this.address + OFFSET.oBuffCount, "DWORD"));
     }
-
+    get count2(): number {
+        return this.use('count2', () => Reader.readProcessMemory(this.address + OFFSET.oBuffCount2, "DWORD"));
+    }
 
 }
