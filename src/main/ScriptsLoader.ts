@@ -14,7 +14,7 @@ export async function loadUserScripts(userScripts: UserScript[]) {
     const userScriptsPaths = fs.readdirSync(basePath);
     for (const scriptPath of userScriptsPaths) {
         try {
-            if (scriptPath.endsWith('.ts')) {
+            if (scriptPath.endsWith('.ts') || scriptPath.startsWith('.gitkeep')) {
                 console.log('Skipped', scriptPath, ' - You need to compile it to js');
                 continue;
             }
