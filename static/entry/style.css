@@ -175,3 +175,11 @@ html, body {
 .version.ko {
     color: red;
 }
+
+
+
+.guide-view {
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 40px;
+}

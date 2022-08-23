@@ -1,6 +1,6 @@
 
 
-import { BrowserWindow, dialog, ipcMain, IpcMainEvent, WebContents } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, WebContents } from 'electron';
 import { setSettings, saveSettingsToFile, getSettings } from '../overlay/Settings'
 import { loadUserScripts, unloadUserScripts } from './ScriptsLoader';
 import { main } from './main';
@@ -24,6 +24,14 @@ export function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => 
 
 export function registerHandlers() {
 
+    onMessage<never>('closeAyayaLeague', (e, data) => {
+        try {
+            app.exit();
+        } catch (ex) {
+            console.error(ex);
+        }
+    });
+
     onMessage<never>('startAyayaLeague', (e, data) => {
         try {
 
@@ -38,7 +46,7 @@ export function registerHandlers() {
                 main();
             }
         } catch (ex) {
-
+            console.error(ex);
         }
     });
 

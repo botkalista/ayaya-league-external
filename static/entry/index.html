@@ -17,6 +17,7 @@
         href="https://cdn.jsdelivr.net/npm/@cityssm/bulma-sticky-table@1.4.0/bulma-with-sticky-table.min.css">
     <link rel="stylesheet" href="ayaya-checkbox.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/styles/default.min.css">
 </head>
 
 <body>
@@ -24,7 +25,12 @@
     <div id="app">
         <div class="titlebar"></div>
 
+
         <div class="main-view" v-if="view==1">
+
+            <div class="script-guide" style="position: absolute; left: 10px; font-size: 14px; font-weight: bold;">
+                <a @click="changeView(3)"> Guide for script creators </a>
+            </div>
 
             <div class="delete" @click="closeMe()"></div>
 
@@ -38,8 +44,7 @@
                 <label style="position: absolute;transform: translate(-20px, 50px);
                 line-height: 15px; font-size: 13px;">
 
-                    <div class="version" style="display: flex; gap: 5px;"
-                        :class="{'ok':version.current == version.last, 'ko': version.current != version.last}">
+                    <div class="version" style="display: flex; gap: 5px;" :class="versionColor">
                         <div style="width: 120px; text-align: right;">Current version:</div>
                         <div>{{version.current}}</div>
                     </div>
@@ -104,9 +109,13 @@
 
         </div>
 
+
+        <div class="guide-view" v-if="view==3" v-html="guideContent">
+        </div>
     </div>
 
 
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="script.js"></script>
 </body>

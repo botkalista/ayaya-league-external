@@ -1,0 +1,85 @@
+<style>
+    .title {
+        font-size: 28px;
+        text-align: center;
+        margin: 0 !important;
+        padding: 10px 0;
+    }
+
+    .subtitle {
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+        margin: 0 !important;
+        padding: 5px 0;
+    }
+
+    .desc {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    pre {
+        background-color: rgb(217, 203, 202);
+    }
+
+    code {
+        background-color: rgba(160, 152, 152, 0.2) !important;
+        padding: 10px !important;
+    }
+
+    .hljs-keyword {
+        color: rgb(62, 62, 247);
+    }
+
+    .back {
+        position: absolute;
+        top: 25px;
+        left: 20px;
+        font-size: 30px;
+        cursor: pointer;
+    }
+
+    .back:hover {
+        color: rgb(62, 62, 247);
+    }
+</style>
+
+<div class="back" onclick="goToMainPage()">
+    <div class="fas fa-arrow-left"></div>
+</div>
+
+<div class="guide">
+    <div class="title"> How to write a script </div>
+
+    <div class="subtitle"> Function: <i>setup</i></div>
+    <div class="desc"> It will manage script initialization </div>
+    <pre><code class="language-js">//file:snippet-setup.js//</code></pre>
+
+    <div class="subtitle"> Function: <i>onTick</i></div>
+    <div class="desc"> It is used to execute actions every tick.</div>
+    <pre><code class="language-js">//file:snippet-onTick.js//</code></pre>
+
+    <div class="subtitle"> Function: <i>onMissileCreate</i></div>
+    <div class="desc"> It is used to execute actions every time a new missile is created.</div>
+    <pre><code class="language-js">//file:snippet-onMissileCreate.js//</code></pre>
+
+    <div class="subtitle"> Function: <i>onMoveCreate</i></div>
+    <div class="desc"> It is used to execute actions every time an enemy changes direction.</div>
+    <pre><code class="language-js">//file:snippet-onMoveCreate.js//</code></pre>
+
+    <div class="subtitle"> Function: <i>onMoveCreate</i></div>
+    <div class="desc"> It is used to execute actions every frame.</div>
+    <pre><code class="language-js">//file:snippet-onDraw.js//</code></pre>
+
+    <div class="subtitle"> Some examples: </div>
+
+    <pre><code class="language-js">//file:snippet-example1.js//</code></pre>
+
+    <!-- <pre><code class="language-js">//file:snippet-example2.js//</code></pre> -->
+
+</div>
+
+<!-- <br>
+
+<button onclick="debug_reloadGuide()"> Reload </button> -->

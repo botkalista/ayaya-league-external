@@ -19,9 +19,19 @@ const state = Vue.reactive({
 
 const app = Vue.createApp({
     data() { return state; },
+    computed: {
+        versionColor() {
+            const version = state.version;
+            return {
+                ok: (version.current == version.last) || version.last == '?',
+                ko: (version.current != version.last) && version.last != '?',
+            }
+        }
+    },
     methods: {
         reloadScripts,
         saveScripts,
+        loadGuide,
         openDiscord() {
             electron.shell.openExternal('https://discord.gg/qYy8Qz4Cr5')
         },
@@ -29,16 +39,60 @@ const app = Vue.createApp({
             electron.shell.openExternal('https://github.com/botkalista/ayaya-league-external')
         },
         changeView(view) {
-            state.view = view;
+            if (view == 3) {
+                return loadGuide();
+            } else {
+                state.view = view;
+            }
         },
         closeMe() {
+            electron.ipcRenderer.send('closeAyayaLeague');
             window.close();
         },
         startAyayaLeague() {
             electron.ipcRenderer.send('startAyayaLeague');
-        }
+        },
     }
 });
+
+async function getSnippet(name) {
+    const res = await fetch('guide/snippets/' + name);
+    const data = await res.text();
+    return data;
+}
+
+function loadGuide() {
+ 
+console.log('loadGuide')
+
+    fetch('guide/guide.html').then(res => res.text()).then(async _data => {
+
+        let data = _data;
+
+        do {
+            currentSnippet = data.match(/\/\/file:(.*)\/\//);
+            if (currentSnippet == null) break;
+            const snippet = await getSnippet(currentSnippet[1]);
+            data = data.replace(`//file:${currentSnippet[1]}//`, snippet)
+        } while (currentSnippet)
+
+
+        state.guideContent = data;
+        state.view = 3;
+        setTimeout(() => {
+            console.log('HIGHLIGHT')
+            hljs.highlightAll();
+        }, 100);
+    });
+
+}
+
+window.debug_reloadGuide = () => {
+    loadGuide();
+}
+window.goToMainPage = () => {
+    state.view = 1;
+}
 
 function addScript(script, basePath, loaded) {
     if (!script.endsWith('.js')) return;
@@ -92,11 +146,18 @@ function saveScripts() {
 }
 
 try {
-    fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/version')
+    fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/ayaya_version')
         .then(res => res.text()).then(e => {
-            const lastVersion = e;
-            state.version.last = lastVersion;
-            const version = fs.readFileSync('version', 'utf-8');
+
+            if (e.startsWith('404')) {
+                state.version.last = '?';
+            } else {
+                const lastVersion = e;
+                state.version.last = lastVersion;
+            }
+
+            const versionPath = fs.existsSync('ayaya_version') ? 'ayaya_version' : 'resources/app/ayaya_version';
+            const version = fs.readFileSync(versionPath, 'utf-8');
             state.version.current = version;
         });
 } catch (ex) {
