@@ -5,6 +5,7 @@ html, body, #app {
     height: 100vh;
     overflow: hidden;
     font-family: 'Roboto';
+    user-select: none;
 }
 
 html, body {

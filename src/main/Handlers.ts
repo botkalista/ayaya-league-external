@@ -1,6 +1,6 @@
 
 
-import { BrowserWindow, ipcMain, IpcMainEvent, WebContents } from 'electron';
+import { BrowserWindow, dialog, ipcMain, IpcMainEvent, WebContents } from 'electron';
 import { setSettings, saveSettingsToFile, getSettings } from '../overlay/Settings'
 import { loadUserScripts, unloadUserScripts } from './ScriptsLoader';
 import { main } from './main';
@@ -26,8 +26,17 @@ export function registerHandlers() {
 
     onMessage<never>('startAyayaLeague', (e, data) => {
         try {
-            main();
+
             WindowsManager.entryWindow.hide();
+            const leagueProcess = AyayaLeague.reader.memInstance.getProcesses().find(e => {
+                return e.szExeFile == 'League of Legends.exe'
+            });
+            if (!leagueProcess) {
+                dialog.showErrorBox('Not in game', 'You need to be in a game before starting AyayaLeague')
+                WindowsManager.entryWindow.show();
+            } else {
+                main();
+            }
         } catch (ex) {
 
         }

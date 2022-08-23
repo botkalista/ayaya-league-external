@@ -91,15 +91,17 @@ function saveScripts() {
 
 }
 
-
-
-fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/version')
-    .then(res => res.text()).then(e => {
-        const lastVersion = e;
-        state.version.last = lastVersion;
-        const version = fs.readFileSync('version', 'utf-8');
-        state.version.current = version;
-    });
+try {
+    fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/version')
+        .then(res => res.text()).then(e => {
+            const lastVersion = e;
+            state.version.last = lastVersion;
+            const version = fs.readFileSync('version', 'utf-8');
+            state.version.current = version;
+        });
+} catch (ex) {
+    console.error(ex);
+}
 
 reloadScripts();
 
