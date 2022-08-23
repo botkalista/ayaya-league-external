@@ -41,7 +41,7 @@ export class Entity extends CachedClass {
     get armorPenPercent(): number {
         return this.use('armorPenPercent', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmorPen, "FLOAT"));
     }
-    get armor():number {
+    get armor(): number {
         return this.use('armor', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmor, "FLOAT"));
     }
     get ap(): number {
@@ -102,7 +102,7 @@ export class Entity extends CachedClass {
             // x4 ^= x5 ^ 0xA0;
             // return x4;
 
-            return this.hp <= 0 || this.mana <= 0;
+            return this.hp <= 0 || (this.mana <= 0 && this.maxMana > 0);
 
         });
     }
