@@ -18,6 +18,45 @@ export class UserScriptUtils extends CachedClass {
         return entities.filter(e => testCirclePolygon(e.satHitbox, line));
     }
 
+    calculateDamage(source: Entity, target: Entity, physicDmg: number = 0, magicDmg: number = 0, trueDmg: number = 0) {
+        const resultPhysic = this.calculatePhysicalDamage(source, target, physicDmg);
+        const resultMagic = this.calculateMagicDamage(source, target, magicDmg);
+        const resultTrue = trueDmg;
+        return resultPhysic + resultMagic + resultTrue
+
+    }
+
+    calculatePhysicalDamage(source: Entity, target: Entity, damage: number) {
+        const A = target.armor;
+        const B = source.lethality;
+        const C = source.armorPenPercent;
+
+        const flatArmorPen = B * (0.6 + (0.4 * source.level / 18));
+
+        let def = A - flatArmorPen;
+        def = def / 100 * (100 - C);
+
+        if (def < 0) return damage * (2 - (100 / (100 - def)));
+
+        return damage * (100 / (100 - def));
+    }
+
+    calculateMagicDamage(source: Entity, target: Entity, damage: number) {
+        const A = target.magicResistTotal;
+        const B = source.magicPenFlat;
+        const C = source.magicPenPercent;
+
+        let def = A - B;
+
+        def = def / 100 * (100 - C);
+
+        if (def < 0) return damage * (2 - (100 / (100 - def)));
+
+        return damage * (100 / (100 - def));
+    }
+
+
+
     enemyChampsInRange(range: number) {
         return this.use('enemyChampInRange', () => this.genericInRange(this.manager.champions.enemies, range));
     }

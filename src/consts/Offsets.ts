@@ -53,6 +53,7 @@ export const OFFSET = {
 
     oObjAbilityHaste: 0x1690,
     oObjLethality: 0x11A8,
+    oObjArmorPen: 0x126C + 0x4,
     oObjArmor: 0x1374,
     oObjBonusArmor: 0x1374,
     oObjMagicRes: 0x137C,

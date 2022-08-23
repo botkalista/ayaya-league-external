@@ -35,6 +35,15 @@ export class Entity extends CachedClass {
     get ad(): number {
         return this.use('ad', () => Reader.readProcessMemory(this.address + OFFSET.oObjAD, "FLOAT"));
     }
+    get lethality(): number {
+        return this.use('lethality', () => Reader.readProcessMemory(this.address + OFFSET.oObjLethality, "FLOAT"));
+    }
+    get armorPenPercent(): number {
+        return this.use('armorPenPercent', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmorPen, "FLOAT"));
+    }
+    get armor():number {
+        return this.use('armor', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmor, "FLOAT"));
+    }
     get ap(): number {
         return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjAbilityPower, "FLOAT"));
     }
