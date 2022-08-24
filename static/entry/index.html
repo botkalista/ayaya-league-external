@@ -64,7 +64,7 @@
                     <span class="icon" @click="openGithub()">
                         <i class="fa-brands fa-github"></i>
                     </span>
-                    <span class="icon" @click="downloadUpdates()" v-if="update.need">
+                    <span class="icon" @click="downloadUpdates()" v-if="update.need && isPrebuilt">
                         <div class="badge"></div>
                         <i class="fa-solid fa-cloud-arrow-down"></i>
                     </span>

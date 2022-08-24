@@ -14,6 +14,7 @@ const basePathDisabled = isPrebuilt ? path.join(__dirname, '../../resources/app/
 const state = Vue.reactive({
     view: 0,
     scripts: [],
+    isPrebuilt,
     version: {
         current: '?',
         last: '?'
@@ -171,13 +172,8 @@ checkVersion().then(e => {
     document.body.style.visibility = "visible";
 });
 
-// checkForUpdates().then(e => {
-//     if (!state.update.required) return state.view = 1;
-//     state.view = 4;
-// });
-
-
 async function downloadUpdates() {
+    if (isPrebuilt == false) return;
     state.view = 4;
     const zip = new JSZip();
     jszipUtils.getBinaryContent(server + '/static/data.zip', {
@@ -189,10 +185,11 @@ async function downloadUpdates() {
                 archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
                     .pipe(fs.createWriteStream('update.zip'))
                     .on('finish', async function () {
-                        const extractDir = isPrebuilt ? path.join(__dirname, '../../resources/app') : path.join(__dirname, '../../cache');
+                        const extractDir = isPrebuilt ? path.join(__dirname, '../../resources/app') : path.join(__dirname, '../../');
                         await extract('update.zip', { dir: extractDir })
                         fs.rmSync('update.zip');
                         checkVersion();
+                        state.update.need = 0;
                         state.view = 1;
                     });
             });
