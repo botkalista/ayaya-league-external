@@ -76,6 +76,30 @@ void getMousePos(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, _pos).ToLocalChecked());
 }
 
+void clickRightMouse(const FunctionCallbackInfo<Value>& args) {
+    INPUT Inputs[2] = { 0 };
+
+    Inputs[0].type = INPUT_MOUSE;
+    Inputs[0].mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
+
+    Inputs[1].type = INPUT_MOUSE;
+    Inputs[1].mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+
+    SendInput(2, Inputs, sizeof(INPUT));
+}
+
+void clickLeftMouse(const FunctionCallbackInfo<Value>& args) {
+    INPUT Inputs[2] = { 0 };
+
+    Inputs[0].type = INPUT_MOUSE;
+    Inputs[0].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+
+    Inputs[1].type = INPUT_MOUSE;
+    Inputs[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+
+    SendInput(2, Inputs, sizeof(INPUT));
+}
+
 void Initialize(Local<Object> exports) {
     NODE_SET_METHOD(exports, "isKeyPressed", isKeyPressed);
     NODE_SET_METHOD(exports, "blockInput", blockInput);
@@ -83,6 +107,8 @@ void Initialize(Local<Object> exports) {
     NODE_SET_METHOD(exports, "pressKey", pressKey);
     NODE_SET_METHOD(exports, "releaseKey", releaseKey);
     NODE_SET_METHOD(exports, "getMousePos", getMousePos);
+    NODE_SET_METHOD(exports, "clickRightMouse", clickRightMouse);
+    NODE_SET_METHOD(exports, "clickLeftMouse", clickLeftMouse);
 }
 
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)

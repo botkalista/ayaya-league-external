@@ -20,7 +20,10 @@ class ActionControllerWrapper {
         AyayaWinapiWrapper.setMousePos(x, y);
     }
     click(button: "left" | "right") {
-
+        if (button == "right") 
+            AyayaWinapiWrapper.clickRightMouse()
+        else if (button == "left") 
+            AyayaWinapiWrapper.clickLeftMouse()
     }
     getMousePos(): Vector2 {
         const [x, y] = AyayaWinapiWrapper.getMousePos().split('_')

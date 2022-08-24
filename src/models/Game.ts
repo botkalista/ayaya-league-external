@@ -1,7 +1,7 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '../LeagueReader';
 import { Vector2 } from "./Vector";
-import ActionControllerWrapper from '../../src/ActionControllerWrapper';
+import ActionControllerWrapper from '../ActionControllerWrapper';
 import { PlayerState } from "../../scripts/UserScriptManager";
 import { OFFSET } from "../consts/Offsets";
 
@@ -82,6 +82,11 @@ export class Game extends CachedClass {
         ActionControllerWrapper.move(x, y);
     }
 
+    mouseClick(button: "left" | "right") {
+        ActionControllerWrapper.click(button)
+        this.sleep(10)
+    }
+
     sleep(ms: number) {
         const t = Date.now();
         while (Date.now() - t < ms) { }
@@ -123,6 +128,5 @@ export class Game extends CachedClass {
         }
         CachedClass.set<PlayerState>('playerState', "idle");
     }
-
 
 }
