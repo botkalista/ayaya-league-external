@@ -2,9 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
-const JSZip = require('jszip');
-const jszipUtils = require('jszip-utils');
-const extract = require('extract-zip')
+// const JSZip = require('jszip');
+// const jszipUtils = require('jszip-utils');
+// const extract = require('extract-zip')
 
 const server = 'http://95.216.218.179:7551';
 const basePathEnabled = path.join(__dirname, '../../scripts/userscripts');
@@ -38,7 +38,7 @@ const app = Vue.createApp({
         reloadScripts,
         saveScripts,
         loadGuide,
-        downloadUpdates,
+        // downloadUpdates,
         openDiscord() {
             electron.shell.openExternal('https://discord.gg/qYy8Qz4Cr5')
         },
@@ -170,30 +170,30 @@ checkVersion().then(e => {
     document.body.style.visibility = "visible";
 });
 
-async function downloadUpdates() {
-    state.view = 4;
-    const zip = new JSZip();
-    jszipUtils.getBinaryContent(server + '/static/data.zip', {
-        progress: (e) => {
-            console.log(e);
-            state.update.percent = e.percent.toFixed(0);
-        }, callback: (err, data) => {
-            zip.loadAsync(data).then(archive => {
-                archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-                    .pipe(fs.createWriteStream('update.zip'))
-                    .on('finish', async function () {
-                        const extractDir = path.join(__dirname, '../../');
-                        await extract('update.zip', { dir: extractDir })
-                        fs.rmSync('update.zip');
-                        checkVersion();
-                        state.update.need = 0;
-                        state.view = 1;
-                    });
-            });
-        }
-    })
+// async function downloadUpdates() {
+//     state.view = 4;
+//     const zip = new JSZip();
+//     jszipUtils.getBinaryContent(server + '/static/data.zip', {
+//         progress: (e) => {
+//             console.log(e);
+//             state.update.percent = e.percent.toFixed(0);
+//         }, callback: (err, data) => {
+//             zip.loadAsync(data).then(archive => {
+//                 archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+//                     .pipe(fs.createWriteStream('update.zip'))
+//                     .on('finish', async function () {
+//                         const extractDir = path.join(__dirname, '../../');
+//                         await extract('update.zip', { dir: extractDir })
+//                         fs.rmSync('update.zip');
+//                         checkVersion();
+//                         state.update.need = 0;
+//                         state.view = 1;
+//                     });
+//             });
+//         }
+//     })
 
-}
+// }
 
 
 

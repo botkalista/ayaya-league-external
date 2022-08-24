@@ -64,10 +64,10 @@
                     <span class="icon" @click="openGithub()">
                         <i class="fa-brands fa-github"></i>
                     </span>
-                    <span class="icon" @click="downloadUpdates()" v-if="update.need">
+                    <!-- <span class="icon" @click="downloadUpdates()" v-if="update.need">
                         <div class="badge"></div>
                         <i class="fa-solid fa-cloud-arrow-down"></i>
-                    </span>
+                    </span> -->
                 </div>
                 <div class="right">
                     <button class="button is-info" @click="changeView(2)"> Manage scripts </button>
@@ -116,7 +116,7 @@
         <div class="guide-view" v-if="view==3" v-html="guideContent">
         </div>
 
-
+<!-- 
         <div class="update-view" v-if="view==4">
 
             <div class="title" style="text-align: center; padding: 40px"> Downloading update </div>
@@ -130,7 +130,7 @@
                 </div>
             </div>
 
-        </div>
+        </div> -->
 
     </div>
 

@@ -8,7 +8,7 @@ exports.OFFSET = {
     oRenderer: 0x314B90C,
     oGameWindowWidth: 0x8,
     oGameWindowHeight: 0xc,
-    oViewProjMatrix: 0x31479B8,
+    oViewProjMatrix: 0x3148A20,
     oHeroManager: 0x187BF54,
     oMinionManager: 0x24C9788,
     oTurretManager: 0x3110C94,

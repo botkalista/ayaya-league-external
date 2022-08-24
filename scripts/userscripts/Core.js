@@ -98,6 +98,8 @@ function drawWards(ctx, manager, color) {
  * @param {Manager} manager 
  */
 function drawPlayerRange(ctx, manager, color) {
+
+    ctx.text(JSON.stringify(manager.me.gamePos), 400, 400, 22, 255)
     const me = manager.me;
     ctx.circle(me.gamePos, me.range, 50, color, 2);
 }
