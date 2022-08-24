@@ -109,9 +109,26 @@
 
         </div>
 
-
         <div class="guide-view" v-if="view==3" v-html="guideContent">
         </div>
+
+
+        <div class="update-view" v-if="view==4">
+
+            <div class="title" style="text-align: center; padding: 40px"> You have an old version </div>
+
+            <div class="actions" style="display: flex; gap: 10px; flex-direction: column; align-items: center;">
+                <button class="button is-primary" @click="executeUpdate()" v-if="!update.updating" style="padding: 10px 40px;">
+                    Update now
+                </button>
+                <button class="button is-secondary" @click="view=1" v-if="!update.updating">
+                    Ignore update
+                </button>
+                <div style="font-size: 24px" v-if="update.updating && !update.completed"> Updating: {{update.oks}}/{{update.files.length}} </div>
+            </div>
+
+        </div>
+
     </div>
 
 
