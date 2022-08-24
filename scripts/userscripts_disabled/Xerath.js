@@ -7,7 +7,6 @@
  * @typedef {import("../../src/models/drawing/DrawContext").DrawContext} DrawContext
  */
 
-
 const prints = [];
 
 function print(...data) {
