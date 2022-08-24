@@ -7,6 +7,7 @@ const ignoreFiles = [
     '^/media',
     '^/tests',
     '^/tmpbuild',
+    '.zip$',
     'AyayaLeague-win32-ia32.zip'
 ]
 
