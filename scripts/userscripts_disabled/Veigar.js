@@ -62,9 +62,6 @@ function isCollectable(target) {
 function onDraw(ctx, _manager, settings) {
     manager = _manager;
 
-    ctx.text((manager.me.address).toString(16), 50, 50, 22, 255);
-
-    return;
     // Q helper
     const closeThings = manager.utils.genericInRange(manager.minions.enemies, 2500);
     const collectableThings = closeThings.filter(isCollectable);

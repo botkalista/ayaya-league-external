@@ -7,14 +7,12 @@ const jszipUtils = require('jszip-utils');
 const extract = require('extract-zip')
 
 const server = 'http://95.216.218.179:7551';
-const isPrebuilt = !fs.existsSync(path.join(__dirname, '../../scripts/userscripts'));
-const basePathEnabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts') : path.join(__dirname, '../../scripts/userscripts');
-const basePathDisabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts_disabled') : path.join(__dirname, '../../scripts/userscripts_disabled');
+const basePathEnabled = path.join(__dirname, '../../scripts/userscripts');
+const basePathDisabled = path.join(__dirname, '../../scripts/userscripts_disabled');
 
 const state = Vue.reactive({
     view: 0,
     scripts: [],
-    isPrebuilt,
     version: {
         current: '?',
         last: '?'
@@ -173,7 +171,6 @@ checkVersion().then(e => {
 });
 
 async function downloadUpdates() {
-    if (isPrebuilt == false) return;
     state.view = 4;
     const zip = new JSZip();
     jszipUtils.getBinaryContent(server + '/static/data.zip', {
@@ -185,7 +182,7 @@ async function downloadUpdates() {
                 archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
                     .pipe(fs.createWriteStream('update.zip'))
                     .on('finish', async function () {
-                        const extractDir = isPrebuilt ? path.join(__dirname, '../../resources/app') : path.join(__dirname, '../../');
+                        const extractDir = path.join(__dirname, '../../');
                         await extract('update.zip', { dir: extractDir })
                         fs.rmSync('update.zip');
                         checkVersion();
