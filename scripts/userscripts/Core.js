@@ -23,7 +23,7 @@ function setup() {
 
 
 /**
- * @param {*} ctx 
+ * @param {DrawContext} ctx 
  * @param {Manager} manager 
  * @param {*} settings 
  */

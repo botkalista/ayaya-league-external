@@ -64,7 +64,7 @@ exports.OFFSET = {
     oObjAdditionalApMulti: 0x1248,
     oObjManaRegen: 0x11E0,
     oObjHealthRegen: 0x1388,
-    oObjAiManager: 0x2C7C,
+    oObjAiManager: 0x2CAC,
     oAiManagerTargetPos: 0x10,
     oAiManagerStartPath: 0x1CC,
     oAiManagerEndPath: 0x1D8,

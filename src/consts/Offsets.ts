@@ -79,7 +79,7 @@ export const OFFSET = {
 
 
 
-    oObjAiManager: 0x2C7C, //0F B6 83 ?? ?? ?? ?? 33 C9
+    oObjAiManager: 0x2CAC, //0F B6 83 ?? ?? ?? ?? 33 C9
     oAiManagerTargetPos: 0x10,
     oAiManagerStartPath: 0x1CC,
     oAiManagerEndPath: 0x1D8,

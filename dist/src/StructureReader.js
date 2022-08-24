@@ -5,7 +5,6 @@ const MemoryReader_1 = require("./MemoryReader");
 const math = require("mathjs");
 function readName(address, forceFirstAddress = false, forceSecondAddress = false) {
     try {
-        console.log('FUCKING READING NAME AT', (address).toString(16));
         const length = MemoryReader_1.default.readProcessMemory(address + 0x10, 'DWORD');
         if (!forceSecondAddress) {
             if ((length < 16 && length > 0) || forceFirstAddress)
