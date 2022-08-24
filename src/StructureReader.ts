@@ -11,10 +11,12 @@ export type EntityReadOptions = Partial<{ onlyProps: EntityKeys, skipProps: Enti
 
 
 
-export function readName(address: number, forceFirstAddress: boolean = false): string {
+export function readName(address: number, forceFirstAddress: boolean = false, forceSecondAddress: boolean = false): string {
     try {
         const length = Reader.readProcessMemory(address + 0x10, 'DWORD');
-        if ((length < 16 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
+        if (!forceSecondAddress) {
+            if ((length < 16 && length > 0) || forceFirstAddress) return Reader.readProcessMemory(address, 'STR');
+        }
         const nameAddress = Reader.readProcessMemory(address, 'DWORD');
         const name = Reader.readProcessMemory(nameAddress, 'STR');
 

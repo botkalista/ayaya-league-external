@@ -3,11 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.readVTable = exports.readMatrix = exports.readMap = exports.readName = void 0;
 const MemoryReader_1 = require("./MemoryReader");
 const math = require("mathjs");
-function readName(address, forceFirstAddress = false) {
+function readName(address, forceFirstAddress = false, forceSecondAddress = false) {
     try {
+        console.log('FUCKING READING NAME AT', (address).toString(16));
         const length = MemoryReader_1.default.readProcessMemory(address + 0x10, 'DWORD');
-        if ((length < 16 && length > 0) || forceFirstAddress)
-            return MemoryReader_1.default.readProcessMemory(address, 'STR');
+        if (!forceSecondAddress) {
+            if ((length < 16 && length > 0) || forceFirstAddress)
+                return MemoryReader_1.default.readProcessMemory(address, 'STR');
+        }
         const nameAddress = MemoryReader_1.default.readProcessMemory(address, 'DWORD');
         const name = MemoryReader_1.default.readProcessMemory(nameAddress, 'STR');
         if (name.startsWith(' ') || name.length == 0) {
