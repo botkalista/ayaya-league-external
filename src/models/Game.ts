@@ -1,7 +1,7 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '../LeagueReader';
 import { Vector2 } from "./Vector";
-import ActionControllerWrapper from '../ActionControllerWrapper';
+import ActionControllerWrapper from '../../src/ActionControllerWrapper';
 import { PlayerState } from "../../scripts/UserScriptManager";
 import { OFFSET } from "../consts/Offsets";
 
