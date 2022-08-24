@@ -34,7 +34,7 @@ p.on('exit', () => {
 });
 
 function prepareBuild() {
-    const basePath = `AyayaLeague-win32-ia32`;
-    const appPath = `${basePath}/resources/app`;
-    fs.moveSync(`${appPath}/static`, `${basePath}/static`);
+    // const basePath = `AyayaLeague-win32-ia32`;
+    // const appPath = `${basePath}/resources/app`;
+    // fs.moveSync(`${appPath}/static`, `${basePath}/static`);
 }

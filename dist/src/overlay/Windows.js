@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+const path = require("path");
 class WindowsManager {
     constructor() { }
     createOverlayWindow() {
@@ -23,7 +24,7 @@ class WindowsManager {
         win.setMenu(null);
         win.setAlwaysOnTop(true, 'screen-saver');
         win.setIgnoreMouseEvents(true);
-        win.loadFile('../../static/overlay/index.html');
+        win.loadFile(path.join(__dirname, '../../../static/overlay/index.html'));
         this.overlayWindow = win;
         return win;
     }
@@ -48,7 +49,7 @@ class WindowsManager {
         });
         win.setMenu(null);
         win.setAlwaysOnTop(true, 'screen-saver');
-        win.loadFile('../../static/settings/settings.html');
+        win.loadFile(path.join(__dirname, '../../../static/settings/settings.html'));
         //win.hide();
         this.settingsWindow = win;
         return win;
@@ -68,7 +69,7 @@ class WindowsManager {
             },
         });
         win.setAlwaysOnTop(true, 'screen-saver');
-        win.loadFile('../../static/entry/index.html');
+        win.loadFile(path.join(__dirname, '../../../static/entry/index.html'));
         this.entryWindow = win;
         return win;
     }

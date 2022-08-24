@@ -1,6 +1,6 @@
 
 import { BrowserWindow, screen } from 'electron';
-
+import * as path from 'path';
 class WindowsManager {
 
     overlayWindow: BrowserWindow;
@@ -29,7 +29,7 @@ class WindowsManager {
         win.setMenu(null);
         win.setAlwaysOnTop(true, 'screen-saver');
         win.setIgnoreMouseEvents(true);
-        win.loadFile('../../static/overlay/index.html');
+        win.loadFile(path.join(__dirname, '../../../static/overlay/index.html'));
 
         this.overlayWindow = win;
 
@@ -57,7 +57,7 @@ class WindowsManager {
         });
         win.setMenu(null);
         win.setAlwaysOnTop(true, 'screen-saver');
-        win.loadFile('../../static/settings/settings.html');
+        win.loadFile(path.join(__dirname, '../../../static/settings/settings.html'));
         //win.hide();
 
         this.settingsWindow = win;
@@ -80,7 +80,7 @@ class WindowsManager {
             },
         });
         win.setAlwaysOnTop(true, 'screen-saver');
-        win.loadFile('../../static/entry/index.html');
+        win.loadFile(path.join(__dirname, '../../../static/entry/index.html'));
 
         this.entryWindow = win;
 
