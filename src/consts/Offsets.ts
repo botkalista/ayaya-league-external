@@ -39,8 +39,8 @@ export const OFFSET = {
 
 
     oObjRecallState: 0xD90,
-    oObjPlayerName: 0x54,
-    oObjName: 0x2BA4,
+    oObjPlayerName: 0x54 + 30,
+    oObjName: 0x2BA4 + 30,
     oObjLevel: 0x3384,
     oObjPosition: 0x01DC,
     oObjAttackRange: 0x1394,
