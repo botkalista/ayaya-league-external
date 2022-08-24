@@ -1,34 +1,29 @@
-export const version = 12.16;
+export const version = 12.15;
 
 export const OFFSET = {
+    oGameTime: 0x3110E24, //F3 0F 11 05 ? ? ? ? 8B 49
 
-    oGameVersion: 0x58D820,	//8B 44 24 04 BA ? ? ? ? 2B D0
-
-    oGameTime: 0x3111E68, //F3 0F 11 05 ? ? ? ? 8B 49
-
-    oRenderer: 0x314B90C, //A1 ?? ?? ?? ?? 56 57 BF ?? ?? ?? ?? 8B
+    oRenderer: 0x314A8A4, // v //57 8B AE ? ? ? ? E8 ? ? ? ? //  A1 ?? ?? ?? ?? 56 57 BF ?? ?? ?? ?? 8B
     oGameWindowWidth: 0x8,
     oGameWindowHeight: 0xc,
-    oViewProjMatrix: 0x31479B8, //B9 ? ? ? ? E8 ? ? ? ? B9 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC // 83 C4 04 5F 8B 8C 24 ? ? ? ?  -> vai sopra, sotto al loc, primo unk_offset
+    oViewProjMatrix: 0x31479B8, //? // 83 C4 04 5F 8B 8C 24 ? ? ? ?  -> vai sopra, sotto al loc, primo unk_offset
 
-    oHeroManager: 0x187BF54, //8B 15 ? ? ? ? 0F 44 C1
-    oMinionManager: 0x24C9788, //A3 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 85 C0 74 32
-    oTurretManager: 0x3110C94, //8B 35 ? ? ? ? 8B 76 18
-    oMissileManager: 0x3118E34, //8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 30 8B 36
-    oInhibitorManager: 0x3118F30, //A1 ?? ?? ?? ?? 53 55 56 8B 70 04 8B 40 08
+    oHeroManager: 0x187AF90, //8B 15 ? ? ? ? 0F 44 C1
+    oMinionManager: 0x24C880C, //A3 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 85 C0 74 32
+    oTurretManager: 0x310FC24, //8B 35 ? ? ? ? 8B 76 18
+    oMissileManager: 0x3117E54, //8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 30 8B 36
+    oInhibitorManager: 0x3117F50, //A1 ?? ?? ?? ?? 53 55 56 8B 70 04 8B 40 08
 
     oUnderMouse: 0x24c1a24, //! AddressToChange 89 0D ? ? ? ? C7 41 ? ? ? ? ? C7 41 ? ? ? ? ? C7 01 ? ? ? ?
 
-    oShopsList: 0x24CA708,	//8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 75 11 8B 4F 04
-
-    oLocalPlayer: 0x3118DDC, //57 8B 3D ? ? ? ? 3B F7 75
-    oObjectManager: 0x187BEC0, //89 ? ? ? ? ? 57 C7 06 ? ? ? ? 66 C7 46 04 ? ?
-    oMinimapObject: 0x310F83C,	// 74 22 8B 0D ? ? ? ? 85 C9 74 18 80 79 38 00
+    oLocalPlayer: 0x3117E0C, //57 8B 3D ? ? ? ? 3B F7 75
+    oObjectManager: 0x187AEFC, //89 ? ? ? ? ? 57 C7 06 ? ? ? ? 66 C7 46 04 ? ?
+    oMinimapObject: 0x3110E64,	//74 22 8B 0D ? ? ? ? 85 C9 74 18 80 79 38 00
     oMinimapObjectHud: 0x120,
     oMinimapHudPos: 0x44,
     oMinimapHudSize: 0x4C,
 
-    oHud: 0x187BF80,	//8B 0D ? ? ? ? 6A 00 8B 49 34 E8 ? ? ? ? B0
+    oHud: 0x187AFBC,
     oZoom: 0x31104FC,
     oMaxZoom: 0x20,
 
@@ -106,7 +101,7 @@ export const OFFSET = {
     oActiveSpellEntryStartPos: 0x84,
     oActiveSpellEntryEndPos: 0x90,
 
-    oBuffManager: 0x21A8, //8B 81 ?? ?? ?? ?? 81 C1 ?? ?? ?? ?? 8B ?? ?? FF E0
+    oBuffManager: 0x2178,
     oBuffArray: 0x10,
     oBuffArrayLength: 0x14,
     oBuffSize: 0x8,
@@ -118,7 +113,7 @@ export const OFFSET = {
     oBuffCount2: 0x74,
 
 
-    oSpellSlots: 0x27E8, // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
+    oSpellSlots: 0x27B8, // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
     oSpellReadyAt: 0x24,
     oSpellLevel: 0x1C,
     oSpellDamage: 0x94,
@@ -137,7 +132,7 @@ export const OFFSET = {
     oSpellInfoDataName: 0x6C,
     oSpellInfoDataCooldownTime: 0x0288,
 
-    oChat: 0x3118E90,// 8B 0D ? ? ? ? 83 78 44 00
+    oChat: 0x31114A8,
     oChatIsOpen: 0x75C,
 
 
