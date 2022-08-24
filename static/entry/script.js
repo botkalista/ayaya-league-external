@@ -4,9 +4,8 @@ const path = require('path');
 const electron = require('electron');
 
 const getFilesMappings = require('../../sha_auto_update/getFileMappings.js')
-
+const server = 'http://95.216.218.179:7551';
 const isPrebuilt = !fs.existsSync(path.join(__dirname, '../../scripts/userscripts'));
-
 const basePathEnabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts') : path.join(__dirname, '../../scripts/userscripts');
 const basePathDisabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts_disabled') : path.join(__dirname, '../../scripts/userscripts_disabled');
 
@@ -185,31 +184,31 @@ checkForUpdates().then(e => {
 
 async function executeUpdate() {
     state.update.updating = true;
-    // for (const file of state.update.files) {
-    //     const url = `https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/${file}`;
-    //     const res = await fetch(url);
-    //     if (res.status >= 300) continue;
-    //     const data = await res.json();
-    //     console.log(path.join(__dirname, '../../', file));
-    //     fs.writeFileSync(path.join(__dirname, '../../', file), data);
-    //     state.update.oks++;
-    // }
+    for (const file of state.update.files) {
+        const url = server + `/static/${file}`;
+        const res = await fetch(url);
+        const data = await res.text();
+        fs.writeFileSync(path.join(__dirname, '../../', file), data);
+        state.update.oks++;
+        await new Promise(r => setTimeout(r, 400))
+    }
     state.update.completed = true;
     state.view = 1;
 }
 
+
+
 async function checkForUpdates() {
-    const reqRemoteFiles = await fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/files_sha.json');
-    if (reqRemoteFiles.status == 404) return;
+    const reqRemoteFiles = await fetch(server + '/sha');
     const remoteFiles = await reqRemoteFiles.json();
     const localFiles = getFilesMappings();
     const toUpdate = [];
     for (const file of remoteFiles) {
         const localFile = localFiles.find(e => e.path == file.path);
         if (localFile && localFile.sha == file.sha) continue;
+        console.log(file.path);
         toUpdate.push(file.path);
     }
     state.update.files = toUpdate;
     state.update.required = toUpdate.length > 0;
-    console.log(toUpdate)
 }

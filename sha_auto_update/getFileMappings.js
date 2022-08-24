@@ -45,7 +45,7 @@ function getFilesMappings() {
         const hashSum = crypto.createHash('sha256');
         hashSum.update(fileBuffer);
         const hex = hashSum.digest('hex');
-        return { path: e, sha: hex }
+        return { path: e.replace(/\\/g, '/'), sha: hex }
     });
 
     return files;
