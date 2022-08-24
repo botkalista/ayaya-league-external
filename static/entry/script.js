@@ -2,8 +2,10 @@
 const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
+const JSZip = require('jszip');
+const jszipUtils = require('jszip-utils');
+const extract = require('extract-zip')
 
-const getFilesMappings = require('../../sha_auto_update/getFileMappings.js')
 const server = 'http://95.216.218.179:7551';
 const isPrebuilt = !fs.existsSync(path.join(__dirname, '../../scripts/userscripts'));
 const basePathEnabled = isPrebuilt ? path.join(__dirname, '../../resources/app/scripts/userscripts') : path.join(__dirname, '../../scripts/userscripts');
@@ -17,10 +19,8 @@ const state = Vue.reactive({
         last: '?'
     },
     update: {
-        files: [],
-        required: false,
-        oks: 0,
-        completed: false
+        need: false,
+        percent: 0
     }
 });
 
@@ -39,7 +39,7 @@ const app = Vue.createApp({
         reloadScripts,
         saveScripts,
         loadGuide,
-        executeUpdate,
+        downloadUpdates,
         openDiscord() {
             electron.shell.openExternal('https://discord.gg/qYy8Qz4Cr5')
         },
@@ -153,62 +153,53 @@ function saveScripts() {
 
 }
 
-try {
-    fetch('https://raw.githubusercontent.com/botkalista/ayaya-league-external/master/ayaya_version')
-        .then(res => res.text()).then(e => {
-
-            if (e.startsWith('404')) {
-                state.version.last = '?';
-            } else {
-                const lastVersion = e;
-                state.version.last = lastVersion;
-            }
-
-            const versionPath = fs.existsSync('ayaya_version') ? 'ayaya_version' : 'resources/app/ayaya_version';
-            const version = fs.readFileSync(versionPath, 'utf-8');
-            state.version.current = version;
-        });
-} catch (ex) {
-    console.error(ex);
+async function checkVersion() {
+    const versionPath = fs.existsSync('ayaya_version') ? 'ayaya_version' : 'resources/app/ayaya_version';
+    const version = fs.readFileSync(versionPath, 'utf-8');
+    state.version.current = version;
+    const res = await fetch(server + '/static/ayaya_version');
+    const data = await res.text();
+    state.version.last = data;
+    state.update.need = state.version.last != state.version.current;
 }
 
 reloadScripts();
-
+document.body.style.visibility = "hidden";
 app.mount('#app');
-
-checkForUpdates().then(e => {
-    if (!state.update.required) return state.view = 1;
-    state.view = 4;
+checkVersion().then(e => {
+    state.view = 1;
+    document.body.style.visibility = "visible";
 });
 
+// checkForUpdates().then(e => {
+//     if (!state.update.required) return state.view = 1;
+//     state.view = 4;
+// });
 
-async function executeUpdate() {
-    state.update.updating = true;
-    for (const file of state.update.files) {
-        const url = server + `/static/${file}`;
-        const res = await fetch(url);
-        const data = await res.text();
-        fs.writeFileSync(path.join(__dirname, '../../', file), data);
-        state.update.oks++;
-        await new Promise(r => setTimeout(r, 400))
-    }
-    state.update.completed = true;
-    state.view = 1;
+
+async function downloadUpdates() {
+    state.view = 4;
+    const zip = new JSZip();
+    jszipUtils.getBinaryContent(server + '/static/data.zip', {
+        progress: (e) => {
+            console.log(e);
+            state.update.percent = e.percent.toFixed(0);
+        }, callback: (err, data) => {
+            zip.loadAsync(data).then(archive => {
+                archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+                    .pipe(fs.createWriteStream('update.zip'))
+                    .on('finish', async function () {
+                        const extractDir = isPrebuilt ? path.join(__dirname, '../../resources/app') : path.join(__dirname, '../../cache');
+                        await extract('update.zip', { dir: extractDir })
+                        fs.rmSync('update.zip');
+                        checkVersion();
+                        state.view = 1;
+                    });
+            });
+        }
+    })
+
 }
 
 
 
-async function checkForUpdates() {
-    const reqRemoteFiles = await fetch(server + '/sha');
-    const remoteFiles = await reqRemoteFiles.json();
-    const localFiles = getFilesMappings();
-    const toUpdate = [];
-    for (const file of remoteFiles) {
-        const localFile = localFiles.find(e => e.path == file.path);
-        if (localFile && localFile.sha == file.sha) continue;
-        console.log(file.path);
-        toUpdate.push(file.path);
-    }
-    state.update.files = toUpdate;
-    state.update.required = toUpdate.length > 0;
-}

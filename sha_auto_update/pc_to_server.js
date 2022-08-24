@@ -1,38 +1,18 @@
 
 const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-
-const fetch = require('node-fetch');
+const JSZip = require('jszip');
 const child = require('child_process');
+const getFileMappings = require('./getFileMappings.js');
 
-const getFilesMappings = require('./getFileMappings.js');
-const server = 'http://95.216.218.179:7551'
+const files = getFileMappings();
+const zip = new JSZip();
 
-main()
-async function main() {
-
-    //* Update server sha
-    await fetch(server + '/recreate_sha');
-
-    //* Get server sha
-    const resSha = await fetch(server + '/sha');
-    const shaFiles = await resSha.json();
-
-    //* Get local sha
-    const localSha = getFilesMappings();
+for (const file of files) zip.file(file.path, fs.readFileSync(file.path, 'utf8'));
 
 
-    for (const file of localSha) {
-        const rFile = shaFiles.find(e => e.path == file.path);
-        if (rFile && rFile.sha == file.sha) continue;
-        console.log('Updating', file.path);
-        await fetch(server + '/prepare_dir', {
-            headers: { file: file.path }
-        });
-        child.execSync(`scp -r ${file.path} root@95.216.218.179:/home/AyayaLeague_Server_Update/__files/${file.path}`);
-    }
-
-    //* Update server sha
-    await fetch(server + '/recreate_sha');
-}
+zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+    .pipe(fs.createWriteStream('data.zip'))
+    .on('finish', function () {
+        child.execSync(`scp -r data.zip root@95.216.218.179:/home/AyayaLeague_Server_Update/upload/data.zip`);
+        child.execSync(`scp -r ayaya_version root@95.216.218.179:/home/AyayaLeague_Server_Update/upload/ayaya_version`);
+    });

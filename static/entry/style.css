@@ -178,8 +178,21 @@ html, body {
 
 
 
+
+
+
 .guide-view {
     overflow-y: scroll;
     height: 100%;
     padding-bottom: 40px;
+}
+
+
+.badge {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: red;
+    border-radius: 1000px;
+    transform: translate(90%, -90%);
 }

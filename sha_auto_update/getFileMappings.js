@@ -3,9 +3,9 @@ const path = require('path');
 const crypto = require('crypto');
 
 const ignore = [
+    'src\\cpp',
+    'data.zip',
     'package.json',
-    'src\\cpp\\build',
-    'scripts\\userscripts',
     '.git',
     'node_modules',
     'cache',

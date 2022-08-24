@@ -64,6 +64,10 @@
                     <span class="icon" @click="openGithub()">
                         <i class="fa-brands fa-github"></i>
                     </span>
+                    <span class="icon" @click="downloadUpdates()" v-if="update.need">
+                        <div class="badge"></div>
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                    </span>
                 </div>
                 <div class="right">
                     <button class="button is-info" @click="changeView(2)"> Manage scripts </button>
@@ -115,16 +119,15 @@
 
         <div class="update-view" v-if="view==4">
 
-            <div class="title" style="text-align: center; padding: 40px"> You have an old version </div>
+            <div class="title" style="text-align: center; padding: 40px"> Downloading update </div>
 
             <div class="actions" style="display: flex; gap: 10px; flex-direction: column; align-items: center;">
-                <button class="button is-primary" @click="executeUpdate()" v-if="!update.updating" style="padding: 10px 40px;">
-                    Update now
-                </button>
-                <button class="button is-secondary" @click="view=1" v-if="!update.updating">
-                    Ignore update
-                </button>
-                <div style="font-size: 24px" v-if="update.updating && !update.completed"> Updating: {{update.oks}}/{{update.files.length}} </div>
+                <div style="font-size: 24px">
+                    Progress: {{update.percent}} %
+                </div>
+                <div class="spinner">
+                    <img src="loader.gif" alt="Loader">
+                </div>
             </div>
 
         </div>
