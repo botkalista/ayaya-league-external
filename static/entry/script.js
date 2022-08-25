@@ -148,6 +148,24 @@ function saveScripts() {
 
 }
 
+function getVersion() {
+    return new Promise(resolve => {
+        try {
+            const currentVersion = fs.readFileSync(path.join(__dirname, '../../ayaya_version'), 'utf8')
+            state.version.current = currentVersion;
+            fetch('http://95.216.218.179:7551/static/ayaya_version').then(res => res.text()).then(data => {
+                state.version.last = data;
+                resolve();
+            });
+        } catch (ex) {
+            resolve();
+        }
+    });
+}
+
 reloadScripts();
-state.view = 1;
-app.mount('#app');
+
+getVersion().then(() => {
+    state.view = 1;
+    app.mount('#app');
+});
