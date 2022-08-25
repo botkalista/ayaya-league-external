@@ -156,13 +156,14 @@ export class Entity extends CachedClass {
         return (1 / totalAttackSpeed * 1000) * result / 20;
     }
 
-    /** @deprecated - Offsets need update */
+
     get baseDrawingOffset(): number {
         return this.use('baseDrawingPos', () => {
+            const base = 0x2F01;
             const v4 = Reader.readProcessMemory(this.address + 0x2ED1, "BYTE");
-            const vTmp = Reader.readProcessMemory((this.address + 0x2ED8), "BYTE");
-            let v5 = Reader.readProcessMemory(this.address + (0x4 * vTmp) + 0x2EDC, "DWORD");
-            const vTmp2 = Reader.readProcessMemory(this.address + 0x2ED4, "DWORD");
+            const vTmp = Reader.readProcessMemory((this.address + (base + 0x7)), "BYTE");
+            let v5 = Reader.readProcessMemory(this.address + (0x4 * vTmp) + (base + 0xB), "DWORD");
+            const vTmp2 = Reader.readProcessMemory(this.address + (base + 0x3), "DWORD");
             v5 ^= ~vTmp2;
             const o1 = Reader.readProcessMemory(v5 + 0x10, "DWORD");
             const o2 = Reader.readProcessMemory(o1 + 0x4, "DWORD");
