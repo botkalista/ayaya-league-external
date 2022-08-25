@@ -1,6 +1,6 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '../LeagueReader';
-import OFFSET  from "../consts/Offsets";
+import OFFSET from "../consts/Offsets";
 import { readName } from "../StructureReader";
 
 const Reader = AyayaLeague.reader;
@@ -12,6 +12,10 @@ export class Buff extends CachedClass {
 
     private get entry() {
         return this.use('entry', () => Reader.readProcessMemory(this.address + 0x8, "DWORD"))
+    }
+
+    get type() {
+        return this.use('type', () => Reader.readProcessMemory(this.address + OFFSET.oBuffType, "BYTE"));
     }
 
     get name() {

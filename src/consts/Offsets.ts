@@ -99,6 +99,7 @@ class Offsets {
     public oBuffArray = 0x10;
     public oBuffArrayLength = 0x14;
     public oBuffSize = 0x8;
+    public oBuffType = 0x4;
 
     public oBuffName = 0x4;
     public oBuffStartTime = 0xC;
