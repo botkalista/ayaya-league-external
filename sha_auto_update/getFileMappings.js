@@ -3,18 +3,13 @@ const path = require('path');
 const crypto = require('crypto');
 
 const ignore = [
-    'src\\cpp',
-    'data.zip',
-    'package.json',
-    '.git',
-    'node_modules',
-    'cache',
-    'dump',
     'media',
-    'tests',
-    'tmpbuild',
+    'node_modules',
+    'scripts',
+    '.git',
+    'settings.json',
+    'COMMIT_EDITMSG',
     'AyayaLeague-win32',
-    'COMMIT_EDITMSG'
 ];
 
 function isIgnored(str) {
