@@ -74,7 +74,6 @@ export class UserScriptUtils extends CachedClass {
         return this.genericInRange(list, range).sort((a, b) => a.hp - b.hp)[0];
     }
 
-    /** @deprecated - Offsets need update */
     getHealthBarPosition(target: Entity) {
         const screen = this.manager.game.screenSize;
         const xFromCenter = (screen.x / 2) - target.screenPos.x;
