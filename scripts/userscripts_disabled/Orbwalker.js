@@ -3,7 +3,7 @@
 
 let lastAaTick = 0;
 let canPlayerMove = true;
-let lastWasMove = false;
+let lastWasMove = 0;
 
 /** @type {import("../UserScriptManager").UserScriptManager} */
 let manager;
@@ -46,9 +46,9 @@ async function onTick(_manager, ticks, settings) {
         lastAaTick = getTime();
         manager.game.issueOrder(target.screenPos, true);
     } else if (canMove(manager.me.windupTime) && (manager.playerState == "idle" || manager.playerState == "isCharging" || manager.playerState == undefined)) {
-        if (lastWasMove) return lastWasMove = false;
-        const pos = await manager.game.getMousePos();
-        lastWasMove = true;
+        if (lastWasMove > 0) return lastWasMove--;
+        const pos = manager.game.getMousePos();
+        lastWasMove = 2;
         manager.game.issueOrder(pos, false);
     }
 
