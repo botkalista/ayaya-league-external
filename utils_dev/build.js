@@ -11,16 +11,24 @@ const ignorePattern = `--ignore="(${ignoreFiles.join('|')})"`;
 
 const base = 'AyayaLeague-win32-ia32';
 
+function copy(path) {
+    fs.rmSync(base + `/${path}`, { force: true, recursive: true });
+    fs.copySync(`${path}`, base + `/resources/app/${path}`);
+}
+
 if (fs.existsSync(base)) {
     console.log('[build.js] Updating build\n')
-    fs.rmSync(base + '/src', { force: true, recursive: true });
-    fs.copySync('src', base + '/resources/app/src');
-    fs.rmSync(base + '/scripts', { force: true, recursive: true });
-    fs.copySync('scripts', base + '/resources/app/scripts');
-    fs.rmSync(base + '/static', { force: true, recursive: true });
-    fs.copySync('static', base + '/resources/app/static');
-    fs.rmSync(base + '/dist', { force: true, recursive: true });
-    fs.copySync('dist', base + '/resources/app/dist');
+
+    copy('scripts');
+    copy('static');
+    copy('dist');
+    copy('COPYING');
+    copy('package.json');
+    copy('package-lock.json');
+    copy('ayaya_version');
+    copy('readme.md');
+    copy('tsconfig.json');
+
     build();
     return;
 }
