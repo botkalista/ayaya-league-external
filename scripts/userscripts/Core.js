@@ -221,9 +221,12 @@ function drawDebug(ctx, manager) {
     debug('WindupTime', manager.me.windupTime);
     debug('AttackDelay', manager.me.attackDelay);
     debug('BoundingBox', manager.me.boundingBox);
-    
 
     ctx.text(debugs.join('\n'), 20, 30, 20, 255);
+
+
+    ctx.text(manager.me.buffManager.buffs.map(e => `${e.address.toString(16)} | ${e.type} | ${e.name}`).join('\n'), 300, 30, 20, 255);
+
 }
 
 
