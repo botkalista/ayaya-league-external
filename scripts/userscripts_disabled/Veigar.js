@@ -68,12 +68,12 @@ function onDraw(ctx, _manager, settings) {
     for (const thing of collectableThings) ctx.circle(thing.gamePos, 30, 40, [0, 0, 220, 90], 3);
 
     // Q counter
-    const cost = [30, 34, 40, 45, 50][manager.spell[0].level - 1];
-    const count = Math.floor(manager.me.mana / cost);
+    // const cost = [30, 34, 40, 45, 50][manager.me.spells[0].level - 1];
+    
+    // const count = Math.floor(manager.me.mana / cost);
+    // const hpbarPos = manager.utils.getHealthBarPosition(manager.me);
+    // ctx.text(count + ' Q', hpbarPos.x + 114, hpbarPos.y - 7, 14, 255);
 
-    const hpbarPos = manager.utils.getHealthBarPosition(manager.me);
-
-    ctx.text(count + ' Q', hpbarPos.x + 114, hpbarPos.y - 7, 14, 255);
 
 }
 
