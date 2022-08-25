@@ -24,17 +24,13 @@ import WebApi from './WebApi';
 
 export async function main() {
 
-    if (process.argv[2] == 'nohook') {
-        AyayaLeague.reader.setMode("DUMP");
-        AyayaLeague.reader.loadDump();
-    } else {
-        try {
-            AyayaLeague.reader.hookLeagueProcess();
-        } catch (ex) {
-            if (WindowsManager.entryWindow) WindowsManager.entryWindow.hide();
-            dialog.showMessageBoxSync({ title: 'Error', message: ex.message, type: 'error' });
-            app.exit();
-        }
+
+    try {
+        AyayaLeague.reader.hookLeagueProcess();
+    } catch (ex) {
+        if (WindowsManager.entryWindow) WindowsManager.entryWindow.hide();
+        dialog.showMessageBoxSync({ title: 'Error', message: ex.message, type: 'error' });
+        app.exit();
     }
 
     Shared.preparator = new Preparator(AyayaLeague);

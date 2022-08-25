@@ -2,7 +2,7 @@ import { app } from "electron";
 
 import { CachedClass } from "../models/CachedClass";
 
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 
 class WebApi {
 
