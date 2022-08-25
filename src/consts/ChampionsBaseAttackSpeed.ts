@@ -131,7 +131,7 @@ export const ChampionsBaseAttackSpeed = [{ "name": "Aatrox", "base": 0.651, "rat
 { "name": "Tristana", "base": 0.656, "ratio": 0.679 },
 { "name": "Trundle", "base": 0.67, "ratio": 0.67 },
 { "name": "Tryndamere", "base": 0.67, "ratio": 0.67 },
-{ "name": "Twisted Fate", "base": 0.651, "ratio": 0.651 },
+{ "name": "TwistedFate", "base": 0.651, "ratio": 0.651 },
 { "name": "Twitch", "base": 0.679, "ratio": 0.679 },
 { "name": "Udyr", "base": 0.649, "ratio": 0.65 },
 { "name": "Urgot", "base": 0.625, "ratio": 0.625 },

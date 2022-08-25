@@ -660,7 +660,7 @@ export const ChampionsWindups = [
     "modWindup": "N/A"
   },
   {
-    "champName": "Twisted Fate",
+    "champName": "TwistedFate",
     "windup": "24.4",
     "modWindup": "N/A"
   },
