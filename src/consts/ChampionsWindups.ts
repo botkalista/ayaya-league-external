@@ -375,17 +375,17 @@ export const ChampionsWindups = [
     "modWindup": "N/A"
   },
   {
-    "champName": "Master Yi",
+    "champName": "MasterYi",
     "windup": "24.38",
     "modWindup": "N/A"
   },
   {
-    "champName": "Mega Gnar",
+    "champName": "MegaGnar",
     "windup": "14.6",
     "modWindup": "N/A"
   },
   {
-    "champName": "Miss Fortune",
+    "champName": "MissFortune",
     "windup": "14.8",
     "modWindup": "N/A"
   },
