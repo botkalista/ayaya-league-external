@@ -1,7 +1,7 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '..//LeagueReader';
 import { readName } from "../StructureReader";
-import { OFFSET } from "../consts/Offsets";
+import OFFSET  from "../consts/Offsets";
 
 
 const Reader = AyayaLeague.reader;

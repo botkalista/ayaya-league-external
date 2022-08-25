@@ -10,7 +10,7 @@ import { Vector2, Vector3, Vector4 } from '../src/models/Vector';
 import { UserScriptUtils } from './UserScriptUtils'
 
 import * as SAT from 'sat';
-import { OFFSET } from '../src/consts/Offsets';
+import OFFSET  from '../src/consts/Offsets';
 
 export type PlayerState = "isCasting" | "isMoving" | "isAttacking" | "isEvading" | "isCharging" | "isChanneling" | "idle";
 

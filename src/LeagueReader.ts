@@ -1,6 +1,6 @@
 
 import Reader from './MemoryReader';
-import { OFFSET } from './consts/Offsets'
+import OFFSET  from './consts/Offsets'
 import { Vector2 } from './models/Vector';
 import { EntityReadOptions, readMap, readMatrix, readVTable } from './StructureReader';
 import * as math from 'mathjs'

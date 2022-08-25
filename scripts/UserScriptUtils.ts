@@ -42,7 +42,7 @@ export class UserScriptUtils extends CachedClass {
     }
 
     calculateMagicDamage(source: Entity, target: Entity, damage: number) {
-        const A = target.magicResistTotal;
+        const A = target.magicResist;
         const B = source.magicPenFlat;
         const C = source.magicPenPercent;
 
