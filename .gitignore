@@ -10,3 +10,5 @@ AyayaLeague-win32-ia32
 AyayaLeague-win32-ia32.zip
 tests
 data.zip
+scripts/testing
+antiban.bat
