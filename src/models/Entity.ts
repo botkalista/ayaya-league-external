@@ -1,7 +1,6 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '../LeagueReader';
 import { readName } from "../StructureReader";
-import { OFFSET } from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
 import { ActiveSpellEntry } from './ActiveSpellEntry';
 import { BuffManager } from './BuffManager';
@@ -9,6 +8,7 @@ import { factoryFromArray, worldToScreen, getChampionWindup, getChampionRadius, 
 import { Spell } from "./Spell";
 import * as SAT from 'sat';
 import { AiManager } from './AiManager';
+import OFFSET from '../consts/Offsets';
 
 const Reader = AyayaLeague.reader;
 
@@ -33,31 +33,37 @@ export class Entity extends CachedClass {
         return this.use('level', () => Reader.readProcessMemory(this.address + OFFSET.oObjLevel, "DWORD"));
     }
     get ad(): number {
-        return this.use('ad', () => Reader.readProcessMemory(this.address + OFFSET.oObjAD, "FLOAT"));
+        return this.use('ad', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatAttackRange, "FLOAT"));
+
     }
-    get lethality(): number {
-        return this.use('lethality', () => Reader.readProcessMemory(this.address + OFFSET.oObjLethality, "FLOAT"));
-    }
-    get armorPenPercent(): number {
-        return this.use('armorPenPercent', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmorPen, "FLOAT"));
-    }
+
     get armor(): number {
         return this.use('armor', () => Reader.readProcessMemory(this.address + OFFSET.oObjArmor, "FLOAT"));
     }
     get ap(): number {
-        return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjAbilityPower, "FLOAT"));
+        return this.use('ap', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatAp, "FLOAT"));
     }
+
+
+
+    // ----- Penetrations -----
     get magicPenFlat(): number {
-        return this.use('magicPenFlat', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicPen, "FLOAT"));
+        return this.use('magicPenFlat', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatMagicPenFlat, "FLOAT"));
     }
     get magicPenPercent(): number {
-        return this.use('magicPenPercent', () => (1 - Reader.readProcessMemory(this.address + OFFSET.oObjMagicPenMulti, "FLOAT")) * 100);
+        return this.use('magicPenPercent', () => (1 - Reader.readProcessMemory(this.address + OFFSET.oObjStatMagicPenPerc, "FLOAT")) * 100);
     }
-    get magicResistTotal(): number {
-        return this.use('magicResistTotal', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicRes, "FLOAT"));
+    get armorPenPercent(): number {
+        return this.use('armorPenPercent', () => (1 - Reader.readProcessMemory(this.address + OFFSET.oObjStatArmorPen, "FLOAT")) * 100);
     }
-    get magicResistBonus(): number {
-        return this.use('magicResistBonus', () => Reader.readProcessMemory(this.address + OFFSET.oObjBonusMagicRes, "FLOAT"));
+    get lethality(): number {
+        return this.use('lethality', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatLethality, "FLOAT"));
+    }
+
+
+
+    get magicResist(): number {
+        return this.use('magicResist', () => Reader.readProcessMemory(this.address + OFFSET.oObjMagicRes, "FLOAT"));
     }
     get hp(): number {
         return this.use('hp', () => Reader.readProcessMemory(this.address + OFFSET.oObjHealth, "FLOAT"));
@@ -72,7 +78,7 @@ export class Entity extends CachedClass {
         return this.use('maxMana', () => Reader.readProcessMemory(this.address + OFFSET.oObjMaxMana, "FLOAT"));
     }
     get movSpeed(): number {
-        return this.use('movSpeed', () => Reader.readProcessMemory(this.address + OFFSET.oObjMovSpeed, "FLOAT"));
+        return this.use('movSpeed', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatMovSpeed, "FLOAT"));
     }
     get visible(): number {
         return this.use('visible', () => Reader.readProcessMemory(this.address + OFFSET.oObjVisible, "BOOL"));
@@ -84,7 +90,7 @@ export class Entity extends CachedClass {
         return this.use('targetable', () => Reader.readProcessMemory(this.address + OFFSET.oObjTargetable, "BOOL"));
     }
     get range(): number {
-        return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjAttackRange, "FLOAT"));
+        return this.use('range', () => Reader.readProcessMemory(this.address + OFFSET.oObjStatAttackRange, "FLOAT"));
     }
     get team(): number {
         return this.use('team', () => Reader.readProcessMemory(this.address + OFFSET.oObjTeam, "DWORD"));
@@ -150,12 +156,14 @@ export class Entity extends CachedClass {
         return (1 / totalAttackSpeed * 1000) * result / 20;
     }
 
+
     get baseDrawingOffset(): number {
         return this.use('baseDrawingPos', () => {
+            const base = 0x2F01;
             const v4 = Reader.readProcessMemory(this.address + 0x2ED1, "BYTE");
-            const vTmp = Reader.readProcessMemory((this.address + 0x2ED8), "BYTE");
-            let v5 = Reader.readProcessMemory(this.address + (0x4 * vTmp) + 0x2EDC, "DWORD");
-            const vTmp2 = Reader.readProcessMemory(this.address + 0x2ED4, "DWORD");
+            const vTmp = Reader.readProcessMemory((this.address + (base + 0x7)), "BYTE");
+            let v5 = Reader.readProcessMemory(this.address + (0x4 * vTmp) + (base + 0xB), "DWORD");
+            const vTmp2 = Reader.readProcessMemory(this.address + (base + 0x3), "DWORD");
             v5 ^= ~vTmp2;
             const o1 = Reader.readProcessMemory(v5 + 0x10, "DWORD");
             const o2 = Reader.readProcessMemory(o1 + 0x4, "DWORD");

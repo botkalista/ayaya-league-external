@@ -16,6 +16,7 @@ function setup() {
         { type: 'check', default: false, text: 'Show missiles' },
         { type: 'check', default: false, text: 'Show wards' },
         { type: 'check', default: true, text: 'Show Discord' },
+        { type: 'check', default: true, text: 'Show Debug' },
     ];
 
     return core_settings;
@@ -37,6 +38,8 @@ function onDraw(ctx, manager, settings) {
     if (settings[5].value == true) {
         ctx.text('Join the AyayaLeague discord: https://discord.gg/qYy8Qz4Cr5', 50, 50, 22, 255);
     }
+
+    if (settings[6].value == true) drawDebug(ctx, manager);
 }
 
 
@@ -44,7 +47,7 @@ function onDraw(ctx, manager, settings) {
  * @param {DrawContext} ctx 
  * @param {Manager} manager 
  */
-function drawWards(ctx, manager, color) {
+function drawWards(ctx, manager) {
 
     const wards = manager.wards.enemies.filter(e => e.hp > 0);
 
@@ -92,18 +95,14 @@ function drawWards(ctx, manager, color) {
     //     ctx.circle(ward.gamePos, 20, 10, [0, 220, 0], 2);
     // }
 }
-
 /**
  * @param {DrawContext} ctx 
  * @param {Manager} manager 
  */
 function drawPlayerRange(ctx, manager, color) {
-
-    ctx.text(JSON.stringify(manager.me.gamePos), 400, 400, 22, 255)
     const me = manager.me;
     ctx.circle(me.gamePos, me.range, 50, color, 2);
 }
-
 /**
  * @param {DrawContext} ctx 
  * @param {Manager} manager 
@@ -114,8 +113,6 @@ function drawEnemiesRange(ctx, manager) {
         ctx.circle(enemy.gamePos, enemy.range, 50, 120, 2);
     }
 }
-
-
 /**
  * @param {DrawContext} ctx 
  * @param {Manager} manager 
@@ -182,5 +179,57 @@ function drawMissiles(ctx, manager) {
 
 
 }
+
+
+
+/**
+ * @param {DrawContext} ctx 
+ * @param {Manager} manager 
+ */
+function drawDebug(ctx, manager) {
+    const debugs = [];
+    function debug(str, val) { debugs.push(`${str}: ${val}`) }
+
+    debug('Addr', '0x' + (manager.me.address).toString(16));
+    debug('----------', '');
+    debug('Time', manager.game.time);
+    debug('----------', '');
+    debug('Name', manager.me.name);
+    debug('Level', manager.me.level);
+    debug('----------', '');
+    debug('Ad', manager.me.ad);
+    debug('Ap', manager.me.ap);
+    debug('Armor', manager.me.armor);
+    debug('Mr', manager.me.magicResist);
+    debug('----------', '');
+    debug('Hp', manager.me.hp);
+    debug('MaxHp', manager.me.maxHp);
+    debug('Mana', manager.me.mana);
+    debug('MaxMana', manager.me.maxMana);
+    debug('----------', '');
+    debug('Leth', manager.me.lethality);
+    debug('ArmorPen', manager.me.armorPenPercent);
+    debug('MPen', manager.me.magicPenFlat);
+    debug('MPen%', manager.me.magicPenPercent);
+    debug('----------', '');
+    debug('MovSpeed', manager.me.movSpeed);
+    debug('Range', manager.me.range);
+    debug('----------', '');
+    debug('Team', manager.me.team);
+    debug('Visible', manager.me.visible);
+    debug('Dead', manager.me.dead);
+    debug('WindupTime', manager.me.windupTime);
+    debug('AttackDelay', manager.me.attackDelay);
+    debug('BoundingBox', manager.me.boundingBox);
+
+    ctx.text(debugs.join('\n'), 20, 30, 20, 255);
+
+
+    ctx.text(manager.me.buffManager.buffs.map(e => `${e.address.toString(16)} | ${e.type} | ${e.name}`).join('\n'), 300, 30, 20, 255);
+
+}
+
+
+
 
 module.exports = { setup, onDraw }

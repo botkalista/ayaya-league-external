@@ -2,11 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
-// const JSZip = require('jszip');
-// const jszipUtils = require('jszip-utils');
-// const extract = require('extract-zip')
 
-const server = 'http://95.216.218.179:7551';
 const basePathEnabled = path.join(__dirname, '../../scripts/userscripts');
 const basePathDisabled = path.join(__dirname, '../../scripts/userscripts_disabled');
 
@@ -89,7 +85,7 @@ function loadGuide() {
         setTimeout(() => {
             console.log('HIGHLIGHT')
             hljs.highlightAll();
-        }, 100);
+        }, 50);
     });
 
 }
@@ -152,48 +148,24 @@ function saveScripts() {
 
 }
 
-async function checkVersion() {
-    const versionPath = fs.existsSync('ayaya_version') ? 'ayaya_version' : 'resources/app/ayaya_version';
-    const version = fs.readFileSync(versionPath, 'utf-8');
-    state.version.current = version;
-    const res = await fetch(server + '/static/ayaya_version');
-    const data = await res.text();
-    state.version.last = data;
-    state.update.need = state.version.last != state.version.current;
+function getVersion() {
+    return new Promise(resolve => {
+        try {
+            const currentVersion = fs.readFileSync(path.join(__dirname, '../../ayaya_version'), 'utf8')
+            state.version.current = currentVersion;
+            fetch('http://95.216.218.179:7551/static/ayaya_version').then(res => res.text()).then(data => {
+                state.version.last = data;
+                resolve();
+            });
+        } catch (ex) {
+            resolve();
+        }
+    });
 }
 
 reloadScripts();
-document.body.style.visibility = "hidden";
-app.mount('#app');
-checkVersion().then(e => {
+
+getVersion().then(() => {
     state.view = 1;
-    document.body.style.visibility = "visible";
+    app.mount('#app');
 });
-
-// async function downloadUpdates() {
-//     state.view = 4;
-//     const zip = new JSZip();
-//     jszipUtils.getBinaryContent(server + '/static/data.zip', {
-//         progress: (e) => {
-//             console.log(e);
-//             state.update.percent = e.percent.toFixed(0);
-//         }, callback: (err, data) => {
-//             zip.loadAsync(data).then(archive => {
-//                 archive.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-//                     .pipe(fs.createWriteStream('update.zip'))
-//                     .on('finish', async function () {
-//                         const extractDir = path.join(__dirname, '../../');
-//                         await extract('update.zip', { dir: extractDir })
-//                         fs.rmSync('update.zip');
-//                         checkVersion();
-//                         state.update.need = 0;
-//                         state.view = 1;
-//                     });
-//             });
-//         }
-//     })
-
-// }
-
-
-

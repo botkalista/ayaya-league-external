@@ -25,26 +25,26 @@ export function onMessage<T>(name: string, cb: (e: IpcMainEvent, message: T) => 
 export function registerHandlers() {
 
     onMessage<never>('closeAyayaLeague', (e, data) => {
-        try {
-            app.exit();
-        } catch (ex) {
-            console.error(ex);
-        }
+        try { app.exit() } catch (ex) { console.error(ex) }
     });
 
     onMessage<never>('startAyayaLeague', (e, data) => {
         try {
 
             WindowsManager.entryWindow.hide();
+            
             const leagueProcess = AyayaLeague.reader.memInstance.getProcesses().find(e => {
                 return e.szExeFile == 'League of Legends.exe'
             });
+            
             if (!leagueProcess) {
                 dialog.showErrorBox('Not in game', 'You need to be in a game before starting AyayaLeague')
                 WindowsManager.entryWindow.show();
-            } else {
-                main();
+                return;
             }
+
+            main();
+
         } catch (ex) {
             console.error(ex);
         }
@@ -60,8 +60,6 @@ export function registerHandlers() {
         }
         e.returnValue = JSON.stringify(Shared.drawContext.__getCommands());
     });
-
-
 
     onMessage<any[]>('updateSettings', (e, data) => {
         setSettings(data);

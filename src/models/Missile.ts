@@ -1,5 +1,5 @@
 import AyayaLeague from '../LeagueReader';
-import { OFFSET } from "../consts/Offsets";
+import OFFSET  from "../consts/Offsets";
 import { Vector2, Vector3 } from "./Vector";
 import { worldToScreen } from "../utils/Utils";
 import { CachedClass } from './CachedClass';

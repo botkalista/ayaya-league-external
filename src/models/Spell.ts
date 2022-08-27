@@ -1,7 +1,7 @@
 import { CachedClass } from "./CachedClass";
 import AyayaLeague from '..//LeagueReader';
 import { readName } from "../StructureReader";
-import { OFFSET } from "../consts/Offsets";
+import OFFSET from "../consts/Offsets";
 
 
 const Reader = AyayaLeague.reader;
@@ -26,9 +26,20 @@ export class Spell extends CachedClass {
         });
     }
 
+
+    get infoName2() {
+        return this.use('infoName2', () => Reader.readProcessMemory(this.info + OFFSET.oSpellInfoName + 0x14, "STR"))
+    }
     get infoName() {
         return this.use('infoName', () => Reader.readProcessMemory(this.info + OFFSET.oSpellInfoName, "STR"))
     }
+    get infoDataName() {
+        return this.use('infoDataName', () => Reader.readProcessMemory(this.data + OFFSET.oSpellInfoDataName, "STR"))
+    }
+    get infoDataMissileName() {
+        return this.use('infoDataMissileName', () => Reader.readProcessMemory(this.data + OFFSET.oSpellInfoDataMissileName, "STR"))
+    }
+
 
     get readyAt(): number {
         return this.use('readyAt', () => Reader.readProcessMemory(this.spellbook + OFFSET.oSpellReadyAt, "FLOAT"));
