@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-<img src="https://github.com/botkalista/ayaya-league-external/blob/master/media/entry_window.png?raw=true" alt="AyayaLeagueLogo" width="512">
+<img src="https://user-images.githubusercontent.com/42075940/187264788-c4c74bcb-2912-41ee-a0b9-c985741fff04.jpg" alt="AyayaLeagueLogo" width="512">
 
 **EVERYTHING CAN CHANGE AT ANY TIME SINCE THIS IS STILL AN ALPHA VERSION**
 
@@ -527,14 +527,3 @@ https://user-images.githubusercontent.com/42075940/183676793-7bb93d23-a154-4641-
 
 https://user-images.githubusercontent.com/42075940/183676831-09139271-4fa7-4564-ad05-5185b04ba860.mp4
 
-> Cooldown tracker
-
-<img src="https://github.com/botkalista/ayaya-league-external/blob/master/media/cooldown_tracker.png?raw=true"></img>
-
-> Settings window
-
-<img src="https://github.com/botkalista/ayaya-league-external/blob/master/media/settings_window.png?raw=true"></img>
-
-> UserScript example
-
-<img src="https://github.com/botkalista/ayaya-league-external/blob/master/media/user_scripts.png?raw=true"></img>
