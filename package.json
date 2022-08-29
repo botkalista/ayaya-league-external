@@ -1,0 +1,24 @@
+{
+  "name": "ayaya-league-external",
+  "version": "2.0.0",
+  "description": "External script platform for League of Legends",
+  "main": "src/index.js",
+  "scripts": {
+    "clean": "cd cpp/ayaya-winapi && node-gyp clean",
+    "configure": "cd cpp/ayaya-winapi && node-gyp configure",
+    "build": "cd cpp/ayaya-winapi && node-gyp build"
+  },
+  "keywords": [],
+  "author": "Emily",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "@types/sat": "^0.0.31",
+    "node-gyp": "^9.1.0"
+  },
+  "dependencies": {
+    "mathjs": "^11.1.0",
+    "node-addon-api": "^5.0.0",
+    "sat": "^0.9.0"
+  }
+}

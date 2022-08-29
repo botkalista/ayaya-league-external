@@ -1,0 +1,10 @@
+node_modules
+.vscode
+Release/obj
+**/ayaya-winapi/build/Release/obj
+**/ayaya-winapi/build/Release/AyayaWinapiWrapper.exp
+**/ayaya-winapi/build/Release/AyayaWinapiWrapper.iobj
+**/ayaya-winapi/build/Release/AyayaWinapiWrapper.ipdb
+**/ayaya-winapi/build/Release/AyayaWinapiWrapper.lib
+**/ayaya-winapi/build/Release/AyayaWinapiWrapper.pdb
+**/ayaya-winapi/build/Release/obj
