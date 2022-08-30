@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "CommonJS",
+    "lib": ["ES2016", "DOM"],
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "outDir": "dist"
+  },
+  "include": ["./src/index.ts"],
+  "exclude": ["node_modules"]
+}

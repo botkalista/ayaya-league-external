@@ -2,8 +2,10 @@
   "name": "ayaya-league-external",
   "version": "2.0.0",
   "description": "External script platform for League of Legends",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
+    "start": "npm run compile && electron dist/index.js",
+    "compile": "tsc --project tsconfig.json",
     "clean": "cd cpp/ayaya-winapi && node-gyp clean",
     "configure": "cd cpp/ayaya-winapi && node-gyp configure",
     "build": "cd cpp/ayaya-winapi && node-gyp build"
@@ -14,9 +16,11 @@
   "devDependencies": {
     "@types/node": "^18.7.13",
     "@types/sat": "^0.0.31",
+    "electron": "^20.1.0",
     "node-gyp": "^9.1.0"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "mathjs": "^11.1.0",
     "node-addon-api": "^5.0.0",
     "sat": "^0.9.0"
