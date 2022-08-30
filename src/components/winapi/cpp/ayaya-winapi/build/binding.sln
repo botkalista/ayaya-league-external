@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AyayaWinapiWrapper", "AyayaWinapiWrapper.vcxproj", "{DB6C4FC3-AD22-C564-264A-ADAF76F83517}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AyayaWinapiWrapper", "AyayaWinapiWrapper.vcxproj", "{93E2CB41-B246-D640-1841-5379E9F2C615}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,10 +8,10 @@ Global
 		Debug|Win32 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB6C4FC3-AD22-C564-264A-ADAF76F83517}.Release|Win32.ActiveCfg = Release|Win32
-		{DB6C4FC3-AD22-C564-264A-ADAF76F83517}.Release|Win32.Build.0 = Release|Win32
-		{DB6C4FC3-AD22-C564-264A-ADAF76F83517}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DB6C4FC3-AD22-C564-264A-ADAF76F83517}.Debug|Win32.Build.0 = Debug|Win32
+		{93E2CB41-B246-D640-1841-5379E9F2C615}.Release|Win32.ActiveCfg = Release|Win32
+		{93E2CB41-B246-D640-1841-5379E9F2C615}.Release|Win32.Build.0 = Release|Win32
+		{93E2CB41-B246-D640-1841-5379E9F2C615}.Debug|Win32.ActiveCfg = Debug|Win32
+		{93E2CB41-B246-D640-1841-5379E9F2C615}.Debug|Win32.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

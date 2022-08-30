@@ -1,5 +1,5 @@
 
-export declare enum DataType {
+export enum DataType {
     BYTE = "byte",
     INT = "int",
     INT32 = "int32",

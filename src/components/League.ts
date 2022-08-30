@@ -29,6 +29,10 @@ class League {
         this.process = winapi.reader.openProcess('League of Legends.exe');
     }
 
+    closeLeagueProcess() {
+        this.process = undefined;
+    }
+
 
 }
 

@@ -36,9 +36,9 @@ html, body, #app {
 
     user-select: none;
 
-    background: rgba(70, 69, 67, 0.4);
+    background: rgba(70, 69, 67, 0.8);
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
@@ -114,7 +114,7 @@ html, body, #app {
 }
 
 .setting:not(:first-child) {
-    border-top: 1px solid rgba(90, 88, 87, 0.4);
+    border-top: 1px solid rgba(90, 88, 87, 0.5);
 }
 
 /* SWITCH STYLE */

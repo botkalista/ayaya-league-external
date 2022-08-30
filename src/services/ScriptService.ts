@@ -4,6 +4,9 @@ import * as path from 'path';
 
 import * as vm from 'vm';
 
+import Manager from '../models/main/Manager';
+import DrawService from './DrawService';
+
 
 type Script = {
     script: vm.Script,
@@ -25,7 +28,7 @@ export async function loadScripts() {
         const fns: { [key: string]: vm.Script } = {};
         for (const fn in res) {
             const fnText = res[fn].toString();
-            fns[fn] = new vm.Script(fnText + `\n${fn}()`);
+            fns[fn] = new vm.Script(fnText + `\n${fn}();`);
         }
         scripts.push({ script, name: scriptPath, path, fns });
     }
@@ -33,4 +36,13 @@ export async function loadScripts() {
 
 export function getScripts() {
     return scripts;
+}
+
+
+export function executeFunction(functionName: string) {
+    for (const script of scripts) {
+        const fn = script.fns[functionName];
+        if (!fn) continue;
+        fn.runInNewContext({ console, manager: Manager, ctx: DrawService });
+    }
 }

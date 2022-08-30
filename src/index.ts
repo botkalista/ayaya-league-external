@@ -1,12 +1,16 @@
-
-import * as Reader from './components/winapi/Winapi';
+console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node, process.arch);
 
 import * as ElectronRemote from '@electron/remote/main';
 ElectronRemote.initialize();
 
-import { app, BrowserWindow, screen } from 'electron';
-import * as path from 'path';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
+
+import League from './components/League';
 import Watcher from './services/LeagueWatcherService';
+import DrawService from './services/DrawService';
+
+import * as path from 'path';
+import * as ScriptService from './services/ScriptService';
 
 app.whenReady().then(start);
 
@@ -40,11 +44,45 @@ function createOverlay() {
     return win;
 }
 
-function start() {
+async function start() {
 
     const win = createOverlay();
 
+    DrawService.attachOverlay(win);
+
+    await ScriptService.loadScripts();
+
     Watcher.startLoopCheck();
+
+    let onTickExecutor;
+    let onDrawExecutor;
+
+    ipcMain.on('drawingContext', (e, args) => {
+        if (!Watcher.isRunning) return;
+        ScriptService.executeFunction('onDraw');
+        e.returnValue = DrawService.flushContext();
+    });
+
+    Watcher.onChange = (isRunning: boolean) => {
+        console.log('CHANGED', isRunning)
+
+        if (isRunning) {
+
+            League.openLeagueProcess();
+
+            ScriptService.executeFunction('setup');
+
+            onTickExecutor = setInterval(() => {
+                ScriptService.executeFunction('onTick');
+            }, 30);
+
+        } else {
+            League.closeLeagueProcess();
+            clearInterval(onTickExecutor);
+            clearInterval(onDrawExecutor);
+        }
+
+    }
 
 
 }

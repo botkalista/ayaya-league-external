@@ -3,7 +3,7 @@ import { Game } from '../primary/Game';
 
 import League from '../../components/League';
 import Offsets from '../../components/Offsets';
-import math from 'mathjs';
+import * as math from 'mathjs';
 
 import * as ManagerUtils from './ManagerUtils';
 

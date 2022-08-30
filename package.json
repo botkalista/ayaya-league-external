@@ -4,25 +4,26 @@
   "description": "External script platform for League of Legends",
   "main": "src/index.ts",
   "scripts": {
-    "start": "npm run compile && electron dist/index.js",
+    "start": "npm run compile && npm run compile:cp && electron dist/index.js",
     "compile": "tsc --project tsconfig.json",
-    "clean": "cd cpp/ayaya-winapi && node-gyp clean",
-    "configure": "cd cpp/ayaya-winapi && node-gyp configure",
-    "build": "cd cpp/ayaya-winapi && node-gyp build"
+    "build": "cd src/components/winapi/cpp/ayaya-winapi && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
+    "compile:cp": "node dev/copy_files.js"
   },
   "keywords": [],
   "author": "Emily",
   "license": "GPL-3.0-or-later",
-  "devDependencies": {
-    "@types/node": "^18.7.13",
-    "@types/sat": "^0.0.31",
-    "electron": "^20.1.0",
-    "node-gyp": "^9.1.0"
-  },
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "mathjs": "^11.1.0",
     "node-addon-api": "^5.0.0",
     "sat": "^0.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "@types/sat": "^0.0.31",
+    "electron": "^20.0.1",
+    "electron-builder": "^23.3.3",
+    "electron-packager": "^15.5.1",
+    "node-gyp": "^9.1.0"
   }
 }

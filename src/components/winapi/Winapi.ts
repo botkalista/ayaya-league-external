@@ -12,8 +12,10 @@ import type { TriggerType } from "./typings/enums/TriggerType";
 
 import { Vector2 } from '../../models/Vector';
 
-const mem = require('./cpp/memoryjs/memoryjs.node');
-const winapi = require('./cpp/ayaya-winapi/build/Release/AyayaWinapiWrapper.node');
+import * as path from 'path';
+
+const mem = require(path.join(__dirname, './cpp/memoryjs/memoryjs.node'));
+const winapi = require(path.join(__dirname, './cpp/ayaya-winapi/build/Release/AyayaWinapiWrapper.node'));
 
 class Winapi {
     get reader() { return reader; }
