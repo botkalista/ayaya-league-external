@@ -29,10 +29,10 @@
 
 
     <div id="app">
-        <div class="appbar" style="margin: 15px;">
+        <!-- <div class="appbar" style="margin: 15px;">
             <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-gear"></i>
             <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-scroll"></i>
-        </div>
+        </div> -->
 
         <div class="settings">
             <div class="picker">
@@ -51,7 +51,7 @@
                                 <div class="setting-text">{{e.text}}</div>
                                 <div class="setting-value">
                                     <el-switch :class="{'switch-style-alt': e.style == 2}" v-if="e.type=='toggle'"
-                                        v-model="e.value">
+                                        v-model="e.value" @change="updateSettings(script, s, e)">
                                     </el-switch>
                                 </div>
                             </div>
@@ -59,6 +59,17 @@
 
                     </template>
                 </template>
+
+
+                <div class="settings-title"> Debug </div>
+                <div class="settings-content">
+                    <div class="setting">
+                        <div class="setting-text"> Reload scripts </div>
+                        <div class="setting-value" style="padding: 6px;">
+                            <el-button @click="reloadScripts($event)" type="primary" plain> Reload scripts </el-button>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>

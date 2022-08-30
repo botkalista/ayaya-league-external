@@ -1,4 +1,6 @@
 
+const { ipcRenderer } = require('electron');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -22,14 +24,27 @@ const app = Vue.createApp({
     data() { return state },
     methods: {
         forwardEvents,
-        toggleSettings
+        toggleSettings,
+        updateSettings,
+        reloadScripts,
     }
 });
+
+
+function reloadScripts(event) {
+    ipcRenderer.send('reloadScripts');
+}
+
+function updateSettings(script, s, e) {
+    const name = script.name;
+    const id = e.id;
+    const value = e.value;
+    ipcRenderer.send('settings', { scriptName: name, id, value })
+}
 
 function toggleSettings() {
     const settingsWindow = document.getElementsByClassName('settings')[0];
     settingsWindow.classList.toggle('anim_enter');
-
 }
 
 app.component('test', {
@@ -38,3 +53,8 @@ app.component('test', {
 
 app.use(ElementPlus);
 app.mount('#app');
+
+
+ipcRenderer.on('scripts', (e, scripts) => {
+    state.scripts = scripts;
+});

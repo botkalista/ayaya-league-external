@@ -37,15 +37,15 @@ class Manager extends CachedClass {
 
     prepareForLoop() {
         this.dispose();
-
+        if (!League.isOpen()) return;
         this.__internal.gameTime = this.game.time;
         this.__internal.myTeam = this.me.team;
         this.__internal.nmeTeam = this.__internal.myTeam == 100 ? 200 : 100;
 
-        this.__internal.renderer = this.__internal.renderer ||
+        this.__internal.renderer = this.__internal.renderer != 0 ? this.__internal.renderer :
             League.read<number>(Offsets.oRenderer, DataType.DWORD, true);
 
-        this.__internal.screen = this.__internal.screen ||
+        this.__internal.screen = this.__internal.screen && this.__internal.screen.x > 0 ? this.__internal.screen :
             new Vector2(
                 League.read(this.__internal.renderer + Offsets.oGameWindowWidth, DataType.DWORD),
                 League.read(this.__internal.renderer + Offsets.oGameWindowHeight, DataType.DWORD)

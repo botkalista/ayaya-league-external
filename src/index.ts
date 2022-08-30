@@ -8,6 +8,7 @@ import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import League from './components/League';
 import Watcher from './services/LeagueWatcherService';
 import DrawService from './services/DrawService';
+import Manager from './models/main/Manager';
 
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
@@ -48,20 +49,51 @@ async function start() {
 
     const win = createOverlay();
 
-    DrawService.attachOverlay(win);
+
+    ipcMain.on('drawingContext', (e, args) => {
+        if (!Watcher.isRunning) {
+            e.returnValue = '[]';
+            return;
+        }
+        ScriptService.executeFunction('onDraw');
+        e.returnValue = DrawService.flushContext();
+    });
+
+
+    await new Promise(resolve => win.webContents.on('did-finish-load', resolve));
+
 
     await ScriptService.loadScripts();
+
+
+    function sendScripts() {
+        win.webContents.send('scripts', ScriptService.getScripts().map(e => {
+            return { name: e.name, settings: e.settings }
+        }));
+    }
+
+    sendScripts();
+
+    ipcMain.on('settings', (e, { scriptName, id, value }) => {
+        const settings = ScriptService.getScripts().find(s => s.name == scriptName).settings;
+        const target = ScriptService.getSettingRaw(settings, id);
+        if (!target) return;
+        target.value = value;
+    });
+
+    ipcMain.on('reloadScripts', () => {
+        ScriptService.reloadScripts();
+        sendScripts();
+    });
+
+    ipcMain.on('settingsRequest', () => {
+        sendScripts();
+    });
 
     Watcher.startLoopCheck();
 
     let onTickExecutor;
-    let onDrawExecutor;
-
-    ipcMain.on('drawingContext', (e, args) => {
-        if (!Watcher.isRunning) return;
-        ScriptService.executeFunction('onDraw');
-        e.returnValue = DrawService.flushContext();
-    });
+    let readDataInterval;
 
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
@@ -73,16 +105,22 @@ async function start() {
             ScriptService.executeFunction('setup');
 
             onTickExecutor = setInterval(() => {
+                Manager.prepareForLoop();
                 ScriptService.executeFunction('onTick');
             }, 30);
 
+            win.webContents.send('startLoop');
+
         } else {
+            win.webContents.send('stopLoop');
             League.closeLeagueProcess();
             clearInterval(onTickExecutor);
-            clearInterval(onDrawExecutor);
+            clearInterval(readDataInterval);
         }
 
     }
+
+
 
 
 }

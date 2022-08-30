@@ -12,6 +12,7 @@ class League {
     private process: Process;
 
     read<T>(address: number, type: DataType, fromBase = false): T {
+        if (!this.process) return;
         return winapi.reader
             .readMemory(this.process.handle,
                 address + (fromBase ? this.process.modBaseAddr : 0),
@@ -20,9 +21,14 @@ class League {
     }
 
     readBuffer(address: number, size: number, fromBase = false) {
+        if (!this.process) return;
         return winapi.reader.readBuffer(this.process.handle,
             address + (fromBase ? this.process.modBaseAddr : 0),
             size);
+    }
+
+    isOpen() {
+        return this.process != undefined;
     }
 
     openLeagueProcess() {
