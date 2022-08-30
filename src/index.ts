@@ -4,11 +4,12 @@ import * as Reader from './components/winapi/Winapi';
 import * as ElectronRemote from '@electron/remote/main';
 ElectronRemote.initialize();
 
-import * as path from 'path';
 import { app, BrowserWindow, screen } from 'electron';
+import * as path from 'path';
+import Watcher from './services/LeagueWatcherService';
 
+app.whenReady().then(start);
 
-    
 function createOverlay() {
 
     const win = new BrowserWindow({
@@ -39,9 +40,13 @@ function createOverlay() {
     return win;
 }
 
-app.whenReady().then(() => {
+function start() {
 
-    createOverlay();
+    const win = createOverlay();
 
-});
+    Watcher.startLoopCheck();
+
+
+}
+
 
