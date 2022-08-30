@@ -5,6 +5,7 @@ html, body, #app {
     padding: 0;
     overflow: hidden;
     background-color: transparent;
+    font-family: "Roboto";
 }
 
 .appbar {
@@ -21,4 +22,104 @@ html, body, #app {
     font-size: 35px;
     color: rgb(105, 105, 105);
     cursor: pointer;
+}
+
+/*  SETTING WINDOW */
+
+.settings {
+    position: absolute;
+    right: 0;
+    top: 20vh;
+    width: 350px;
+    height: 500px;
+    transition: all 0.5s ease;
+
+    user-select: none;
+
+    background: rgba(70, 69, 67, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.settings .content {
+    padding: 16px 0;
+    width: 100%;
+    height: 100%;
+}
+
+.settings .picker {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 2px 3px;
+}
+
+.settings .picker i {
+    font-size: 30px;
+    color: gray;
+    transform: scaleY(140%) translateX(-150%) rotateY(180deg);
+    cursor: pointer;
+}
+
+.settings .picker i:hover {
+    color: rgb(165, 165, 165);
+}
+
+.settings.anim_enter {
+    transform: translateX(100%);
+}
+
+.settings.anim_enter .picker i {
+    transform: scaleY(140%) translateX(-150%);
+}
+
+/* SETTINGS CONTENT */
+
+
+.settings-title {
+    font-weight: bold;
+    color: #b3b2b0;
+    padding: 5px 0 8px 32px;
+}
+
+.settings-desc {
+    color: #b3b2b0;
+    font-size: 13px;
+    padding: 8px 16px 16px 32px;
+}
+
+.settings-content {
+    background-color: rgba(76, 75, 73, 0.2);
+    border: 1px solid #5e5e5c;
+    border-radius: 6px;
+    padding-left: 16px;
+    margin: 0 16px;
+    color: #d6d6d6;
+}
+
+.setting .setting-value {
+    padding-right: 16px;
+}
+
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.setting:not(:first-child) {
+    border-top: 1px solid rgba(90, 88, 87, 0.4);
+}
+
+/* SWITCH STYLE */
+
+.switch-style-alt {
+    --el-switch-on-color: #13ce66;
+    --el-switch-off-color: #ff4949
 }

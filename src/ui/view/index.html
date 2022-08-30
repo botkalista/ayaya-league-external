@@ -6,7 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>___TITLE___</title>
+
+    <!-- ELEMENT PLUS -->
+
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+
+    <!-- ROBOTO -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+
+    <!-- MY CSS -->
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
@@ -15,14 +30,45 @@
 
     <div id="app">
         <div class="appbar" style="margin: 15px;">
-            <i class="fa-solid fa-gear"></i>
-            <i class="fa-solid fa-scroll"></i>
+            <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-gear"></i>
+            <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-scroll"></i>
         </div>
+
+        <div class="settings">
+            <div class="picker">
+                <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" @click="toggleSettings()"
+                    class="fa-solid fa-angle-left"></i>
+            </div>
+            <div class="content" @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)">
+
+                <template v-for="script of scripts">
+                    <template v-for="s of script.settings">
+
+                        <div v-if="s.title" class="settings-title"> {{s.title}} </div>
+                        <div v-else-if="s.desc" class="settings-desc"> {{s.desc}} </div>
+                        <div v-else-if="s.group" class="settings-content">
+                            <div class="setting" v-for="e of s.group">
+                                <div class="setting-text">{{e.text}}</div>
+                                <div class="setting-value">
+                                    <el-switch :class="{'switch-style-alt': e.style == 2}" v-if="e.type=='toggle'"
+                                        v-model="e.value">
+                                    </el-switch>
+                                </div>
+                            </div>
+                        </div>
+
+                    </template>
+                </template>
+
+            </div>
+        </div>
+
+
     </div>
 
 
     <script src="https://unpkg.com/vue@3"></script>
-
+    <script src="https://unpkg.com/element-plus"></script>
 
     <script src="../js/internal/forwarder.js"></script>
     <script src="../js/internal/app_loader.js"></script>
