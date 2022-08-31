@@ -84,12 +84,16 @@ class Manager extends CachedClass {
         }
         this.eventsData.hp = hp;
 
-        const aiManagers = this.champions.all.map(e => e.AiManager.endPath);
+        const champions = this.champions.all;
 
-        for (const aiManager of this.eventsData.aiManagers) {
-            const addr = aiManager[0];
-            const endPath = aiManager[1];
-            
+        for (const champ of champions) {
+            const addr = champ.address;
+            const endPath = champ.AiManager.endPath;
+            if (!this.eventsData.aiManagers.has(addr)) this.eventsData.aiManagers.set(addr, endPath);
+            if (!this.eventsData.aiManagers.get(addr).isEqual(endPath)) {
+                // trgger event onPlayerMove
+                this.eventsData.aiManagers.set(addr, endPath);
+            }
         }
 
 
