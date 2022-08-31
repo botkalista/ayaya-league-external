@@ -28,6 +28,10 @@ class Manager extends CachedClass {
         nmeTeam: 0,
     }
 
+    private eventsData = {
+
+    }
+
     constructor() { super(); }
 
 
@@ -57,6 +61,9 @@ class Manager extends CachedClass {
         const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
 
         this.__internal.matrix = matrixToArray(viewProjMatrix);
+
+        //TODO: Events
+
     }
 
 
