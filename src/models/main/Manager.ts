@@ -14,6 +14,7 @@ import { readMatrix, readVTable } from '../../components/StructureReader';
 import { matrixToArray } from './ManagerUtils';
 import { Missile } from '../primary/Missile';
 import { TeamDistinct } from '../TeamDistinct';
+import { AiManager } from '../secondary/AiManager';
 
 class Manager extends CachedClass {
 
@@ -29,7 +30,9 @@ class Manager extends CachedClass {
     }
 
     private eventsData = {
-
+        missiles: new Set<number>(),
+        aiManagers: new Map<number, Vector3>(),
+        hp: 0
     }
 
     constructor() { super(); }
@@ -63,6 +66,32 @@ class Manager extends CachedClass {
         this.__internal.matrix = matrixToArray(viewProjMatrix);
 
         //TODO: Events
+
+        const missiles = this.missiles;
+        for (const missile of missiles) {
+            const addr = missile.address;
+            if (!this.eventsData.missiles.has(addr)) {
+                this.eventsData.missiles.add(addr)
+                //trigger event onMissileCreate
+            } else {
+                this.eventsData.missiles.delete(addr);
+            }
+        }
+
+        const hp = this.me.hp;
+        if (this.eventsData.hp > hp) {
+            //trigger event onDamage
+        }
+        this.eventsData.hp = hp;
+
+        const aiManagers = this.champions.all.map(e => e.AiManager.endPath);
+
+        for (const aiManager of this.eventsData.aiManagers) {
+            const addr = aiManager[0];
+            const endPath = aiManager[1];
+            
+        }
+
 
     }
 
