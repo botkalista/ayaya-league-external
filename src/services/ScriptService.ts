@@ -55,11 +55,12 @@ export function getScripts() {
     return scripts;
 }
 
-export function executeFunction(functionName: string) {
+export function executeFunction(functionName: string, ...args) {
     for (const script of scripts) {
         const fn = script.fns[functionName];
         if (!fn) continue;
         fn.runInNewContext({
+            args,
             console,
             manager: Manager,
             ctx: DrawService,

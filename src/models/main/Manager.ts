@@ -14,7 +14,7 @@ import { readMatrix, readVTable } from '../../components/StructureReader';
 import { matrixToArray } from './ManagerUtils';
 import { Missile } from '../primary/Missile';
 import { TeamDistinct } from '../TeamDistinct';
-import { AiManager } from '../secondary/AiManager';
+import * as ScriptService from '../../services/ScriptService';
 
 class Manager extends CachedClass {
 
@@ -72,7 +72,7 @@ class Manager extends CachedClass {
             const addr = missile.address;
             if (!this.eventsData.missiles.has(addr)) {
                 this.eventsData.missiles.add(addr)
-                //trigger event onMissileCreate
+                ScriptService.executeFunction('onMissileCreate', missile);
             } else {
                 this.eventsData.missiles.delete(addr);
             }
@@ -80,7 +80,7 @@ class Manager extends CachedClass {
 
         const hp = this.me.hp;
         if (this.eventsData.hp > hp) {
-            //trigger event onDamage
+            ScriptService.executeFunction('onDamage');
         }
         this.eventsData.hp = hp;
 
@@ -91,7 +91,7 @@ class Manager extends CachedClass {
             const endPath = champ.AiManager.endPath;
             if (!this.eventsData.aiManagers.has(addr)) this.eventsData.aiManagers.set(addr, endPath);
             if (!this.eventsData.aiManagers.get(addr).isEqual(endPath)) {
-                // trgger event onPlayerMove
+                ScriptService.executeFunction('onPlayerMove', champ);
                 this.eventsData.aiManagers.set(addr, endPath);
             }
         }
