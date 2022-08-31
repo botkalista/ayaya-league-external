@@ -3,3 +3,4 @@ node_modules
 Release/obj
 **/ayaya-winapi/build
 dist
+build

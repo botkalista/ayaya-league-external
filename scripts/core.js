@@ -1,4 +1,4 @@
-
+/// <reference path="../src/typings/ScriptTypings.d.ts" />
 
 
 function setup() {
@@ -24,10 +24,7 @@ function onDraw() {
     }
 
 
-
-
 }
-
 
 register({ setup, onTick, onDraw });
 
@@ -40,11 +37,10 @@ const scriptSettings = [
             { id: 'test.slider', type: 'slider', text: 'Test', style: 1, value: 10, max: 100, min: 0, size: 1 },
         ],
     },
-    {desc:'Ayaya core is a builtin script and it is NOT required for AyayaLeague to work'}
+    { desc: 'Ayaya core is a builtin script and it is NOT required for AyayaLeague to work' }
 ]
 
 settings(scriptSettings);
-
 
 
 

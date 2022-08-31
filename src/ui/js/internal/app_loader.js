@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
+    inGame: false,
     scripts: [
         {
             script: 'default', settings: [
@@ -27,9 +28,13 @@ const app = Vue.createApp({
         toggleSettings,
         updateSettings,
         reloadScripts,
+        closeWindow
     }
 });
 
+function closeWindow() {
+    window.close();
+}
 
 function reloadScripts(event) {
     ipcRenderer.send('reloadScripts');
@@ -57,4 +62,9 @@ app.mount('#app');
 
 ipcRenderer.on('scripts', (e, scripts) => {
     state.scripts = scripts;
+});
+
+
+ipcRenderer.on('inGame', (e, value) => {
+    state.inGame = value;
 });

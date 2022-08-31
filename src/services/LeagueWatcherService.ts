@@ -8,6 +8,11 @@ export class LeagueWatcher {
 
     startLoopCheck() {
         if (this.loopChecking) return;
+        
+        const running = this.check();
+        if (this.isRunning != running) this.onChange(running);
+        this.isRunning = running;
+
         this.loopChecking = setInterval(() => {
             const running = this.check();
             if (this.isRunning != running) this.onChange(running);

@@ -97,6 +97,7 @@ async function start() {
 
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
+        ipcMain.emit('inGame', isRunning);
 
         if (isRunning) {
 

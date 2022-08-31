@@ -2,12 +2,20 @@
   "name": "ayaya-league-external",
   "version": "2.0.0",
   "description": "External script platform for League of Legends",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "start": "npm run compile && npm run compile:cp && electron dist/index.js",
     "compile": "tsc --project tsconfig.json",
     "build": "cd src/components/winapi/cpp/ayaya-winapi && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
-    "compile:cp": "node dev/copy_files.js"
+    "compile:cp": "node dev/copy_files.js",
+    "package": "electron-builder --dir"
+  },
+  "build": {
+    "appId": "aya.ayayaleague.app",
+    "asar": false,
+    "directories": {
+      "output": "build"
+    }
   },
   "keywords": [],
   "author": "Emily",

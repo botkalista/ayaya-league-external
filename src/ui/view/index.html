@@ -71,11 +71,25 @@
 
 
                 <div class="settings-title"> Debug </div>
+
                 <div class="settings-content">
+                    <div class="setting">
+                        <div class="setting-text"> Game status: </div>
+                        <div class="setting-value" style="padding: 6px;">
+                            <el-tag v-if="inGame==false" class="ml-2" type="danger" round plain> notInGame </el-tag>
+                            <el-tag v-if="inGame==true" class="ml-2" type="primary" round plain> inGame </el-tag>
+                        </div>
+                    </div>
                     <div class="setting">
                         <div class="setting-text"> Reload scripts </div>
                         <div class="setting-value" style="padding: 6px;">
                             <el-button @click="reloadScripts($event)" type="primary" plain> Reload scripts </el-button>
+                        </div>
+                    </div>
+                    <div class="setting">
+                        <div class="setting-text"> Close </div>
+                        <div class="setting-value" style="padding: 6px;">
+                            <el-button @click="closeWindow()" type="danger"> Close </el-button>
                         </div>
                     </div>
                 </div>
