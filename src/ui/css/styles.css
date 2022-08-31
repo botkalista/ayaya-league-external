@@ -123,3 +123,12 @@ html, body, #app {
     --el-switch-on-color: #13ce66;
     --el-switch-off-color: #ff4949
 }
+
+
+
+.el-slider.small {
+    width: 100px;
+}
+.el-slider.medium {
+    width: 150px;
+}

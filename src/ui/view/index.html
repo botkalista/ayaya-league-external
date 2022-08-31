@@ -50,9 +50,18 @@
                             <div class="setting" v-for="e of s.group">
                                 <div class="setting-text">{{e.text}}</div>
                                 <div class="setting-value">
+
+
                                     <el-switch :class="{'switch-style-alt': e.style == 2}" v-if="e.type=='toggle'"
                                         v-model="e.value" @change="updateSettings(script, s, e)">
                                     </el-switch>
+
+                                    <div v-if="e.type=='slider'" style="display: flex; align-items: center; gap:8px;">
+                                        <span> {{e.value}}</span>
+                                        <el-slider :class="{'small': e.size==1, 'medium': e.size==2}" v-model="e.value"
+                                            @change="updateSettings(script, s, e)" :min="e.min" :max="e.max" />
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
