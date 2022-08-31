@@ -30,9 +30,11 @@ function setup() {
     canvas.elt.style.zIndex = '-10';
 
     ipcRenderer.on('startLoop', () => {
+        console.log('LoopStarted')
         loop();
     });
     ipcRenderer.on('stopLoop', () => {
+        console.log('LoopStopped')
         noLoop();
     });
 

@@ -21,6 +21,8 @@ import { getChampionWindup } from "../../components/consts/ChampionsWindups";
 import { getChampionBaseAttackSpeed } from "../../components/consts/ChampionsBaseAttackSpeed";
 import { getChampionRadius } from "../../components/consts/ChampionsRadius";
 
+import WebApiWatcher from '../../services/WebApiWatcher';
+
 export class Entity extends CachedClass {
 
     constructor(public address: number) { super(); }
@@ -35,13 +37,16 @@ export class Entity extends CachedClass {
         return this.use('gamePos', () => Vector3.fromData(League.read<memVector3>(this.address + Offsets.oObjPosition, DataType.VEC3)));
     }
     get screenPos(): Vector2 {
-        return worldToScreen(this.gamePos, CachedClass.get('screen'), CachedClass.get('matrix'));
+        return worldToScreen(this.gamePos, Manager.__internal.screen, Manager.__internal.matrix);
     }
     get level(): number {
         return this.use('level', () => League.read(this.address + Offsets.oObjLevel, DataType.DWORD));
     }
     get ad(): number {
-        return this.use('ad', () => League.read(this.address + Offsets.oObjStatAttackRange, DataType.FLOAT));
+        return this.use('ad', () => {
+            return League.read<number>(this.address + Offsets.oObjStatBaseAd, DataType.FLOAT) +
+                League.read<number>(this.address + Offsets.oObjStatBonusAd, DataType.FLOAT)
+        });
     }
     get armor(): number {
         return this.use('armor', () => League.read(this.address + Offsets.oObjArmor, DataType.FLOAT));
@@ -143,7 +148,9 @@ export class Entity extends CachedClass {
     }
 
     get attackDelay() {
-        return 1000 / Manager.webApis.championStats.attackSpeed;
+        const data: any = WebApiWatcher.data;
+        if (!data.championStats) return 1000 / 0.62;
+        return 1000 / data.championStats.attackSpeed;
     }
 
     get windupTime() {
@@ -154,7 +161,11 @@ export class Entity extends CachedClass {
         const windupPercent = 100 / parseInt(windup.windup);
         const baseAttackSpeed = getChampionBaseAttackSpeed(this.name).base;
         const bWindupTime = 1 / baseAttackSpeed * windupPercent;
-        const totalAttackSpeed: number = Manager.webApis.championStats.attackSpeed;
+
+        const data: any = WebApiWatcher.data;
+
+        const totalAttackSpeed: number = data.championStats ? data.championStats.attackSpeed : 0.62;
+
         const cAttackTime = 1 / totalAttackSpeed;
         const windupModifier = modWindup == 0 ? 0 : 100 / modWindup;
         const result = bWindupTime + ((cAttackTime * windupPercent) - bWindupTime) * windupModifier;

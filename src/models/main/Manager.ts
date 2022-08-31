@@ -4,7 +4,7 @@ import { Game } from '../primary/Game';
 import League from '../../components/League';
 import Offsets from '../../components/Offsets';
 import * as math from 'mathjs';
-
+import * as http from 'http';
 import * as ManagerUtils from './ManagerUtils';
 
 import { DataType } from '../../components/winapi/typings/enums/DataType';
@@ -18,15 +18,13 @@ import { AiManager } from '../secondary/AiManager';
 
 class Manager extends CachedClass {
 
-    public webApis: any = {}
-
     public __internal = {
         renderer: 0,
         screen: new Vector2(0, 0),
         matrix: [0],
         gameTime: 0,
         myTeam: 0,
-        nmeTeam: 0,
+        nmeTeam: 0
     }
 
     private eventsData = {
@@ -45,6 +43,8 @@ class Manager extends CachedClass {
     prepareForLoop() {
         this.dispose();
         if (!League.isOpen()) return;
+
+
         this.__internal.gameTime = this.game.time;
         this.__internal.myTeam = this.me.team;
         this.__internal.nmeTeam = this.__internal.myTeam == 100 ? 200 : 100;

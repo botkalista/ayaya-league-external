@@ -101,6 +101,7 @@ async function start() {
 
         if (isRunning) {
 
+            console.log('Opening leeague process')
             League.openLeagueProcess();
 
             ScriptService.executeFunction('setup');
@@ -110,6 +111,7 @@ async function start() {
                 ScriptService.executeFunction('onTick');
             }, 30);
 
+            console.log('Starting loop on reenderer');
             win.webContents.send('startLoop');
 
         } else {

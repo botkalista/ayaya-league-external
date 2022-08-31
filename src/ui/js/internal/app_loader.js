@@ -44,6 +44,7 @@ function updateSettings(script, s, e) {
     const name = script.name;
     const id = e.id;
     const value = e.value;
+    console.log('updateSettings', { scriptName: name, id, value })
     ipcRenderer.send('settings', { scriptName: name, id, value })
 }
 
@@ -62,9 +63,13 @@ app.mount('#app');
 
 ipcRenderer.on('scripts', (e, scripts) => {
     state.scripts = scripts;
+    console.log('Got script settings', scripts)
 });
 
 
 ipcRenderer.on('inGame', (e, value) => {
     state.inGame = value;
+    if (value == true) {
+        loop();
+    }
 });
