@@ -21,8 +21,6 @@ import { getChampionWindup } from "../../components/consts/ChampionsWindups";
 import { getChampionBaseAttackSpeed } from "../../components/consts/ChampionsBaseAttackSpeed";
 import { getChampionRadius } from "../../components/consts/ChampionsRadius";
 
-import WebApiWatcher from '../../services/WebApiWatcher';
-
 export class Entity extends CachedClass {
 
     constructor(public address: number) { super(); }
@@ -69,7 +67,7 @@ export class Entity extends CachedClass {
     }
 
     get spawnCount(): number {
-        return this.use('spawnCount', () => League.read(this.address + Offsets.oObjSpawnCount, DataType.DWORD));
+        return this.use('spawnCount', () => League.read(this.address + Offsets.oObjSpawnCount, DataType.BYTE));
     }
 
     get magicResist(): number {
@@ -117,8 +115,8 @@ export class Entity extends CachedClass {
             // x4 ^= x5 ^ 0xA0;
             // return x4;
 
-            // TO TEST: spawnCount % 2 == 0
-            return this.hp <= 0 || (this.mana <= 0 && this.maxMana > 0);
+            return this.spawnCount % 2 == 0;
+            // return this.hp <= 0 || (this.mana <= 0 && this.maxMana > 0);
         });
 
     }
@@ -147,10 +145,28 @@ export class Entity extends CachedClass {
         });
     }
 
+
+    get attackSpeedBonus() {
+        return this.use('attackSpeedBonus', () => {
+            const mult = League.read<number>(this.address + Offsets.oObjAttackSpeedBonus, DataType.FLOAT);
+            return mult;
+        });
+    }
+
+    get attackSpeedBase() {
+        return this.use('attackSpeedBase', () => {
+            return getChampionBaseAttackSpeed(this.name).base;
+        });
+    }
+
+    get attackSpeed() {
+        return this.use('attackSpeed', () => {
+            return this.attackSpeedBase * this.attackSpeedBonus;
+        });
+    }
+
     get attackDelay() {
-        const data: any = WebApiWatcher.data;
-        if (!data.championStats) return 1000 / 0.62;
-        return 1000 / data.championStats.attackSpeed;
+        return 1000 / this.attackSpeed;
     }
 
     get windupTime() {
@@ -161,15 +177,11 @@ export class Entity extends CachedClass {
         const windupPercent = 100 / parseInt(windup.windup);
         const baseAttackSpeed = getChampionBaseAttackSpeed(this.name).base;
         const bWindupTime = 1 / baseAttackSpeed * windupPercent;
-
-        const data: any = WebApiWatcher.data;
-
-        const totalAttackSpeed: number = data.championStats ? data.championStats.attackSpeed : 0.62;
-
-        const cAttackTime = 1 / totalAttackSpeed;
+        
+        const cAttackTime = 1 / this.attackSpeed;
         const windupModifier = modWindup == 0 ? 0 : 100 / modWindup;
         const result = bWindupTime + ((cAttackTime * windupPercent) - bWindupTime) * windupModifier;
-        return (1 / totalAttackSpeed * 1000) * result / 20;
+        return (1 / this.attackSpeed * 1000) * result / 20;
     }
 
 

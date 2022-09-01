@@ -68,8 +68,7 @@ ipcRenderer.on('scripts', (e, scripts) => {
 
 
 ipcRenderer.on('inGame', (e, value) => {
+    console.log('got inGame', value);
     state.inGame = value;
-    if (value == true) {
-        loop();
-    }
+    if (value == true) { loop(); }
 });

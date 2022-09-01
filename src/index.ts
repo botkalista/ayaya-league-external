@@ -37,7 +37,7 @@ function createOverlay() {
     win.setIgnoreMouseEvents(true, { forward: true });
     win.setAlwaysOnTop(true, 'screen-saver');
 
-    win.webContents.openDevTools({ mode: 'detach' });
+    // win.webContents.openDevTools({ mode: 'detach' });
 
     const file = path.join(__dirname, '../src/ui/view/index.html')
     win.loadFile(file);
@@ -97,11 +97,12 @@ async function start() {
 
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
-        ipcMain.emit('inGame', isRunning);
+        
+        win.webContents.send('inGame', isRunning);
 
         if (isRunning) {
 
-            console.log('Opening leeague process')
+            console.log('Opening league process')
             League.openLeagueProcess();
 
             ScriptService.executeFunction('setup');

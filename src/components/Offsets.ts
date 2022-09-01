@@ -62,6 +62,7 @@ class Offsets {
     public oObjItemList = 0x33E8;
     public oObjExpierience = 0x337C;
 
+    public oObjAttackSpeedBonus = 0x1350;
 
     public oObjSpawnCount = 0x288;
 
