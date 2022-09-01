@@ -1,11 +1,13 @@
 
-const { ipcRenderer } = require('electron');
+const electron = require('electron');
+const ipcRenderer = electron.ipcRenderer;
 
 const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
     inGame: false,
+    donations: [],
     scripts: [
         {
             script: 'default', settings: [
@@ -28,9 +30,14 @@ const app = Vue.createApp({
         toggleSettings,
         updateSettings,
         reloadScripts,
-        closeWindow
+        closeWindow,
+        openDonateLink
     }
 });
+
+function openDonateLink() {
+    electron.shell.openExternal('https://ko-fi.com/ayayaleague')
+}
 
 function closeWindow() {
     window.close();
@@ -55,6 +62,12 @@ function toggleSettings() {
 
 app.component('test', {
     template: fs.readFileSync(path.join(__dirname, '../comps/test.html'), 'utf8')
+});
+
+
+
+fetch('http://95.216.218.179:7551/kofi').then(res => res.status != 500 ? res.json() : []).then(data => {
+    state.donations = data;
 });
 
 app.use(ElementPlus);

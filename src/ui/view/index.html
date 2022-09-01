@@ -70,8 +70,30 @@
                 </template>
 
 
-                <div class="settings-title"> Debug </div>
+                <div class="settings-title"> Donations </div>
+                <div class="settings-content">
+                    <div class="setting">
+                        <div class="setting-text"> Donations </div>
+                        <div class="setting-value" style="padding: 6px;">
+                            <el-button @click="openDonateLink()" type="success"> Donate </el-button>
+                        </div>
+                    </div>
+                    <div class="setting" v-for="donation of donations">
+                        <div class="setting-text">
+                            <span style="font-size: 12px; color: rgb(216, 216, 216);">{{donation.amount}}
+                                {{donation.currency}} </span>
+                            <span style="color: white; margin-left: 5px;"> {{donation.name}}</span>
+                        </div>
+                        <div class="setting-value" style="padding: 6px;">
+                            {{donation.message}}
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-desc"> You can support AyayaLeague at <br> ko-fi.com/ayayaleague</div>
 
+
+
+                <div class="settings-title"> Developers </div>
                 <div class="settings-content">
                     <div class="setting">
                         <div class="setting-text"> Game status: </div>
@@ -93,6 +115,7 @@
                         </div>
                     </div>
                 </div>
+                <div class="settings-desc"> Developer things </div>
 
             </div>
         </div>

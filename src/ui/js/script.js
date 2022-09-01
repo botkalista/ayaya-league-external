@@ -60,5 +60,4 @@ function draw() {
         console.error(ex);
     }
 
-
 }
