@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
+    version: "2.0.2",
+    updated: true,
     inGame: false,
     donations: [],
     scripts: [
@@ -68,6 +70,9 @@ app.component('test', {
 
 fetch('http://95.216.218.179:7551/kofi').then(res => res.status != 500 ? res.json() : []).then(data => {
     state.donations = data;
+});
+fetch('http://95.216.218.179:7551/static/ayaya_version').then(res => res.text()).then(data => {
+    state.updated = (data == `v${state.version}`);
 });
 
 app.use(ElementPlus);

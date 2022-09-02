@@ -34,12 +34,26 @@
             <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-scroll"></i>
         </div> -->
 
+
         <div class="settings">
             <div class="picker">
                 <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" @click="toggleSettings()"
                     class="fa-solid fa-angle-left"></i>
             </div>
             <div class="content" @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)">
+
+                <div class="row" style="display: flex; gap: 10px; justify-content: flex-end; font-size: 12px; margin-right: 10px; padding-bottom: 20px">
+                    <div class="version">
+                        <div class="text">updated</div>
+                        <div class="value" v-if="updated" style="background-color: green;">{{updated}}</div>
+                        <div class="value" v-else style="background-color: rgb(218, 49, 49);">{{updated}}</div>
+                    </div>
+
+                    <div class="version">
+                        <div class="text">version</div>
+                        <div class="value">{{version}}</div>
+                    </div>
+                </div>
 
                 <template v-for="script of scripts">
                     <template v-for="s of script.settings">

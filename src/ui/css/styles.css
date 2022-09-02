@@ -119,6 +119,31 @@ html, body, #app {
     border-top: 1px solid rgba(90, 88, 87, 0.5);
 }
 
+
+.version {
+    display: flex;
+    color: white;
+    width: fit-content;
+}
+
+.version .text {
+    background-color: gray;
+    padding: 2px 5px 2px 7px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.version .value {
+    background-color: rgb(63, 150, 221);
+    padding: 2px 7px 2px 5px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+
+
+
+
 /* SWITCH STYLE */
 
 .switch-style-alt {
@@ -129,6 +154,7 @@ html, body, #app {
 .el-slider.small {
     width: 100px;
 }
+
 .el-slider.medium {
     width: 150px;
 }
@@ -138,13 +164,16 @@ html, body, #app {
 /* SCROLLBARS */
 
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
 }
 
 ::-webkit-scrollbar-track {
     background: #888;
+    border-radius: 16px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: #cccccc;
+    background: hsl(224, 68%, 50%);
+    border-radius: 16px;
 }

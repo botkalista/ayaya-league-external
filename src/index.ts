@@ -10,6 +10,8 @@ import Watcher from './services/LeagueWatcherService';
 import DrawService from './services/DrawService';
 import Manager from './models/main/Manager';
 
+import WinApi from './components/winapi/Winapi';
+
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
 
@@ -92,12 +94,11 @@ async function start() {
 
     Watcher.startLoopCheck();
 
-    let onTickExecutor;
-    let readDataInterval;
+    let onTickExecutor;;
 
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
-        
+
         win.webContents.send('inGame', isRunning);
 
         if (isRunning) {
@@ -119,7 +120,6 @@ async function start() {
             win.webContents.send('stopLoop');
             League.closeLeagueProcess();
             clearInterval(onTickExecutor);
-            clearInterval(readDataInterval);
         }
 
     }
