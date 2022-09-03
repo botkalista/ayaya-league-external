@@ -62,9 +62,14 @@ function toggleSettings() {
     settingsWindow.classList.toggle('anim_enter');
 }
 
-app.component('test', {
-    template: fs.readFileSync(path.join(__dirname, '../comps/test.html'), 'utf8')
-});
+
+const appElement = document.getElementById('app');
+appElement.style.visibility = 'hidden';
+
+
+// app.component('test', {
+//     template: fs.readFileSync(path.join(__dirname, '../comps/test.html'), 'utf8')
+// });
 
 
 
@@ -75,8 +80,6 @@ fetch('http://95.216.218.179:7551/static/ayaya_version').then(res => res.text())
     state.updated = (data == `v${state.version}`);
 });
 
-app.use(ElementPlus);
-app.mount('#app');
 
 
 ipcRenderer.on('scripts', (e, scripts) => {
@@ -90,3 +93,17 @@ ipcRenderer.on('inGame', (e, value) => {
     state.inGame = value;
     if (value == true) { loop(); }
 });
+
+
+app.use(ElementPlus);
+app.mount('#app');
+
+setTimeout(() => {
+    appElement.style.visibility = 'visible';
+    const loader = document.getElementsByClassName('loader')[0];
+    loader.style.display = 'none';
+}, 1000);
+
+
+
+

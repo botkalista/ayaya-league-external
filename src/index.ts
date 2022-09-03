@@ -10,7 +10,7 @@ import Watcher from './services/LeagueWatcherService';
 import DrawService from './services/DrawService';
 import Manager from './models/main/Manager';
 
-import WinApi from './components/winapi/Winapi';
+// import WinApi from './components/winapi/Winapi';
 
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';

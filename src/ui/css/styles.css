@@ -141,6 +141,29 @@ html, body, #app {
 }
 
 
+/*  LOADER  */
+
+.loader {
+    margin: auto;
+    margin-top: 20vh;
+    width: 400px;
+    height: 256px;
+}
+
+.loader img {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+}
+
+.loader .loader-text {
+    padding: 5px 0;
+    color: rgb(78, 20, 6);
+    text-shadow: white 0 0 12px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
 
 
 
