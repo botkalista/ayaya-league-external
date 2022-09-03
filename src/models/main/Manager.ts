@@ -16,6 +16,8 @@ import { Missile } from '../primary/Missile';
 import { TeamDistinct } from '../TeamDistinct';
 import * as ScriptService from '../../services/ScriptService';
 
+import State from '../State';
+
 class Manager extends CachedClass {
 
     public __internal = {
@@ -99,6 +101,9 @@ class Manager extends CachedClass {
 
     }
 
+    get state() {
+        return State;
+    }
 
     get game(): Game {
         return this.use('game', () => new Game());

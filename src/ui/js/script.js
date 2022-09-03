@@ -1,26 +1,6 @@
-function _draw_textAt(str, x, y, size, color) {
-    textSize(size);
-    noStroke();
-    fill(color);
-    text(str, x, y);
-}
-
-function _draw_circleAt(x, y, size, color) {
-    noFill();
-    stroke(color);
-    ellipse(x, y, size, size);
-}
-
-function _draw_circle3D(points, weight, color) {
-    noFill();
-    stroke(color);
-    strokeWeight(weight);
-    for (let i = 0; i < points.length; i++) {
-        line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
-    }
-}
 
 
+let assetsManager;
 
 function setup() {
     const canvas = createCanvas(screen.width, screen.height);
@@ -39,6 +19,8 @@ function setup() {
     });
 
     ipcRenderer.send('settingsRequest');
+
+    assetsManager = assets_manager_scoped()
 
     noLoop();
 }

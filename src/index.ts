@@ -15,6 +15,8 @@ import Manager from './models/main/Manager';
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
 
+const DEBUG = (process.env.debug.trim() == 'true');
+
 app.whenReady().then(start);
 
 let marketWin;
@@ -41,7 +43,7 @@ function createOverlay() {
     win.setIgnoreMouseEvents(true, { forward: true });
     win.setAlwaysOnTop(true, 'screen-saver');
 
-    // win.webContents.openDevTools({ mode: 'detach' });
+    if (DEBUG) win.webContents.openDevTools({ mode: 'detach' });
 
     const file = path.join(__dirname, '../src/ui/view/index.html')
     win.loadFile(file);
@@ -69,19 +71,8 @@ function createMarket() {
 }
 
 
+
 async function start() {
-
-
-    protocol.registerFileProtocol('atom', (request, callback) => {
-        const url = request.url.substr(7)
-        callback({ path: path.normalize(`${__dirname}/${url}`) })
-    })
-
-    // protocol.registerHttpProtocol('ayaya', (req, callback) => {
-    //     console.log(req);
-    //     callback({ url: 'google.it' });
-    // });
-
 
     const win = createOverlay();
 
@@ -96,10 +87,16 @@ async function start() {
 
 
     ipcMain.on('drawingContext', (e, args) => {
-        if (!Watcher.isRunning) {
-            e.returnValue = '[]';
-            return;
+
+        if (!DEBUG) {
+
+            if (!Watcher.isRunning) {
+                e.returnValue = '[]';
+                return;
+            }
+
         }
+
         ScriptService.executeFunction('onDraw');
         e.returnValue = DrawService.flushContext();
     });
@@ -129,6 +126,8 @@ async function start() {
     ipcMain.on('reloadScripts', () => {
         ScriptService.reloadScripts();
         sendScripts();
+        if (Watcher.isRunning) ScriptService.executeFunction('setup');
+
     });
 
     ipcMain.on('settingsRequest', () => {
@@ -137,7 +136,7 @@ async function start() {
 
     Watcher.startLoopCheck();
 
-    let onTickExecutor;;
+    let onTickExecutor;
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
 
@@ -151,11 +150,14 @@ async function start() {
             ScriptService.executeFunction('setup');
 
             onTickExecutor = setInterval(() => {
+                const start = performance.now();
                 Manager.prepareForLoop();
                 ScriptService.executeFunction('onTick');
+                const end = performance.now();
+                // console.log('Tick duration:', end - start)
             }, 30);
 
-            console.log('Starting loop on reenderer');
+            console.log('Starting loop on renderer');
             win.webContents.send('startLoop');
 
         } else {
@@ -165,8 +167,6 @@ async function start() {
         }
 
     }
-
-
 
 
 }

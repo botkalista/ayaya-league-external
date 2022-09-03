@@ -33,15 +33,19 @@ export async function loadScripts() {
         const fns: { [key: string]: vm.Script } = {};
         let settings;
 
-        script.runInNewContext({
-            register: (res) => {
-                for (const fn in res) {
-                    const fnText = res[fn].toString();
-                    fns[fn] = new vm.Script(fnText + `\n${fn}();`);
-                }
-            },
-            settings: (res) => { settings = res; }
-        });
+        try {
+            script.runInNewContext({
+                register: (res) => {
+                    for (const fn in res) {
+                        const fnText = res[fn].toString();
+                        fns[fn] = new vm.Script(fnText + `\n${fn}();`);
+                    }
+                },
+                settings: (res) => { settings = res; }
+            });
+        } catch (ex) {
+            console.log('Error on script', path, ex);
+        }
 
 
 
@@ -56,21 +60,29 @@ export function getScripts() {
 }
 
 export function executeFunction(functionName: string, ...args) {
+
     for (const script of scripts) {
         const fn = script.fns[functionName];
         if (!fn) continue;
-        fn.runInNewContext({
-            args,
-            console,
-            manager: Manager,
-            ctx: DrawService,
-            settings: script.settings,
-            getSetting: (id) => {
-                const target = getSettingRaw(script.settings, id);
-                return target?.value;
-            }
-        });
+
+        try {
+            fn.runInNewContext({
+                args,
+                console,
+                manager: Manager,
+                ctx: DrawService,
+                settings: script.settings,
+                getSetting: (id) => {
+                    const target = getSettingRaw(script.settings, id);
+                    return target?.value;
+                }
+            });
+        } catch (ex) {
+            console.log('Error on script', script.name, ex);
+        }
+
     }
+
 }
 
 export function getSettingRaw(settings: any, id: string) {

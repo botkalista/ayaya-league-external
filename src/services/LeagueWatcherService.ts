@@ -10,7 +10,7 @@ export class LeagueWatcher {
         if (this.loopChecking) return;
 
         this.loopChecking = setInterval(() => {
-            const running = this.check() && (Manager.game.time > 0);
+            const running = this.check();
             if (this.isRunning != running) this.onChange(running);
             this.isRunning = running;
         }, 5000);
