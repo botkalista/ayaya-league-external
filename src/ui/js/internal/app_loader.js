@@ -26,6 +26,7 @@ const state = Vue.reactive({
 });
 
 const app = Vue.createApp({
+    mounted,
     data() { return state },
     methods: {
         forwardEvents,
@@ -33,7 +34,8 @@ const app = Vue.createApp({
         updateSettings,
         reloadScripts,
         closeWindow,
-        openDonateLink
+        openDonateLink,
+        openMarket
     }
 });
 
@@ -62,6 +64,9 @@ function toggleSettings() {
     settingsWindow.classList.toggle('anim_enter');
 }
 
+function openMarket() {
+    ipcRenderer.send('openMarket');
+}
 
 const appElement = document.getElementById('app');
 appElement.style.visibility = 'hidden';
@@ -97,13 +102,16 @@ ipcRenderer.on('inGame', (e, value) => {
 
 app.use(ElementPlus);
 app.mount('#app');
+ipcRenderer.send('loaded');
 
-setTimeout(() => {
-    appElement.style.visibility = 'visible';
-    const loader = document.getElementsByClassName('loader')[0];
-    loader.style.display = 'none';
-}, 1000);
-
+function mounted() {
+    setTimeout(() => {
+        appElement.style.visibility = 'visible';
+        const loader = document.getElementsByClassName('loader')[0];
+        loader.style.display = 'none';
+        ipcRenderer.send('loaded');
+    }, 1000);
+}
 
 
 

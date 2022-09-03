@@ -3,7 +3,7 @@ console.log('ELECTRON', process.versions.electron, 'NODE', process.versions.node
 import * as ElectronRemote from '@electron/remote/main';
 ElectronRemote.initialize();
 
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, screen } from 'electron';
 
 import League from './components/League';
 import Watcher from './services/LeagueWatcherService';
@@ -16,6 +16,8 @@ import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
 
 app.whenReady().then(start);
+
+let marketWin;
 
 function createOverlay() {
 
@@ -47,9 +49,50 @@ function createOverlay() {
     return win;
 }
 
+function createMarket() {
+
+    const win = new BrowserWindow({
+        width: 1200,
+        height: 800,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    win.setAlwaysOnTop(true, 'screen-saver');
+    win.setMenu(null);
+    win.loadURL('https://www.ayayaleague.com/market');
+
+    marketWin = win;
+    return win;
+}
+
+
 async function start() {
 
+
+    protocol.registerFileProtocol('atom', (request, callback) => {
+        const url = request.url.substr(7)
+        callback({ path: path.normalize(`${__dirname}/${url}`) })
+    })
+
+    // protocol.registerHttpProtocol('ayaya', (req, callback) => {
+    //     console.log(req);
+    //     callback({ url: 'google.it' });
+    // });
+
+
     const win = createOverlay();
+
+    ipcMain.on('openMarket', (e, args) => {
+        if (!marketWin) createMarket();
+    });
+
+    ipcMain.on('loaded', (e, args) => {
+        const isRunning = Watcher.check();
+        win.webContents.send('inGame', isRunning);
+    });
 
 
     ipcMain.on('drawingContext', (e, args) => {
@@ -95,7 +138,6 @@ async function start() {
     Watcher.startLoopCheck();
 
     let onTickExecutor;;
-
     Watcher.onChange = (isRunning: boolean) => {
         console.log('CHANGED', isRunning)
 
