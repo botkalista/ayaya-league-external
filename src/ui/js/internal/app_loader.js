@@ -7,6 +7,7 @@ const path = require('path');
 
 const state = Vue.reactive({
     version: "2.0.3",
+    vKeys,
     updated: true,
     inGame: false,
     donations: [],
@@ -30,6 +31,7 @@ const app = Vue.createApp({
     data() { return state },
     methods: {
         forwardEvents,
+        forwardEventsApp,
         toggleSettings,
         updateSettings,
         reloadScripts,

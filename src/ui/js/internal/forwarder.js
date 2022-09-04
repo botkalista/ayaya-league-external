@@ -6,3 +6,7 @@ function forwardEvents(val) {
     if (!thisWin) return;
     thisWin.setIgnoreMouseEvents(val, { forward: true });
 }
+
+function forwardEventsApp(e) {
+    console.log('fea', e);
+}

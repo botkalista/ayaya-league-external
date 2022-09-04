@@ -4,7 +4,6 @@ import { Game } from '../primary/Game';
 import League from '../../components/League';
 import Offsets from '../../components/Offsets';
 import * as math from 'mathjs';
-import * as http from 'http';
 import * as ManagerUtils from './ManagerUtils';
 
 import { DataType } from '../../components/winapi/typings/enums/DataType';

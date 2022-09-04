@@ -7,6 +7,7 @@ import * as vm from 'vm';
 import Manager from '../models/main/Manager';
 import DrawService from './DrawService';
 
+import { vKeys } from './KeyMappingService';
 
 type Script = {
     script: vm.Script,
@@ -41,7 +42,8 @@ export async function loadScripts() {
                         fns[fn] = new vm.Script(fnText + `\n${fn}();`);
                     }
                 },
-                settings: (res) => { settings = res; }
+                settings: (res) => { settings = res; },
+                getVKEY: (vKey: keyof typeof vKeys) => { return vKey }
             });
         } catch (ex) {
             console.log('Error on script', path, ex);
@@ -72,6 +74,7 @@ export function executeFunction(functionName: string, ...args) {
                 manager: Manager,
                 ctx: DrawService,
                 settings: script.settings,
+                vKeys,
                 getSetting: (id) => {
                     const target = getSettingRaw(script.settings, id);
                     return target?.value;

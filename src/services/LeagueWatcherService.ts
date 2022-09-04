@@ -1,5 +1,6 @@
 import winapi from '../components/winapi/Winapi';
 import Manager from '../models/main/Manager';
+import League from '../components/League';
 
 export class LeagueWatcher {
 
@@ -11,6 +12,8 @@ export class LeagueWatcher {
 
         this.loopChecking = setInterval(() => {
             const running = this.check();
+            if (this.isRunning && !League.isOpen()) League.openLeagueProcess();
+            if (Manager.game.time <= 1) return;
             if (this.isRunning != running) this.onChange(running);
             this.isRunning = running;
         }, 5000);

@@ -15,7 +15,7 @@ import Manager from './models/main/Manager';
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
 
-const DEBUG = (process.env.debug.trim() == 'true');
+const DEBUG = (process.env.debug?.trim() == 'true');
 
 app.whenReady().then(start);
 
@@ -143,10 +143,6 @@ async function start() {
         win.webContents.send('inGame', isRunning);
 
         if (isRunning) {
-
-            console.log('Opening league process')
-            League.openLeagueProcess();
-
             ScriptService.executeFunction('setup');
 
             onTickExecutor = setInterval(() => {

@@ -36,21 +36,19 @@
     </div>
 
     <div id="app">
-        <!-- <div class="appbar" style="margin: 15px;">
-            <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-gear"></i>
-            <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" class="fa-solid fa-scroll"></i>
-        </div> -->
 
+        <div @mouseover="forwardEvents(true)" @mouseleave="forwardEvents(false)" class="eventMoveHandler" style="width: 100vw; height: 100vh; overflow:hidden; position: absolute; top: 0; left: 0;"></div>
 
         <div class="settings">
             <div class="picker">
-                <i @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)" @click="toggleSettings()"
+                <i @click="toggleSettings()"
                     class="fa-solid fa-angle-left"></i>
             </div>
-            <div class="content" @mouseover="forwardEvents(false)" @mouseleave="forwardEvents(true)">
+            <div class="content">
 
-                <div class="row" style="display: flex; gap: 10px; justify-content: flex-end; font-size: 12px; margin-right: 10px; padding-bottom: 20px">
-                   
+                <div class="row"
+                    style="display: flex; gap: 10px; justify-content: flex-end; font-size: 12px; margin-right: 10px; padding-bottom: 20px">
+
                     <div class="version">
                         <div class="text">updated</div>
                         <div class="value" v-if="updated" style="background-color: green;">{{updated}}</div>
@@ -63,7 +61,7 @@
                     </div>
                 </div>
 
-            <!--             
+                <!--             
                 <div class="settings-title"> SCRIPTS </div>
                 <div class="settings-content">
                     <div class="setting">
@@ -85,21 +83,39 @@
                         <div v-else-if="s.desc" class="settings-desc"> {{s.desc}} </div>
                         <div v-else-if="s.group" class="settings-content">
                             <div class="setting" v-for="e of s.group">
-                                <div class="setting-text">{{e.text}}</div>
+
+                                <div class="setting-text" v-if="e.text && e.type != 'radio'">{{e.text}}</div>
+
                                 <div class="setting-value">
-
-
                                     <el-switch :class="{'switch-style-alt': e.style == 2}" v-if="e.type=='toggle'"
                                         v-model="e.value" @change="updateSettings(script, s, e)">
                                     </el-switch>
+                                    <div v-else-if="e.type=='key'" style="padding: 4px 0; width: 160px">
 
-                                    <div v-if="e.type=='slider'" style="display: flex; align-items: center; gap:8px;">
+                                        <el-select v-model="e.value" class="m-2" placeholder="Select key">
+                                            <el-option v-for="key in vKeys" :key="key[2]" :label="key[2]"
+                                                :value="key[2]" />
+                                        </el-select>
+
+                                    </div>
+                                    <div v-else-if="e.type=='radio'"
+                                        style="padding: 2px 0 5px 16px; display: flex; align-items: center; display: flex; flex-direction: column;">
+                                        <div style="padding-bottom: 3px;"> {{e.text}} </div>
+                                        <el-radio-group v-model="e.value">
+                                            <el-radio-button v-for="option of e.options" :label="option" />
+                                        </el-radio-group>
+                                    </div>
+                                    <div v-else-if="e.type=='slider'"
+                                        style="display: flex; align-items: center; gap:8px;">
                                         <span> {{e.value}}</span>
                                         <el-slider :class="{'small': e.size==1, 'medium': e.size==2}" v-model="e.value"
                                             @change="updateSettings(script, s, e)" :min="e.min" :max="e.max" />
                                     </div>
-
+                                    <div v-else-if="e.type=='text'" style="padding: 4px 0">
+                                        <el-input v-model="e.value"> </el-input>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -166,6 +182,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
 
+    <script src="../js/internal/vkeys.js"></script>
     <script src="../js/internal/forwarder.js"></script>
     <script src="../js/internal/app_loader.js"></script>
     <script src="../js/assets_manager.js"></script>
