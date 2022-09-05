@@ -30,8 +30,6 @@ const app = Vue.createApp({
     mounted,
     data() { return state },
     methods: {
-        forwardEvents,
-        forwardEventsApp,
         toggleSettings,
         updateSettings,
         reloadScripts,
@@ -88,6 +86,12 @@ fetch('http://95.216.218.179:7551/static/ayaya_version').then(res => res.text())
 });
 
 
+ipcRenderer.on('toggleSettings', (e, data) => {
+    console.log('TOGGLE SETTINGS')
+    toggleSettings();
+});
+
+
 
 ipcRenderer.on('scripts', (e, scripts) => {
     state.scripts = scripts;
@@ -112,6 +116,7 @@ function mounted() {
         const loader = document.getElementsByClassName('loader')[0];
         loader.style.display = 'none';
         ipcRenderer.send('loaded');
+        ipcRenderer.send('settingsRequest')
     }, 1000);
 }
 

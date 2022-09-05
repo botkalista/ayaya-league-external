@@ -8,68 +8,21 @@ html, body, #app {
     font-family: "Roboto";
 }
 
-.appbar {
-    display: flex;
-    gap: 15px;
-}
-
-.appbar i {
-    font-size: 35px;
-    color: gray;
-}
-
-.appbar i:hover {
-    font-size: 35px;
-    color: rgb(105, 105, 105);
-    cursor: pointer;
-}
 
 /*  SETTING WINDOW */
 
 .settings {
-    position: absolute;
-    right: 0;
-    top: 20vh;
-    width: 350px;
-    height: 500px;
     transition: all 0.5s ease;
-
     user-select: none;
-
     background: rgba(70, 69, 67, 0.8);
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-
-    padding: 16px 0;
-}
-
-.settings .content {
     width: 100%;
     height: 100%;
     overflow-y: scroll;
 }
 
-.settings .picker {
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    /* padding: 2px 3px; */
-}
-
-.settings .picker i {
-    font-size: 30px;
-    color: gray;
-    transform: scaleY(140%) translateX(-150%) rotateY(180deg);
-    cursor: pointer;
-}
-
-.settings .picker i:hover {
-    color: rgb(165, 165, 165);
+.settings .content {
+    padding: 16px 0;
 }
 
 .settings.anim_enter {
@@ -146,8 +99,9 @@ html, body, #app {
 .loader {
     margin: auto;
     margin-top: 20vh;
-    width: 400px;
-    height: 256px;
+    width: 200px;
+    height: 128px;
+    transform: scale(140%);
 }
 
 .loader img {
@@ -191,7 +145,7 @@ html, body, #app {
 }
 
 ::-webkit-scrollbar-track {
-    background: #888;
+    background: transparent;
     border-radius: 16px;
 }
 
@@ -199,4 +153,14 @@ html, body, #app {
     background: #cccccc;
     background: hsl(224, 68%, 50%);
     border-radius: 16px;
+}
+
+::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-bottom: 15px; 
+}
+
+::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-top: 15px;
 }

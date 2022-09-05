@@ -69,6 +69,7 @@ export function executeFunction(functionName: string, ...args) {
 
         try {
             fn.runInNewContext({
+                ...script.fns,
                 args,
                 console,
                 manager: Manager,

@@ -22,28 +22,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 
     <!-- MY CSS -->
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="settings.css">
 </head>
 
 <body>
 
 
     <div class="loader">
-        <img src="../assets/ayaya_poster.jpg" alt="AyayaPoster">
+        <img src="assets/ayaya_poster.jpg" alt="AyayaPoster">
         <div class="loader-text">
             Loading...
         </div>
     </div>
 
     <div id="app">
-
-        <div @mouseover="forwardEvents(true)" @mouseleave="forwardEvents(false)" class="eventMoveHandler" style="width: 100vw; height: 100vh; overflow:hidden; position: absolute; top: 0; left: 0;"></div>
-
         <div class="settings">
-            <div class="picker">
-                <i @click="toggleSettings()"
-                    class="fa-solid fa-angle-left"></i>
-            </div>
             <div class="content">
 
                 <div class="row"
@@ -60,21 +53,6 @@
                         <div class="value">{{version}}</div>
                     </div>
                 </div>
-
-                <!--             
-                <div class="settings-title"> SCRIPTS </div>
-                <div class="settings-content">
-                    <div class="setting">
-                        <div class="setting-text"> Script marketplace </div>
-                        <div class="setting-value" style="padding: 6px;">
-                            <el-button @click="openMarket()" type="info" round> Get scripts </el-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="settings-desc"></div>
-            -->
-
-
 
                 <template v-for="script of scripts">
                     <template v-for="s of script.settings">
@@ -172,22 +150,13 @@
 
             </div>
         </div>
-
-
     </div>
 
 
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://unpkg.com/element-plus"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
-
-    <script src="../js/internal/vkeys.js"></script>
-    <script src="../js/internal/forwarder.js"></script>
-    <script src="../js/internal/app_loader.js"></script>
-    <script src="../js/assets_manager.js"></script>
-    <script src="../js/drawer.js"></script>
-    <script src="../js/script.js"></script>
+    <script src="./vkeys.js"></script>
+    <script src="./app_loader.js"></script>
 </body>
 
 </html>

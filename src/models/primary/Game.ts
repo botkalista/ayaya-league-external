@@ -45,7 +45,7 @@ export class Game extends CachedClass {
             this.winapi.actions.move(position.x, position.y);
             await this.sleep(sleeps.afterMove);
             this.winapi.actions.press(23);
-            await this.sleep(sleeps.afterMove);
+            await this.sleep(sleeps.afterPress);
             this.winapi.actions.release(23);
             await this.sleep(sleeps.afterRelease);
             this.winapi.actions.move(startMousePos.x, startMousePos.y);

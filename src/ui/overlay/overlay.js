@@ -1,4 +1,4 @@
-
+const { ipcRenderer } = require('electron');
 
 let assetsManager;
 
