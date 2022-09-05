@@ -20,7 +20,7 @@ function onDraw() {
 
     if (showPlayerRange) {
         const me = manager.me;
-        ctx.circleAtPoint3D(me.gamePos, 50, 200, 2)
+        ctx.circleAtPoint3D(me.gamePos, 50, me.range, 2)
     }
 
 
