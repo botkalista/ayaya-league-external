@@ -137,12 +137,15 @@ async function start() {
 
 
     let lastOpen = 0;
+    let settingsOpened = true;
     async function checkSettingsShortcut() {
         const now = Date.now();
         if (lastOpen + 550 < now) {
             const checkKey = Manager.game.winapi.actions.isPressed;
             if (checkKey(0x20) && checkKey(0x11)) {
                 sett.webContents.send('toggleSettings');
+                sett.setIgnoreMouseEvents(settingsOpened, { forward: false });
+                settingsOpened = !settingsOpened;
                 lastOpen = now;
             }
         }
