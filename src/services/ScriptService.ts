@@ -28,7 +28,7 @@ export async function loadScripts() {
     const basePath = path.join(__dirname, '../../scripts');
     const scriptsFiles = fs.readdirSync(basePath);
     for (const scriptPath of scriptsFiles) {
-        const path = `${basePath}\\${scriptPath}`;
+        const path = `${basePath}/${scriptPath}`;
         const script = new vm.Script(fs.readFileSync(path, 'utf8'));
 
         const fns: { [key: string]: vm.Script } = {};
