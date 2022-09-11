@@ -41,7 +41,6 @@
 
                 <div class="row"
                     style="display: flex; gap: 10px; justify-content: flex-end; font-size: 12px; margin-right: 10px; padding-bottom: 20px">
-
                     <div class="version">
                         <div class="text">updated</div>
                         <div class="value" v-if="updated" style="background-color: green;">{{updated}}</div>
@@ -52,7 +51,15 @@
                         <div class="text">version</div>
                         <div class="value">{{version}}</div>
                     </div>
+
                 </div>
+                <div class="row"
+                    style="display: flex; gap: 10px; justify-content: center; font-size: 16px; color: white;  line-height: 25px; margin-right: 10px; padding-bottom: 20px">
+                    TYPE: {{ offsets[1]?.trial ? 'TRIAL' : 'PREMIUM' }}
+                    <br>
+                    {{durationString}}
+                </div>
+
 
                 <template v-for="script of scripts">
                     <template v-for="s of script.settings">

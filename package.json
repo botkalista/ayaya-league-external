@@ -22,6 +22,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@electron/remote": "^2.0.8",
+    "jsonwebtoken": "^8.5.1",
     "mathjs": "^11.1.0",
     "node-addon-api": "^5.0.0",
     "node-fetch": "^2.6.1",

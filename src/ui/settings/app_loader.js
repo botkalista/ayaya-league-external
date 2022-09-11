@@ -6,11 +6,13 @@ const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
-    version: "2.0.6",
+    version: "2.1.0",
     vKeys,
     updated: true,
     inGame: false,
     donations: [],
+    offsets: {},
+    now: Date.now(),
     scripts: [
         {
             script: 'default', settings: [
@@ -36,8 +38,16 @@ const app = Vue.createApp({
         closeWindow,
         openDonateLink,
         openMarket
+    },
+    computed: {
+        durationString() {
+            const a = ((state.offsets[1]?.expire - state.now) / 1000).toFixed(0);
+            const b = ((state.offsets[1]?.expire - state.now) / 1000 / 60).toFixed(0);
+            return `DURATION: ${a} s [${b} min]`
+        }
     }
 });
+
 
 function openDonateLink() {
     electron.shell.openExternal('https://ko-fi.com/ayayaleague')
@@ -91,7 +101,17 @@ ipcRenderer.on('toggleSettings', (e, data) => {
     toggleSettings();
 });
 
+ipcRenderer.on('__offsets', (e, data) => {
+    state.offsets = JSON.parse(data);
+});
 
+setInterval(() => {
+    state.now = Date.now();
+    if (state.now >= state.offsets[0].expire) {
+        close();
+        ipcRenderer.send('expired');
+    }
+}, 1000)
 
 ipcRenderer.on('scripts', (e, scripts) => {
     state.scripts = scripts;
