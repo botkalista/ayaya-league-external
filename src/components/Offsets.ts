@@ -1,28 +1,28 @@
 class Offsets {
 
-    public version = 12.16;
+    public version = 12.17;
 
     public oGameVersion = 0x58D820;	//8B 44 24 04 BA ? ? ? ? 2B D0
 
-    public oGameTime = 0x3111E68; //F3 0F 11 05 ? ? ? ? 8B 49
+    public oGameTime = 0x313AFF0; //F3 0F 11 05 ? ? ? ? 8B 49
 
-    public oRenderer = 0x314B90C; //A1 ?? ?? ?? ?? 56 57 BF ?? ?? ?? ?? 8B
+    public oRenderer = 0x3174DF4; //A1 ?? ?? ?? ?? 56 57 BF ?? ?? ?? ?? 8B
     public oGameWindowWidth = 0x8;
     public oGameWindowHeight = 0xc;
-    public oViewProjMatrix = 0x3148A20; //B9 ? ? ? ? E8 ? ? ? ? B9 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC // 83 C4 04 5F 8B 8C 24 ? ? ? ?  -> vai sopra; sotto al loc; primo unk_offset
+    public oViewProjMatrix = 0x316F328; //B9 ? ? ? ? E8 ? ? ? ? B9 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC // 83 C4 04 5F 8B 8C 24 ? ? ? ?  -> vai sopra; sotto al loc; primo unk_offset
 
-    public oHeroManager = 0x187BF54; //8B 15 ? ? ? ? 0F 44 C1
-    public oMinionManager = 0x24C9788; //A3 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 85 C0 74 32
-    public oTurretManager = 0x3110C94; //8B 35 ? ? ? ? 8B 76 18
-    public oMissileManager = 0x3118E34; //8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 30 8B 36
+    public oHeroManager = 0x18A50D0; //8B 15 ? ? ? ? 0F 44 C1
+    public oMinionManager = 0x24F2850; //A3 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 04 85 C0 74 32
+    public oTurretManager = 0x3139D5C; //8B 35 ? ? ? ? 8B 76 18
+    public oMissileManager = 0x3142288; //8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 30 8B 36
     public oInhibitorManager = 0x3118F30; //A1 ?? ?? ?? ?? 53 55 56 8B 70 04 8B 40 08
 
-    public oUnderMouse = 0x24c1a24; //! AddressToChange 89 0D ? ? ? ? C7 41 ? ? ? ? ? C7 41 ? ? ? ? ? C7 01 ? ? ? ?
+    public oUnderMouse = 0x24F29C4; //! AddressToChange 89 0D ? ? ? ? C7 41 ? ? ? ? ? C7 41 ? ? ? ? ? C7 01 ? ? ? ?
 
     public oShopsList = 0x24CA708;	//8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 75 11 8B 4F 04
 
-    public oLocalPlayer = 0x3118DDC; //57 8B 3D ? ? ? ? 3B F7 75
-    public oObjectManager = 0x187BEC0; //89 ? ? ? ? ? 57 C7 06 ? ? ? ? 66 C7 46 04 ? ?
+    public oLocalPlayer = 0x3141554; //57 8B 3D ? ? ? ? 3B F7 75
+    public oObjectManager = 0x18A503C; //89 ? ? ? ? ? 57 C7 06 ? ? ? ? 66 C7 46 04 ? ?
     public oMinimapObject = 0x310F83C;	// 74 22 8B 0D ? ? ? ? 85 C9 74 18 80 79 38 00
     public oMinimapObjectHud = 0x120;
     public oMinimapHudPos = 0x44;
@@ -40,9 +40,9 @@ class Offsets {
 
     public oObjRecallState = 0xD90;
     public oObjPlayerName = 0x54 + 30;
-    public oObjName = 0x2BD4;
-    public oObjLevel = 0x33B4;
-    public oObjPosition = 0x01DC;
+    public oObjName = 0x2D3C;
+    public oObjLevel = 0x351C;
+    public oObjPosition = 0x1DC;
     public oObjVisible = 0x0274;
     public oObjTargetable = 0xD04;
     public oObjVulnerable = 0x3D4;
@@ -98,7 +98,7 @@ class Offsets {
     public oActiveSpellEntryStartPos = 0x84;
     public oActiveSpellEntryEndPos = 0x90;
 
-    public oBuffManager = 0x21A8; //8B 81 ?? ?? ?? ?? 81 C1 ?? ?? ?? ?? 8B ?? ?? FF E0
+    public oBuffManager = 0x2310; //8B 81 ?? ?? ?? ?? 81 C1 ?? ?? ?? ?? 8B ?? ?? FF E0
     public oBuffArray = 0x10;
     public oBuffArrayLength = 0x14;
     public oBuffSize = 0x8;
@@ -111,7 +111,7 @@ class Offsets {
     public oBuffCount2 = 0x74;
 
 
-    public oSpellSlots = 0x27E8; // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
+    public oSpellSlots = 0x2950; // 8B 84 83 ? ? ? ? EB 06 8B 83 ? ? ? ? 85 C0 0F 84 ? ? ? ? 53 8B CF E8 ? ? ? ? 8B C8 8B 10 FF 52 18 8B F0
     public oSpellReadyAt = 0x24;
     public oSpellLevel = 0x1C;
     public oSpellDamage = 0x94;

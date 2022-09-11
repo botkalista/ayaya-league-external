@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
-    version: "2.0.5",
+    version: "2.0.6",
     vKeys,
     updated: true,
     inGame: false,
@@ -102,7 +102,6 @@ ipcRenderer.on('scripts', (e, scripts) => {
 ipcRenderer.on('inGame', (e, value) => {
     console.log('got inGame', value);
     state.inGame = value;
-    if (value == true) { loop(); }
 });
 
 

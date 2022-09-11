@@ -15,7 +15,6 @@ function onDraw() {
 
     if (showPlayerRange) manager.prepareForLoop();
 
-
     if (showDiscord) ctx.textAt('Join the AyayaLeague discord: https://discord.gg/qYy8Qz4Cr5', 20, 35, 26, 255);
 
     if (showPlayerRange) {
