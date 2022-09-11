@@ -13,14 +13,13 @@ function onTick() {
 function onDraw() {
     const result = [];
 
-    const enemies = manager.champions.enemies;
+    const closest = manager.utils.enemyChampsInRange(2000, { includeClones: true, includeDead: true });
 
-    for (const enemy of enemies) {
-        const spells = enemy.spells.map(e => e.ready);
-        result.push(spells);
-    }
-    const txt = result.map(e => e.join(' ')).join('\n');
-    ctx.textAt(txt, 30, 40, 20, 255);
+    ctx.textAt(closest.length, 40, 40, 22, 255);
+
+    if (closest.length == 0) return;
+
+    ctx.circleAtPoint3D(closest[0].gamePos, 50, 150, 2, [200, 0, 0]);
 }
 
 register({ setup, onTick, onDraw });

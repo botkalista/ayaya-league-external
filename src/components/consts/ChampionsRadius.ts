@@ -76,7 +76,7 @@ export const ChampionsRadius = [
     { name: "Maokai", size: 80 },
     { name: "Master Yi", size: 65 },
     { name: "Mega Gnar", size: 65 },
-    { name: "Miss Fortune", size: 65 },
+    { name: "MissFortune", size: 65 },
     { name: "Mordekaiser", size: 80 },
     { name: "Morgana", size: 65 },
     { name: "Nami", size: 65 },

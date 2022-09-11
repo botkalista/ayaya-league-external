@@ -71,9 +71,9 @@ export function getCircle3D(pos: Vector3, points: number, radius: number, screen
 export function hasEnemyOnPath(source: Entity, target: Entity) {
     const line = new Polygon(new Vector(source.screenPos.x, source.screenPos.y), [new Vector(target.screenPos.x, source.screenPos.y)]);
     const entities: Entity[] = []
-    entities.push(...this.manager.champions.enemies);
-    entities.push(...this.manager.minions.enemies);
-    entities.push(...this.manager.monsters);
+    entities.push(...Manager.champions.enemies);
+    entities.push(...Manager.minions.enemies);
+    entities.push(...Manager.monsters);
     return entities.filter(e => testCirclePolygon(e.satHitbox, line));
 }
 
@@ -82,8 +82,8 @@ export function hasEnemyOnPath(source: Entity, target: Entity) {
 //*  ------ Damage calculation ------
 
 export function calculateDamage(source: Entity, target: Entity, physicDmg: number = 0, magicDmg: number = 0, trueDmg: number = 0) {
-    const resultPhysic = this.calculatePhysicalDamage(source, target, physicDmg);
-    const resultMagic = this.calculateMagicDamage(source, target, magicDmg);
+    const resultPhysic = calculatePhysicalDamage(source, target, physicDmg);
+    const resultMagic = calculateMagicDamage(source, target, magicDmg);
     const resultTrue = trueDmg;
     return resultPhysic + resultMagic + resultTrue
 
@@ -122,10 +122,10 @@ export function calculateMagicDamage(source: Entity, target: Entity, damage: num
 type OptionsInRange = { includeClones: boolean, includeDead: boolean }
 
 export function enemyChampsInRange(range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
-    return this.genericInRange(Manager.champions.enemies, range, options);
+    return genericInRange(Manager.champions.enemies, range, options);
 }
 export function genericInRange(list: Entity[], range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
-    const me = this.manager.me;
+    const me = Manager.me;
     return list.filter(e => {
         const deadCheck = options.includeDead ? true : !e.dead;
         const cloneCheck = options.includeClones ? true : e.level > 0;
