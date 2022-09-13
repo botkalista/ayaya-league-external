@@ -173,6 +173,8 @@ export function getChampionRadius(name: string) {
         if (name.toLowerCase().replace(/ /g, '') == name) return entry;
     }
 
-    console.log('CANNOT FIND', name, 'RADIUS');
-    return { name, size: 0 }
+    if (!name.startsWith('PracticeTool')) {
+        console.log('CANNOT FIND', name, 'RADIUS');
+    }
+    return { name, size: 50 }
 }
