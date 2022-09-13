@@ -50,7 +50,7 @@ const actions = {
         return new Vector2(parseInt(x), parseInt(y));
     },
     blockInput(block: boolean): boolean {
-        return winapi.blockINput(block);
+        return winapi.blockInput(block);
     },
     sleepSync(ms: number) {
         const t = Date.now();
