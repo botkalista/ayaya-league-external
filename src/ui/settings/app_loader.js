@@ -41,8 +41,8 @@ const app = Vue.createApp({
     },
     computed: {
         durationString() {
-            const a = ((state.offsets[1]?.expire - state.now) / 1000).toFixed(0);
-            const b = ((state.offsets[1]?.expire - state.now) / 1000 / 60).toFixed(0);
+            const a = ((state.offsets - state.now) / 1000).toFixed(0);
+            const b = ((state.offsets - state.now) / 1000 / 60).toFixed(0);
             return `DURATION: ${a} s [${b} min]`
         }
     }
@@ -107,8 +107,7 @@ ipcRenderer.on('__offsets', (e, data) => {
 
 setInterval(() => {
     state.now = Date.now();
-    if (state.now >= state.offsets[0].expire) {
-        close();
+    if (state.now >= state.offsets) {
         ipcRenderer.send('expired');
     }
 }, 1000)
