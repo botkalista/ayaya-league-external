@@ -8,7 +8,7 @@
     "compile": "tsc --project tsconfig.json",
     "build": "cd src/components/winapi/cpp/ayaya-winapi && node-gyp clean configure build --target=20.0.1 --arch=ia32 --dist-url=https://electronjs.org/headers",
     "compile:cp": "node dev/copy_files.js",
-    "package": "electron-builder --dir"
+    "package": "electron-builder --dir && node dev/clean_build.js"
   },
   "build": {
     "appId": "aya.ayayaleague.app",
