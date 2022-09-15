@@ -119,24 +119,21 @@ export function calculateMagicDamage(source: Entity, target: Entity, damage: num
 
 //*  ------ Things in range ------
 
-type OptionsInRange = { includeClones: boolean, includeDead: boolean }
 
-export function enemyChampsInRange(range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
-    return genericInRange(Manager.champions.enemies, range, options);
+export function enemyChampsInRange(range: number) {
+    return genericInRange(Manager.champions.enemies, range);
 }
-export function genericInRange(list: Entity[], range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
+export function genericInRange(list: Entity[], range: number) {
     const me = Manager.me;
     return list.filter(e => {
-        const deadCheck = options.includeDead ? true : !e.dead;
-        const cloneCheck = options.includeClones ? true : e.level > 0;
-        return deadCheck && cloneCheck && e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox))
+        return e.visible && e.gamePos.dist(me.gamePos) < ((range + e.boundingBox + me.boundingBox))
     });
 }
-export function lowestHealthEnemyChampInRange(range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
-    return enemyChampsInRange(range, options).sort((a, b) => a.hp - b.hp)[0];
+export function lowestHealthEnemyChampInRange(range: number) {
+    return enemyChampsInRange(range).sort((a, b) => a.hp - b.hp)[0];
 }
-export function lowestHealthGenericInRange(list: Entity[], range: number, options: OptionsInRange = { includeClones: true, includeDead: false }) {
-    return genericInRange(list, range, options).sort((a, b) => a.hp - b.hp)[0];
+export function lowestHealthGenericInRange(list: Entity[], range: number) {
+    return genericInRange(list, range).sort((a, b) => a.hp - b.hp)[0];
 }
 
 
