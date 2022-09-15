@@ -29,7 +29,7 @@ class Manager extends CachedClass {
     }
 
     private eventsData = {
-        missiles: new Set<number>(),
+        missiles: [],
         aiManagers: new Map<number, Vector3>(),
         hp: 0
     }
@@ -45,6 +45,9 @@ class Manager extends CachedClass {
         this.dispose();
         if (!League.isOpen()) return;
 
+        const start = performance.now();
+
+        const performance_prepareInit_start = performance.now();
 
         this.__internal.gameTime = this.game.time;
         this.__internal.myTeam = this.me.team;
@@ -59,25 +62,30 @@ class Manager extends CachedClass {
                 League.read(this.__internal.renderer + Offsets.oGameWindowHeight, DataType.DWORD)
             );
 
+        const performance_prepareInit_end = performance.now();
 
+        const performance_matrix_start = performance.now();
         const viewMatrix = readMatrix(Offsets.oViewProjMatrix);
         const projMatrix = readMatrix(Offsets.oViewProjMatrix + 0x40);
         const viewProjMatrix = math.multiply(viewMatrix, projMatrix);
-
         this.__internal.matrix = matrixToArray(viewProjMatrix);
+
+        const performance_matrix_end = performance.now();
 
         //TODO: Events
 
+        const performance_events_missiles_start = performance.now();
+
         const missiles = this.missiles;
         for (const missile of missiles) {
-            const addr = missile.address;
-            if (!this.eventsData.missiles.has(addr)) {
-                this.eventsData.missiles.add(addr)
-                ScriptService.executeFunction('onMissileCreate', missile);
-            } else {
-                this.eventsData.missiles.delete(addr);
-            }
+            if (this.eventsData.missiles.find(m => m.address == missile.address)) return;
+            ScriptService.executeFunction('onMissileCreate', missile);
+            this.eventsData.missiles.push(missile);
         }
+        this.eventsData.missiles = this.eventsData.missiles.filter(m => missiles.find(e => e.address == m.address));
+
+
+        const performance_events_missiles_end = performance.now();
 
         const hp = this.me.hp;
         if (this.eventsData.hp > hp) {
@@ -95,6 +103,21 @@ class Manager extends CachedClass {
                 ScriptService.executeFunction('onPlayerMove', champ);
                 this.eventsData.aiManagers.set(addr, endPath);
             }
+        }
+
+        const end = performance.now();
+
+        const performance_text = `
+            Prepare took: ${end - start}
+           -- init: ${performance_prepareInit_end - performance_prepareInit_start}
+           -- matrix: ${performance_matrix_end - performance_matrix_start}
+           -- missiles: ${performance_events_missiles_end - performance_events_missiles_start}
+        `;
+
+        this['performance'] = performance_text;
+
+        if (end - start > 100) {
+            console.log(performance_text)
         }
 
 

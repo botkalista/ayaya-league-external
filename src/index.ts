@@ -10,22 +10,14 @@ import Watcher from './services/LeagueWatcherService';
 import DrawService from './services/DrawService';
 import Manager from './models/main/Manager';
 
-// import WinApi from './components/winapi/Winapi';
-
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
 import { CachedClass } from './components/CachedClass';
 
 const DEBUG = (process.env.debug?.trim() == 'true');
 
-const offsets = require('./offsets.min.js');
-
-
 
 app.whenReady().then(async () => {
-    const exp = await offsets[2](app);
-    CachedClass.set('__offsets', exp);
-    init();
     start();
 });
 
@@ -90,17 +82,6 @@ function createSettings() {
     return win;
 }
 
-function init() {
-
-    // Before you start messing with this code, this is not for checking your license it's only used to show you the message <.<
-    // The license checking is server-side
-
-    if (CachedClass.get('__offsets') < Date.now()) {
-        dialog.showMessageBox(undefined, { message: 'Your time is expired, please buy more time at our discord https://discord.gg/dH4TzxStCE' })
-        setTimeout(() => { app.exit(); }, 10000);
-    }
-
-}
 
 async function start() {
 
@@ -151,17 +132,13 @@ async function start() {
     });
 
 
-    ipcMain.on('reloadScripts', () => {
-        ScriptService.reloadScripts();
+    ipcMain.on('reloadScripts', async () => {
+        await ScriptService.loadScripts();
         sendScripts();
-        settingsWin.webContents.send('__offsets', JSON.stringify(CachedClass.get('__offsets')));
-        if (Watcher.isRunning) ScriptService.executeFunction('setup');
-
     });
 
     ipcMain.on('settingsRequest', () => {
         sendScripts();
-        settingsWin.webContents.send('__offsets', JSON.stringify(CachedClass.get('__offsets')));
     });
 
     Watcher.startLoopCheck();
@@ -189,14 +166,12 @@ async function start() {
 
     let onTickExecutor;
     Watcher.onChange = (isRunning: boolean) => {
-        console.log('CHANGED', isRunning)
 
+        console.log('CHANGED', isRunning)
         win.webContents.send('inGame', isRunning);
         sett.webContents.send('inGame', isRunning);
 
         if (isRunning) {
-            ScriptService.executeFunction('setup');
-
             onTickExecutor = setInterval(() => {
                 Manager.prepareForLoop();
                 ScriptService.executeFunction('onTick');

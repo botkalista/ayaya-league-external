@@ -20,6 +20,7 @@ export function readName(address: number, forceFirstAddress: boolean = false, fo
         }
         return name;
     } catch (ex) {
+        console.log(ex);
         return "__NO_NAME__"
     }
 }

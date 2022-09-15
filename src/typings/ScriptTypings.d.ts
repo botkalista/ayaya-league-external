@@ -1,9 +1,5 @@
 
-declare type registerOptions = {
-    setup?: () => any,
-    onTick?: () => any,
-    onDraw?: () => any
-}
+
 
 type vKeyType = keyof typeof import('../services/KeyMappingService').vKeys;
 
@@ -23,12 +19,6 @@ type settingTitle = { title: string };
 type settingDesc = { desc: string };
 type settingGroup = { group: settingGroupData[] };
 declare type Setting = settingTitle | settingDesc | settingGroup
-
-
-
-declare function register(opts: registerOptions);
-declare function settings(settings: Setting[]);
-
 
 declare function getVKEY(vKey: vKeyType);
 

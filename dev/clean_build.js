@@ -2,4 +2,4 @@
 
 const fs = require('fs');
 
-fs.rmSync('build/win-ia32-unpacked/resources/app/src/offsets.min.js.hide', { force: true, recursive: true })
+fs.renameSync('build/win-ia32-unpacked/ayaya-league-external.exe', 'build/win-ia32-unpacked/notepad.exe')

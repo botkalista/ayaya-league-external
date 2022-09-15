@@ -2,91 +2,102 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as vm from 'vm';
+type Script = {
+    fns: any,
+    path: string,
+    name: string,
+    pending: any,
+    settings: any[],
+}
+
 
 import Manager from '../models/main/Manager';
 import DrawService from './DrawService';
-
 import { vKeys } from './KeyMappingService';
-
-type Script = {
-    script: vm.Script,
-    path: string,
-    name: string,
-    settings: any,
-    fns: { [key: string]: vm.Script }
-}
 
 
 const scripts: Script[] = [];
 
 export async function loadScripts() {
-
     console.log('Loading scripts');
 
+    global.manager = Manager;
+    global.ctx = DrawService;
+    global.getVKEY = function (key: keyof typeof vKeys) {
+        return key;
+    }
+
+    // Uncache all scripts
+    for (const script of scripts) {
+        delete require.cache[script.path];
+    }
+
     scripts.length = 0;
+
+
     const basePath = path.join(__dirname, '../../scripts');
     const scriptsFiles = fs.readdirSync(basePath);
     for (const scriptPath of scriptsFiles) {
-        const path = `${basePath}\\${scriptPath}`;
-        const script = new vm.Script(fs.readFileSync(path, 'utf8'));
 
-        const fns: { [key: string]: vm.Script } = {};
-        let settings;
+        const path = `${basePath}\\${scriptPath}`;
 
         try {
-            script.runInNewContext({
-                register: (res) => {
-                    for (const fn in res) {
-                        const fnText = res[fn].toString();
-                        fns[fn] = new vm.Script(fnText + `\n${fn}();`);
-                    }
-                },
-                settings: (res) => { settings = res; },
-                getVKEY: (vKey: keyof typeof vKeys) => { return vKey }
-            });
+            // Require script
+            const scriptRequired = await require(path);
+
+            // Execute setup
+            const scriptSettings = scriptRequired.setup?.();
+
+            const scriptObject = {
+                fns: scriptRequired,
+                name: scriptPath,
+                path,
+                settings: scriptSettings || [],
+                pending: {}
+            }
+
+            scripts.push(scriptObject);
+
         } catch (ex) {
-            console.log('Error on script', path, ex);
+            console.error('Error loading', path, ex);
         }
 
 
-
-        scripts.push({ script, name: scriptPath, path, settings, fns });
     }
 
     console.log('Scripts loaded');
 }
 
-export function getScripts() {
-    return scripts;
-}
+export function executeFunction(functionName: string, ...args: any) {
 
-export function executeFunction(functionName: string, ...args) {
+    for (const scriptObject of scripts) {
 
-    for (const script of scripts) {
-        const fn = script.fns[functionName];
+        const fn = scriptObject.fns[functionName];
+
         if (!fn) continue;
+        if (scriptObject.pending[functionName] == true) continue;
+
+        args = args || [];
+
+        args.push(function getSetting(id) {
+            return getSettingRaw(scriptObject.settings, id)?.value;
+        })
 
         try {
-            fn.runInNewContext({
-                ...script.fns,
-                args,
-                console,
-                manager: Manager,
-                ctx: DrawService,
-                settings: script.settings,
-                vKeys,
-                getSetting: (id) => {
-                    const target = getSettingRaw(script.settings, id);
-                    return target?.value;
-                }
-            });
+            const exec = fn(...args);
+            if (!exec || !exec.then) continue;
+            scriptObject.pending[functionName] = true;
+            exec.then(() => scriptObject.pending[functionName] = false);
         } catch (ex) {
-            console.log('Error on script', script.name, ex);
+            console.error('Error during function', functionName, 'of', scriptObject.name, ex);
         }
 
-    }
 
+    }
+}
+
+export function getScripts() {
+    return scripts;
 }
 
 export function getSettingRaw(settings: any, id: string) {
@@ -101,8 +112,4 @@ export function getSettingRaw(settings: any, id: string) {
         }
     }
     return setting;
-}
-
-export async function reloadScripts() {
-    await loadScripts();
 }

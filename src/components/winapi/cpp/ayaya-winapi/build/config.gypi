@@ -362,6 +362,17 @@
     "nodedir": "C:\\Users\\Emily\\AppData\\Local\\node-gyp\\Cache\\20.0.1",
     "standalone_static_library": 1,
     "msbuild_path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-    "target": "20.0.1"
+    "target": "20.0.1",
+    "cache": "C:\\Users\\Emily\\AppData\\Local\\npm-cache",
+    "globalconfig": "C:\\Users\\Emily\\AppData\\Roaming\\npm\\etc\\npmrc",
+    "global_prefix": "C:\\Users\\Emily\\AppData\\Roaming\\npm",
+    "init_module": "C:\\Users\\Emily\\.npm-init.js",
+    "local_prefix": "D:\\ayaya-league-external",
+    "metrics_registry": "https://registry.npmjs.org/",
+    "msvs_version": "2015",
+    "node_gyp": "D:\\node16\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
+    "prefix": "C:\\Users\\Emily\\AppData\\Roaming\\npm",
+    "userconfig": "C:\\Users\\Emily\\.npmrc",
+    "user_agent": "npm/7.24.0 node/v16.10.0 win32 ia32 workspaces/false"
   }
 }

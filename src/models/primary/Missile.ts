@@ -19,8 +19,9 @@ export class Missile extends CachedClass {
         const missileManager = League.read<number>(Offsets.oMissileManager, DataType.DWORD, true);
         const rootNode = League.read<number>(missileManager + 0x4, DataType.DWORD);
         const missilesSize = League.read<number>(missileManager + 0x8, DataType.DWORD);
+        if (missilesSize == 0) return [];
         const addresses = readMap(rootNode, missilesSize + 1);
-        addresses.splice(1);
+        addresses.splice(0, 1);
         return addresses.map(e => new Missile(e));
     }
 

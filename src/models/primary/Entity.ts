@@ -170,18 +170,19 @@ export class Entity extends CachedClass {
     }
 
     get windupTime() {
-
         const windup = getChampionWindup(this.name);
-        const modWindup = parseInt(windup.modWindup) == NaN ? 0 : parseInt(windup.modWindup);
-
-        const windupPercent = 100 / parseInt(windup.windup);
+        const modParsed = parseInt(windup.modWindup);
+        const modWindup = isNaN(modParsed) ? 0 : modParsed;
         const baseAttackSpeed = getChampionBaseAttackSpeed(this.name).base;
-        const bWindupTime = 1 / baseAttackSpeed * windupPercent;
-        
+
         const cAttackTime = 1 / this.attackSpeed;
-        const windupModifier = modWindup == 0 ? 0 : 100 / modWindup;
+        const windupPercent = parseInt(windup.windup) / 100;
+        const bWindupTime = (1 / baseAttackSpeed) * windupPercent;
+
+        const windupModifier = modWindup == 0 ? 0 : modWindup / 100;
         const result = bWindupTime + ((cAttackTime * windupPercent) - bWindupTime) * windupModifier;
-        return (1 / this.attackSpeed * 1000) * result / 20;
+
+        return result;
     }
 
 

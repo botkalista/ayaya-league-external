@@ -3,15 +3,27 @@
 
 function setup() {
     console.log('Debug loaded');
+
+    return [
+        { title: 'Debug' },
+        {
+            group: [
+                { id: 'show.debug.info', type: 'toggle', text: 'Show Debug Info', style: 1, value: false },
+            ],
+        },
+        { desc: 'Script created to check data when offsets changes' }
+    ];
+
 }
 
 function onTick() {
-
+    // console.log('Tick')
 }
 
-function onDraw() {
-    const showDebugInfo = getSetting('show.debug.info');
-    if (!showDebugInfo) return;
+function onDraw(getSetting) {
+     const showDebugInfo = getSetting('show.debug.info');
+
+      if (!showDebugInfo) return;
 
     const info = {
         address: manager.me.address,
@@ -46,22 +58,11 @@ function onDraw() {
 
     ctx.textAt(JSON.stringify(info, null, 2), 30, 30, 20, 255);
 
+
+
 }
 
-register({ setup, onTick, onDraw });
-
-const scriptSettings = [
-    { title: 'Debug' },
-    {
-        group: [
-            { id: 'show.debug.info', type: 'toggle', text: 'Show Debug Info', style: 1, value: false },
-        ],
-    },
-    { desc: 'Script created to check data when offsets changes' }
-]
-
-settings(scriptSettings);
-
+module.exports = { onTick, onDraw, setup }
 
 
 

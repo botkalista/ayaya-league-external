@@ -69,6 +69,18 @@ function openProcess(name: string): Process {
 
 
 function readMemory<T>(handle: number, address: number, dataType: any): T {
+
+    if ((dataType.toUpperCase() == 'STR' || dataType.toUpperCase() == 'STRING')) {
+        const chars = [];
+        const buff = readBuffer(handle, address, 50)
+        for (let i = 0; i < buff.length; i++) {
+            const target = buff.at(i);
+            if (target == 0 && i > 0) break;
+            chars.push(String.fromCharCode(target));
+        }
+        return chars.join('') as unknown as any;
+    }
+
     return mem.readMemory(handle, address, dataType);
 }
 

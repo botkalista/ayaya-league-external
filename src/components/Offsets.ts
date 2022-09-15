@@ -83,7 +83,7 @@ class Offsets {
 
     // --- MISSILES ---
     public oMissileObjectEntry = 0x14;
-    public oMissileSpellInfo = 0x0260;
+    public oMissileSpellInfo = 0x260;
     public oMissileSrcIdx = 0x2DC;
     public oMissileDestIdx = 0x330;
     public oMissileStartPos = 0x02DC;

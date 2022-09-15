@@ -38,13 +38,6 @@ const app = Vue.createApp({
         closeWindow,
         openDonateLink,
         openMarket
-    },
-    computed: {
-        durationString() {
-            const a = ((state.offsets - state.now) / 1000).toFixed(0);
-            const b = ((state.offsets - state.now) / 1000 / 60).toFixed(0);
-            return `DURATION: ${a} s [${b} min]`
-        }
     }
 });
 
@@ -101,9 +94,6 @@ ipcRenderer.on('toggleSettings', (e, data) => {
     toggleSettings();
 });
 
-ipcRenderer.on('__offsets', (e, data) => {
-    state.offsets = JSON.parse(data);
-});
 
 setInterval(() => {
     state.now = Date.now();

@@ -11,18 +11,15 @@ export class LeagueWatcher {
         if (this.loopChecking) return;
 
         this.loopChecking = setInterval(() => {
-            
-            let running = this.check();
-            
-            if (this.isRunning && !League.isOpen()) League.openLeagueProcess();
-            
+
+            let runningCheck = this.check();
             if (this.isRunning) {
-                running = running && (Manager.game.time > 1);
+                if (!League.isOpen()) League.openLeagueProcess();
+                runningCheck = runningCheck && (Manager.game.time > 1);
             }
 
-            if (this.isRunning != running) this.onChange(running);
-
-            this.isRunning = running;
+            if (this.isRunning != runningCheck) this.onChange(runningCheck);
+            this.isRunning = runningCheck;
 
         }, 5000);
     }
