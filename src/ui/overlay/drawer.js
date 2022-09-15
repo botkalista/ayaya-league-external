@@ -28,3 +28,10 @@ function _draw_circle3D(points, weight, color) {
         line(points[i][0].x, points[i][0].y, points[i][1].x, points[i][1].y);
     }
 }
+
+function _draw_lineAt(x1, y1, x2, y2, weight, color) {
+    noFill();
+    stroke(color);
+    strokeWeight(weight);
+    line(x1, y1, x2, y2)
+}
