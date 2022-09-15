@@ -30,9 +30,9 @@ function canMove() { return (canPlayerMove) }
 
 async function onTick(getSettings) {
 
-    const orbEnabled = getSettings('orb.enabled');
+    const orbEnabled = getSetting('orb.enabled');
     if (!orbEnabled) return;
-    const orbKey = getSettings('orb.key');
+    const orbKey = getSetting('orb.key');
     if (!manager.game.winapi.actions.isPressed(orbKey)) return;
 
     const target = manager.utils.lowestHealthEnemyChampInRange(manager.me.range, { includeClones: true, includeDead: true });
