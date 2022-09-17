@@ -32,11 +32,11 @@ function canAttack(attackDelay) { return lastAaTick + attackDelay < getTime() }
 
 function canMove(windupTime) { return (lastAaTick + windupTime < getTime() || canPlayerMove) }
 
-async function onTick(settings) {
+async function onTick(getSetting) {
 }
 
 function onDraw(getSetting) {
-     const showDiscord = getSetting('show.discord');
+    const showDiscord = getSetting('show.discord');
     if (showDiscord) ctx.textAt('Join the AyayaLeague discord: https://discord.gg/qYy8Qz4Cr5', 20, 35, 26, 255);
 }
 
