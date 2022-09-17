@@ -77,14 +77,15 @@ export function executeFunction(functionName: string, ...args: any) {
         if (!fn) continue;
         if (scriptObject.pending[functionName] == true) continue;
 
-        args = args || [];
+        const finalArgs = [...args] || [];
+        
 
-        args.push(function getSetting(id) {
+        finalArgs.push(function getSetting(id) {
             return getSettingRaw(scriptObject.settings, id)?.value;
         })
 
         try {
-            const exec = fn(...args);
+            const exec = fn(...finalArgs);
             if (!exec || !exec.then) continue;
             scriptObject.pending[functionName] = true;
             exec.then(() => scriptObject.pending[functionName] = false);
