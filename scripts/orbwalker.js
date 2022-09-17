@@ -29,7 +29,6 @@ function canAttack(attackDelay) { return lastAaTick + attackDelay < getTime() }
 function canMove() { return (canPlayerMove) }
 
 async function onTick(getSetting) {
-
     const orbEnabled = getSetting('orb.enabled');
     if (!orbEnabled) return;
     const orbKey = getSetting('orb.key');
