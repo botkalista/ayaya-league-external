@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const state = Vue.reactive({
-    version: "2.2.0",
+    version: "2.3.2",
     vKeys,
     updated: true,
     inGame: false,

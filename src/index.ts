@@ -12,7 +12,6 @@ import Manager from './models/main/Manager';
 
 import * as path from 'path';
 import * as ScriptService from './services/ScriptService';
-import { CachedClass } from './components/CachedClass';
 
 const DEBUG = (process.env.debug?.trim() == 'true');
 

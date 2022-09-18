@@ -24,7 +24,7 @@ export async function loadScripts() {
     global.manager = Manager;
     global.ctx = DrawService;
     global.getVKEY = function (key: keyof typeof vKeys) {
-        return key;
+        return parseInt(vKeys[key][0]);
     }
 
     // Uncache all scripts

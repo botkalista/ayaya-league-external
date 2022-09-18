@@ -7,7 +7,7 @@ function setup() {
         { title: 'AyayaCore' },
         {
             group: [
-                { id: 'show.player.range', type: 'toggle', text: 'Show Player Range', style: 1, value: false },
+                // { id: 'show.player.range', type: 'toggle', text: 'Show Player Range', style: 1, value: false },
                 { id: 'show.discord', type: 'toggle', text: 'Show Discord', style: 1, value: true },
                 // { id: 'test.slider', type: 'slider', text: 'Test slider', style: 1, value: 10, max: 100, min: 0, size: 1 },
                 // { id: 'test.text', type: 'text', text: 'Test text', value: 'Something' },
