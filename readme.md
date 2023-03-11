@@ -3,6 +3,28 @@
 <h1>AyayaLeague</h1>
 </div>
 
+
+
+
+
+
+<div align="center">
+
+<h1> I AM WRITING A NEW VERSION OF AYAYA-LEAGUE <h1/>
+
+<h2>IF YOU WANT TO HELP ME, TRY THE PREVIEW OR SUGGEST SOMETHING TO MAKE / ADD FEEL FREE TO TALK IN THE NEW DISCORD SERVER <h2>
+
+<h2> 11/03/2023 </h2>
+
+<h1>  https://discord.gg/76p9nyJg8e </h1>
+</div>
+
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+
 <div align="center">
 <img src="https://user-images.githubusercontent.com/42075940/187264788-c4c74bcb-2912-41ee-a0b9-c985741fff04.jpg" alt="AyayaLeagueLogo" width="512">
 
